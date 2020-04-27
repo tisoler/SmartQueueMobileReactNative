@@ -11,7 +11,6 @@
     ],
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/imagenes/login.png",
     "splash": {
       "image": "./assets/imagenes/splash.png",
       "resizeMode": "contain",
@@ -24,11 +23,13 @@
       "**/*"
     ],
     "ios": {
+      "icon": "./assets/imagenes/icono.png",
       "supportsTablet": true,
-      "bundleIdentifier": "com.aillus.smartqueue",
+      "bundleIdentifier": "com.questreaming.sionfm",
       "buildNumber": "1.0.0"
     },
     "android": {
+      "icon": "./assets/imagenes/icono.png",
       "package": "com.aillus.smartqueue",
       "versionCode": 1
     }

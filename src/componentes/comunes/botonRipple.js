@@ -1,87 +1,102 @@
-import React, { useState } from 'react';
+// @flow
+import * as React from 'react';
+import { useState } from 'react';
 import {
-	View,
-	TouchableWithoutFeedback,
-	Animated,
-	Easing,
-	Platform
+  View, TouchableWithoutFeedback, Animated, Easing, Platform
 } from 'react-native';
 
-const BotonRipple = (props) => {
-		const {
-			width,
-			height,
-			colorBoton,
-			borderRadius = 0,
-			ManejadorClick = () => {},
-			colorEfecto = '#fff',
-			estilo = {}
-		} = props;
+type Props = {
+  width: number | string,
+  height: number,
+  colorBoton: string,
+  borderRadius?: number,
+  ManejadorClick?: Function,
+  colorEfecto?: string,
+  estilo?: Object,
+  children: React.Element<any> | React.Element<any>[],
+  maxOpacity?: number,
+  amplitudEfecto?: number
+};
 
-		const [maxOpacity] = useState(0.42);
-		const [scaleValue] = useState(new Animated.Value(0.01));
-		const [opacityValue] = useState(new Animated.Value(maxOpacity));
-		const	widthContainer = width;
-		const	heightContainer = height;
+const BotonRipple = (props: Props) => {
+  const {
+    width,
+    height,
+    colorBoton,
+    borderRadius = 0,
+    ManejadorClick = () => {},
+    colorEfecto = '#fff',
+    estilo = {},
+    children,
+    maxOpacity = 0.2,
+    amplitudEfecto = 1
+  } = props;
 
-    const onPressedIn = () => {
-			Animated.timing(scaleValue, {
-				toValue: 1,
-				duration: 120,
-				easing: Easing.bezier(0.0, 0.0, 0.2, 1),
-				useNativeDriver: Platform.OS === 'android',
-			}).start(() => setTimeout(() => ManejadorClick(), 350));
-    }
+  const [scaleValue] = useState(new Animated.Value(0.01));
+  const [opacityValue] = useState(new Animated.Value(maxOpacity));
+  const widthContainer = width;
+  const heightContainer = height;
 
-    const onPressedOut = () => {
-			Animated.timing(opacityValue, {
-				toValue: 0,
-				useNativeDriver: Platform.OS === 'android',
-			}).start(() => {
-				scaleValue.setValue(0.01);
-				opacityValue.setValue(maxOpacity);
-			});
-    }
+  const onPressed = () => {
+    Animated.timing(scaleValue, {
+      toValue: amplitudEfecto,
+      duration: 120,
+      easing: Easing.bezier(0.0, 0.0, 0.2, 1),
+      useNativeDriver: Platform.OS === 'android',
+    }).start(() => {
+      setTimeout(() => {
+        scaleValue.setValue(0.01);
+        opacityValue.setValue(maxOpacity);
+      }, 150);
+      setTimeout(() => ManejadorClick(), 350);
+    });
+  };
 
-    const renderRippleView = () => {
-			return (
-				<Animated.View
-					style={{
-						position: 'absolute',
-						top: 0,
-						left: 0,
-						width: '100%',
-						height: heightContainer,
-						borderRadius: borderRadius,
-						transform: [{ scale: scaleValue }],
-						opacity: opacityValue,
-						backgroundColor: colorEfecto,
-						zIndex: 1
-					}}
-				/>
-			);
-    }
-    
-    const iconContainer = { 
-			width: widthContainer, 
-			height: heightContainer, 
-			backgroundColor: colorBoton,
-			borderRadius: borderRadius
-    };
+  const renderRippleView = () => (
+    <Animated.View
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: heightContainer,
+        borderRadius,
+        transform: [{ scale: scaleValue }],
+        opacity: opacityValue,
+        backgroundColor: colorEfecto,
+        zIndex: 1
+      }}
+    />
+  );
 
-    return (
-			<TouchableWithoutFeedback
-				onPressIn={onPressedIn}
-				onPressOut={onPressedOut}
-			>
-				<View style={[iconContainer, estilo]}>
-					{renderRippleView()}
-					<View >
-						{props.children}
-					</View>
-				</View>
-			</TouchableWithoutFeedback>
-    );
-}
+  const iconContainer = {
+    width: widthContainer,
+    height: heightContainer,
+    backgroundColor: colorBoton,
+    borderRadius
+  };
 
-export default BotonRipple
+  return (
+    <TouchableWithoutFeedback
+      onPress={onPressed}
+    >
+      <View style={[iconContainer, estilo]}>
+        {renderRippleView()}
+        <View>
+          {children}
+        </View>
+      </View>
+    </TouchableWithoutFeedback>
+  );
+};
+
+BotonRipple.defaultProps = {
+  borderRadius: 0,
+  ManejadorClick: () => {},
+  colorEfecto: '#fff',
+  estilo: {},
+  maxOpacity: 0.2,
+  amplitudEfecto: 1
+};
+
+export default BotonRipple;
