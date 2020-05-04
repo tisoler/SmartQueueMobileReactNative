@@ -7,9 +7,10 @@ import withErrorBoundary from '../../enhancers/withErrorBoundary';
 import { ContextoStates } from '../../lib/contextoStates';
 import { obtenerCentrosAtencion } from '../../lib/servicios';
 import ImagenLink from '../../componentes/comunes/imagenLink';
+import setearCentros from './centroAtencionAcciones';
 
 const estilo = StyleSheet.create({
-  container: {
+  contenedor: {
     flex: 1,
     backgroundColor: '#0084a8',
     flexDirection: 'row',
@@ -24,11 +25,8 @@ const ListaCentrosAtencion = ({ navigation }) => {
     if (centrosState == null || centrosState.centros.length === 0) {
       obtenerCentrosAtencion(loginState.token)
         .then(res => res.json())
-        .then(response => {
-          centrosDispatch({
-            type: 'SET_CENTROS',
-            payload: { centros: response.response }
-          });
+        .then(respuesta => {
+          setearCentros(centrosDispatch, respuesta.response);
         })
         .catch(() => Alert.alert('Error durante la carga de centros.'));
     }
@@ -48,14 +46,14 @@ const ListaCentrosAtencion = ({ navigation }) => {
 
   if (centrosState == null) {
     return (
-      <View style={estilo.container}>
+      <View style={estilo.contenedor}>
         <ActivityIndicator size="large" color="#FFF" />
       </View>
     );
   }
 
   return (
-    <View style={estilo.container}>
+    <View style={estilo.contenedor}>
       { centrosState.centros.map(centro => (
         <ImagenLink
           key={centro.id}

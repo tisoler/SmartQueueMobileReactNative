@@ -9,6 +9,7 @@ import { login } from '../../lib/servicios';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import { ContextoStates } from '../../lib/contextoStates';
 import { imagenLogo } from '../../lib/constantes';
+import { setearUsuarioLogueado } from './usuarioAcciones';
 
 const styles = StyleSheet.create({
   container: {
@@ -44,10 +45,7 @@ const Login = ({ navigation }) => {
       .then(response => {
         cambioCargando(false);
         if (response.success) {
-          loginDispatch({
-            type: 'SET_LOGIN',
-            payload: { email: payload.email, token: response.token }
-          });
+          setearUsuarioLogueado(loginDispatch, payload.email, response.token);
           navigation.navigate('Lobby');
         } else {
           cambioLogin(true);

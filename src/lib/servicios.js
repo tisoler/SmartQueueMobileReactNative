@@ -71,3 +71,13 @@ export const confirmarAsistencia = (token: string, idCentro: number) => {
       }
     });
 };
+
+export const evaluarTurno = (token: string, idCentro: number, calificacion: number) => {
+  const url = `${apiURI}/feed/${idCentro}/${calificacion}`;
+  return fetch(url,
+    {
+      headers: {
+        'x-access-token': token
+      }
+    });
+};

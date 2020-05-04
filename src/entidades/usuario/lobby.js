@@ -8,6 +8,7 @@ import { ContextoStates } from '../../lib/contextoStates';
 import withErrorBoundary from '../../enhancers/withErrorBoundary';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import ImagenLink from '../../componentes/comunes/imagenLink';
+import { setearTurnosActivos } from './usuarioAcciones';
 
 const estilos = StyleSheet.create({
   contenedor: {
@@ -39,10 +40,12 @@ const Lobby = ({ navigation }) => {
       .then(res => res.json())
       .then(respuesta => {
         if (respuesta.success) {
-          loginDispatch({
-            type: 'SET_TURNOS_ACTIVOS',
-            payload: { turnosActivos: respuesta.response }
-          });
+          setearTurnosActivos(loginDispatch, respuesta.response);
+          if (respuesta.response.some(turno => turno.status === 'finished')) {
+            navigation.navigate('EvaluacionTurno');
+          }
+        } else {
+          Alert.alert('Error durante la carga de turnos activos.');
         }
       })
       .catch(() => Alert.alert('Error durante la carga de turnos activos.'));

@@ -4,7 +4,8 @@
 const estadoInicial = {
   email: '',
   token: '',
-  turnosActivos: []
+  turnosActivos: [],
+  turnosParaEvaluar: []
 };
 
 const loginReducer = (state: Object = estadoInicial, action: Object) => {
@@ -18,12 +19,23 @@ const loginReducer = (state: Object = estadoInicial, action: Object) => {
     case 'SET_TURNOS_ACTIVOS':
       return {
         ...state,
-        turnosActivos: payload.turnosActivos
+        turnosActivos: payload.turnosActivos.filter(t => ['waiting', 'ready'].includes(t.status)),
+        turnosParaEvaluar: payload.turnosActivos.filter(t => t.status === 'finished')
       };
     case 'AGREGAR_TURNO_ACTIVOS':
       return {
         ...state,
         turnosActivos: [...state.turnosActivos, payload.turnoActivo]
+      };
+    case 'CANCELAR_TURNO':
+      return {
+        ...state,
+        turnosActivos: state.turnosActivos.splice(payload.turno)
+      };
+    case 'EVALUAR_TURNO':
+      return {
+        ...state,
+        turnosParaEvaluar: state.turnosParaEvaluar.filter(t => t.id !== payload.turno.id)
       };
     default:
       return state;

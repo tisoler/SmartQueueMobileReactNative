@@ -9,6 +9,7 @@ import CentroAtencion from '../entidades/centroAtencion/centroAtencion';
 import Turno from '../entidades/turno/turno';
 import Registro from '../entidades/usuario/registro';
 import Lobby from '../entidades/usuario/lobby';
+import EvaluacionTurno from '../entidades/turno/evaluacionTurno';
 
 const Stack = createStackNavigator();
 
@@ -75,6 +76,21 @@ const Navegacion = () => (
         component={Turno}
         options={{
           title: 'Turno',
+          headerStyle: {
+            backgroundColor: '#005f79'
+          },
+          headerTintColor: '#fff',
+          transitionSpec: {
+            open: TransitionSpecs.TransitionIOSSpec,
+            close: TransitionSpecs.TransitionIOSSpec,
+          },
+        }}
+      />
+      <Stack.Screen
+        name="EvaluacionTurno"
+        component={EvaluacionTurno}
+        options={{
+          title: 'Evaluación',
           headerStyle: {
             backgroundColor: '#005f79'
           },

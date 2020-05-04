@@ -8,12 +8,17 @@ import { iconosCentros } from '../../lib/constantes';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import { ContextoStates } from '../../lib/contextoStates';
 import { estimarDemora, cancelarTicket, confirmarAsistencia } from '../../lib/servicios';
+import { cancelarTurnoState } from '../usuario/usuarioAcciones';
 
 const estilos = StyleSheet.create({
-  container: {
+  contenedor: {
     flex: 1,
     backgroundColor: '#0084a8',
     flexDirection: 'column',
+    alignItems: 'center',
+    width: '100%'
+  },
+  subContenedor: {
     alignItems: 'center',
     width: '100%'
   },
@@ -43,7 +48,7 @@ const estilos = StyleSheet.create({
 
 const Turno = ({ route, navigation }) => {
   const { turno, demoraTurnoCreado } = route.params;
-  const { loginState } = useContext(ContextoStates);
+  const { loginState, loginDispatch } = useContext(ContextoStates);
   const [demora, setDemora] = useState(null);
   const [confirmoPresencia, setConfirmoPresencia] = useState(false);
   const [cargando, setCargando] = useState(true);
@@ -57,6 +62,9 @@ const Turno = ({ route, navigation }) => {
         .then(respuesta => {
           setDemora(respuesta.response.wait);
           setCargando(false);
+          if (turno.status === 'ready') {
+            setConfirmoPresencia(true);
+          }
         })
         .catch(() => Alert.alert('Error en la solicitud de turno.'));
     } else {
@@ -69,18 +77,22 @@ const Turno = ({ route, navigation }) => {
     setCargando(true);
     cancelarTicket(loginState.token, turno.id)
       .then(res => res.json())
-      .then(() => {
-        navigation.pop(2);
+      .then(respuesta => {
+        if (respuesta.success) {
+          cancelarTurnoState(loginDispatch, turno);
+          navigation.pop(1);
+        } else {
+          Alert.alert('Error al cancelar el turno.');
+        }
       })
       .catch(() => Alert.alert('Error al cancelar el turno.'));
   };
 
   const confirmarPresencia = () => {
-    setConfirmoPresencia(true);
     confirmarAsistencia(loginState.token, turno.Center.id)
       .then(res => res.json())
       .then(() => {
-        setTimeout(() => navigation.pop(2), 1500);
+        setConfirmoPresencia(true);
       })
       .catch(() => {
         Alert.alert('Error al confirmar presencia.');
@@ -88,18 +100,8 @@ const Turno = ({ route, navigation }) => {
       });
   };
 
-  const obtenerVistaTurno = () => (
-    <View style={estilos.container}>
-      <Text style={estilos.titulo}>{turno.code}</Text>
-      <Text style={estilos.subtitulo}>
-        {turno.Category.name}
-      </Text>
-      <Text style={estilos.textoTurno}>
-        {`Turnos antes: ${demora ? demora.tickets : ''}`}
-      </Text>
-      <Text style={[estilos.textoTurno, estilos.margenUltimoTexto]}>
-        {`Tiempo estimado: ${demora ? demora.hours : ''} hs. ${demora ? demora.minutes : ''} minutos`}
-      </Text>
+  const obtenerAccionesTurno = () => (
+    <View style={estilos.subContenedor}>
       <BotonRedondeado ManejadorClick={() => confirmarPresencia()} Cargando={false} Color="#fff">
         YA ESTOY AQUÍ
       </BotonRedondeado>
@@ -110,26 +112,45 @@ const Turno = ({ route, navigation }) => {
   );
 
   const obtenerSaludo = () => (
-    <View style={estilos.container}>
-      <Text style={estilos.titulo}>Muchas gracias.</Text>
-      <Text style={estilos.titulo}>Que tenga un buen día.</Text>
+    <View style={estilos.subContenedor}>
+      <Text style={estilos.titulo}>Bienvenida/o.</Text>
+      <Text style={estilos.titulo}>Ya hemos recibido la notificación de su llegada.</Text>
     </View>
   );
 
-  const obtenerRender = () => {
-    if (!confirmoPresencia) {
-      if (cargando) {
-        return <ActivityIndicator size="large" color="#fff" />;
-      }
-      return obtenerVistaTurno();
-    }
-    return obtenerSaludo();
-  };
+  const obtenerVista = () => (
+    <View style={estilos.subContenedor}>
+      <Text style={estilos.titulo}>{turno.code}</Text>
+      <Text style={estilos.subtitulo}>
+        {turno.Category.name}
+      </Text>
+      <Text style={estilos.textoTurno}>
+        {`Turnos antes: ${demora ? demora.tickets : ''}`}
+      </Text>
+      <Text style={[estilos.textoTurno, estilos.margenUltimoTexto]}>
+        {`Tiempo estimado: ${demora ? demora.hours : ''} hs. ${demora ? demora.minutes : ''} minutos`}
+      </Text>
+      { !confirmoPresencia ? (
+        obtenerAccionesTurno()
+      ) : (
+        obtenerSaludo()
+      )}
+    </View>
+  );
+
+  if (cargando) {
+    return (
+      <View style={estilos.contenedor}>
+        <Image style={estilos.imagen} source={iconosCentros[turno.Center.app_icon]} />
+        <ActivityIndicator size="large" color="#FFF" />
+      </View>
+    );
+  }
 
   return (
-    <View style={estilos.container}>
+    <View style={estilos.contenedor}>
       <Image style={estilos.imagen} source={iconosCentros[turno.Center.app_icon]} />
-      { obtenerRender() }
+      { obtenerVista() }
     </View>
   );
 };

@@ -10,6 +10,7 @@ import { iconosCentros } from '../../lib/constantes';
 import { estimarDemora, generarTicket } from '../../lib/servicios';
 import BotonPopup from '../../componentes/comunes/botonPopup';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
+import { agregarTurnoActivoState } from '../usuario/usuarioAcciones';
 
 const estilos = StyleSheet.create({
   container: {
@@ -79,10 +80,7 @@ const CentrosAtencion = ({ route, navigation }) => {
       .then(res => res.json())
       .then(respuesta => {
         setCargando(false);
-        loginDispatch({
-          type: 'AGREGAR_TURNO_ACTIVOS',
-          payload: { turnoActivo: respuesta.response.ticket }
-        });
+        agregarTurnoActivoState(loginDispatch, respuesta.response.ticket);
         navigation.navigate('Turno', { turno: respuesta.response.ticket, demoraTurnoCreado: demora });
         setTurnoPedido(false);
       })
