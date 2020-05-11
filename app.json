@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Smart Queue",
-    "slug": "SmartQueueMobileApp",
+    "name": "TucapelTurnos",
+    "slug": "tucapelt.turnos",
     "privacy": "public",
     "sdkVersion": "36.0.0",
     "platforms": [
@@ -32,6 +32,7 @@
       "icon": "./assets/imagenes/icono.png",
       "package": "com.aillus.smartqueue",
       "versionCode": 1
-    }
+    },
+    "description": "Implementación para pruebas de turenos de camiones de Tucapel."
   }
 }
