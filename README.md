@@ -1,4 +1,4 @@
-# SmartQueueMobileReactNative
+# TucapelTurnos, forked from SmartQueueMobileReactNative
 
 El proyecto usa esLint y flow (tipado estático)
 Para desactivar en Visual Code errores de TypeScript mientras se programa seguir estos pasos:
