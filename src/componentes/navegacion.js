@@ -20,44 +20,44 @@ const Navegacion = () => (
         name="Login"
         component={Login}
         options={{
-          title: 'Smart queue',
+          title: 'TucapelTurnos',
           headerStyle: {
-            backgroundColor: '#005f79'
+            backgroundColor: '#ffffff'
           },
-          headerTintColor: '#fff'
+          headerTintColor: '#bb0000'
         }}
       />
       <Stack.Screen
         name="Registro"
         component={Registro}
         options={{
-          title: 'Smart queue - Registro',
+          title: 'Tucapel - Solicitar TucapelID',
           headerStyle: {
-            backgroundColor: '#005f79'
+            backgroundColor: '#fff'
           },
-          headerTintColor: '#fff'
+          headerTintColor: '#bb0000'
         }}
       />
       <Stack.Screen
         name="Lobby"
         component={Lobby}
         options={{
-          title: 'Smart queue',
+          title: 'Zina de Espera',
           headerStyle: {
-            backgroundColor: '#005f79'
+            backgroundColor: '#fff'
           },
-          headerTintColor: '#fff'
+          headerTintColor: '#bb0000'
         }}
       />
       <Stack.Screen
         name="ListaCentrosAtencion"
         component={ListaCentrosAtencion}
         options={{
-          title: 'Centros de atención',
+          title: 'Plantas y SUcursales',
           headerStyle: {
-            backgroundColor: '#005f79'
+            backgroundColor: '#fff'
           },
-          headerTintColor: '#fff'
+          headerTintColor: '#bb0000'
         }}
       />
       <Stack.Screen
