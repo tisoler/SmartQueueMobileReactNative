@@ -1,21 +1,25 @@
 // @flow
 import React, { useContext, useEffect } from 'react';
 import {
-  View, StyleSheet, ActivityIndicator, Alert
+  View, StyleSheet, ActivityIndicator, Alert, ScrollView, Text
 } from 'react-native';
 import withErrorBoundary from '../../enhancers/withErrorBoundary';
 import { ContextoStates } from '../../lib/contextoStates';
 import { obtenerCentrosAtencion } from '../../lib/servicios';
-import ImagenLink from '../../componentes/comunes/imagenLink';
+import Teja from '../../componentes/comunes/teja';
 import setearCentros from './centroAtencionAcciones';
 
-const estilo = StyleSheet.create({
+const estilos = StyleSheet.create({
   contenedor: {
     flex: 1,
     backgroundColor: '#0084a8',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
+    flexDirection: 'column',
+    justifyContent: 'center'
+  },
+  texto: {
+    color: '#FFF',
+    fontSize: 19,
+    paddingLeft: 10
   }
 });
 
@@ -46,22 +50,25 @@ const ListaCentrosAtencion = ({ navigation }) => {
 
   if (centrosState == null) {
     return (
-      <View style={estilo.contenedor}>
+      <View style={estilos.contenedor}>
         <ActivityIndicator size="large" color="#FFF" />
       </View>
     );
   }
 
   return (
-    <View style={estilo.contenedor}>
-      { centrosState.centros.map(centro => (
-        <ImagenLink
-          key={centro.id}
-          AppIcon={centro.app_icon}
-          ManejadorClick={() => seleccionarCentro(centro)}
-          Texto={centro.name}
-        />
-      ))}
+    <View style={estilos.contenedor}>
+      <ScrollView>
+        { centrosState.centros.map(centro => (
+          <Teja
+            key={centro.id}
+            appIcon={centro.app_icon}
+            manejadorClick={() => seleccionarCentro(centro)}
+          >
+            <Text style={estilos.texto}>{centro.name}</Text>
+          </Teja>
+        ))}
+      </ScrollView>
     </View>
   );
 };

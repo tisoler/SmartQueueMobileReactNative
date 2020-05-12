@@ -52,8 +52,8 @@ export const generarTicket = (token: string, idCategoria: number, idCentro: numb
     });
 };
 
-export const cancelarTicket = (token: string, idTurno: number) => {
-  const url = `${apiURI}cancel/${idTurno}`;
+export const cancelarTicket = (token: string, idCentro: number) => {
+  const url = `${apiURI}cancel/${idCentro}`;
   return fetch(url,
     {
       headers: {

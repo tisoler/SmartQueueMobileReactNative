@@ -20,7 +20,15 @@ const estilos = StyleSheet.create({
   },
   subContenedor: {
     alignItems: 'center',
-    width: '100%'
+    width: '95%'
+  },
+  subContenedorSaludo: {
+    alignItems: 'center',
+    width: '95%',
+    borderColor: '#005f79',
+    borderWidth: 1,
+    paddingTop: 5,
+    paddingBottom: 10
   },
   imagen: {
     height: 150,
@@ -34,7 +42,8 @@ const estilos = StyleSheet.create({
   subtitulo: {
     fontSize: 22,
     color: '#fff',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    textAlign: 'center'
   },
   margenUltimoTexto: {
     marginBottom: 20
@@ -75,12 +84,12 @@ const Turno = ({ route, navigation }) => {
 
   const cancelarTurno = () => {
     setCargando(true);
-    cancelarTicket(loginState.token, turno.id)
+    cancelarTicket(loginState.token, turno.Center.id)
       .then(res => res.json())
       .then(respuesta => {
         if (respuesta.success) {
           cancelarTurnoState(loginDispatch, turno);
-          navigation.pop(1);
+          navigation.navigate('Lobby');
         } else {
           Alert.alert('Error al cancelar el turno.');
         }
@@ -102,19 +111,19 @@ const Turno = ({ route, navigation }) => {
 
   const obtenerAccionesTurno = () => (
     <View style={estilos.subContenedor}>
-      <BotonRedondeado ManejadorClick={() => confirmarPresencia()} Cargando={false} Color="#fff">
+      <BotonRedondeado manejadorClick={() => confirmarPresencia()}>
         YA ESTOY AQUÍ
       </BotonRedondeado>
-      <BotonRedondeado ManejadorClick={() => cancelarTurno()} Cargando={false} Color="#fff">
+      <BotonRedondeado manejadorClick={() => cancelarTurno()}>
         CANCELAR TURNO
       </BotonRedondeado>
     </View>
   );
 
   const obtenerSaludo = () => (
-    <View style={estilos.subContenedor}>
+    <View style={estilos.subContenedorSaludo}>
       <Text style={estilos.titulo}>Bienvenida/o.</Text>
-      <Text style={estilos.titulo}>Ya hemos recibido la notificación de su llegada.</Text>
+      <Text style={estilos.subtitulo}>Ya hemos recibido la notificación de su llegada.</Text>
     </View>
   );
 

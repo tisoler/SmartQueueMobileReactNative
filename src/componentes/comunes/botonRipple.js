@@ -8,9 +8,10 @@ import {
 type Props = {
   width: number | string,
   height: number,
-  colorBoton: string,
+  colorFondo?: string,
+  colorBorde?: string,
   borderRadius?: number,
-  ManejadorClick?: Function,
+  manejadorClick?: Function,
   colorEfecto?: string,
   estilo?: Object,
   children: React.Element<any> | React.Element<any>[],
@@ -22,10 +23,11 @@ const BotonRipple = (props: Props) => {
   const {
     width,
     height,
-    colorBoton,
-    borderRadius = 0,
-    ManejadorClick = () => {},
-    colorEfecto = '#fff',
+    colorFondo,
+    colorBorde = colorFondo,
+    borderRadius = 10,
+    manejadorClick = () => {},
+    colorEfecto = 'black',
     estilo = {},
     children,
     maxOpacity = 0.2,
@@ -34,10 +36,12 @@ const BotonRipple = (props: Props) => {
 
   const [scaleValue] = useState(new Animated.Value(0.01));
   const [opacityValue] = useState(new Animated.Value(maxOpacity));
+  const [presiono, setPresiono] = useState(false);
   const widthContainer = width;
   const heightContainer = height;
 
   const onPressed = () => {
+    setPresiono(true);
     Animated.timing(scaleValue, {
       toValue: amplitudEfecto,
       duration: 120,
@@ -47,8 +51,9 @@ const BotonRipple = (props: Props) => {
       setTimeout(() => {
         scaleValue.setValue(0.01);
         opacityValue.setValue(maxOpacity);
+        setPresiono(false);
       }, 150);
-      setTimeout(() => ManejadorClick(), 350);
+      setTimeout(() => manejadorClick(), 350);
     });
   };
 
@@ -59,7 +64,7 @@ const BotonRipple = (props: Props) => {
         top: 0,
         left: 0,
         width: '100%',
-        height: heightContainer,
+        height: heightContainer - 3,
         borderRadius,
         transform: [{ scale: scaleValue }],
         opacity: opacityValue,
@@ -72,7 +77,9 @@ const BotonRipple = (props: Props) => {
   const iconContainer = {
     width: widthContainer,
     height: heightContainer,
-    backgroundColor: colorBoton,
+    borderWidth: 1.7,
+    borderColor: !presiono ? colorBorde : '#0084a8',
+    backgroundColor: colorFondo ?? 'none',
     borderRadius
   };
 
@@ -91,9 +98,11 @@ const BotonRipple = (props: Props) => {
 };
 
 BotonRipple.defaultProps = {
-  borderRadius: 0,
-  ManejadorClick: () => {},
-  colorEfecto: '#fff',
+  borderRadius: 7,
+  manejadorClick: () => {},
+  colorEfecto: 'black',
+  colorFondo: '#0084a8',
+  colorBorde: '#fff',
   estilo: {},
   maxOpacity: 0.2,
   amplitudEfecto: 1

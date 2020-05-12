@@ -89,7 +89,7 @@ const CentrosAtencion = ({ route, navigation }) => {
 
   const obtenerBotonesCategorias = () => (
     centro.Categories.map(categ => (
-      <BotonRedondeado key={categ.id} ManejadorClick={() => pedirTurno(categ)} Cargando={false} Color="#fff">
+      <BotonRedondeado key={categ.id} manejadorClick={() => pedirTurno(categ)}>
         { categ.description }
       </BotonRedondeado>
     ))
@@ -119,10 +119,18 @@ const CentrosAtencion = ({ route, navigation }) => {
         </Text>
       </View>
       <View style={estilos.contenedorBotonesConfirmacion}>
-        <BotonPopup height={80} width="50%" ManejadorClick={() => setTurnoPedido(false)} Color="#044F58">
+        <BotonPopup
+          height={80}
+          width="50%"
+          manejadorClick={() => setTurnoPedido(false)}
+          colorFondo="#044F58">
           NO
         </BotonPopup>
-        <BotonPopup height={80} width="50%" ManejadorClick={() => confirmarTurno()} Color="#1CA3B3">
+        <BotonPopup
+          height={80}
+          width="50%"
+          manejadorClick={() => confirmarTurno()}
+          colorFondo="#1CA3B3">
           SÍ
         </BotonPopup>
       </View>

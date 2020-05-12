@@ -30,7 +30,7 @@ const loginReducer = (state: Object = estadoInicial, action: Object) => {
     case 'CANCELAR_TURNO':
       return {
         ...state,
-        turnosActivos: state.turnosActivos.splice(payload.turno)
+        turnosActivos: state.turnosActivos.filter(t => t.id !== payload.turno.id)
       };
     case 'EVALUAR_TURNO':
       return {

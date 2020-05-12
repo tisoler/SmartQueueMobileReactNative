@@ -3,23 +3,11 @@ import * as React from 'react';
 import { StyleSheet, Text } from 'react-native';
 import BotonRipple from './botonRipple';
 
-const estilos = StyleSheet.create({
-  textoBoton: {
-    textAlign: 'center',
-    lineHeight: 80,
-    fontSize: 20,
-    color: '#fff',
-    fontWeight: 'bold',
-    height: 80,
-    width: '100%'
-  }
-});
-
 type Props = {
   height: number,
   width: number | string,
-  Color: string,
-  ManejadorClick: Function,
+  colorFondo: string,
+  manejadorClick: Function,
   children: string
 };
 
@@ -27,17 +15,30 @@ const BotonPopup = (props: Props) => {
   const {
     height,
     width,
-    Color,
-    ManejadorClick,
+    colorFondo,
+    manejadorClick,
     children
   } = props;
+
+  const estilos = StyleSheet.create({
+    textoBoton: {
+      textAlign: 'center',
+      lineHeight: height,
+      fontSize: 22,
+      color: '#fff',
+      height,
+      width: '100%'
+    }
+  });
 
   return (
     <BotonRipple
       height={height}
       width={width}
-      colorBoton={Color}
-      ManejadorClick={ManejadorClick}
+      colorFondo={colorFondo}
+      colorBorde={colorFondo}
+      manejadorClick={manejadorClick}
+      borderRadius={0}
     >
       <Text style={estilos.textoBoton}>{children}</Text>
     </BotonRipple>

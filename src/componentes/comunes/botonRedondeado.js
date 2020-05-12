@@ -15,23 +15,28 @@ const estilos = StyleSheet.create({
     width: '100%',
     textAlign: 'center',
     fontSize: 18,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    color: 'white'
   }
 });
 
 type Props = {
-  ManejadorClick: Function,
-  Color: string,
-  Cargando: boolean,
-  children: string
+  manejadorClick: Function,
+  colorBorde?: string,
+  colorFondo?: string,
+  cargando?: boolean,
+  children: string,
+  colorEfecto?: string
 };
 
 const BotonRedondeado = (props: Props) => {
   const {
-    ManejadorClick,
-    Color,
-    Cargando,
-    children
+    manejadorClick,
+    colorBorde,
+    colorFondo,
+    cargando = false,
+    children,
+    colorEfecto = '#005f79'
   } = props;
   const boton = {
     marginTop: 20
@@ -39,21 +44,28 @@ const BotonRedondeado = (props: Props) => {
 
   return (
     <BotonRipple
-      height={55}
-      width="75%"
+      height={59}
+      width="85%"
       style={boton}
-      ManejadorClick={ManejadorClick}
-      borderRadius={30}
-      colorEfecto="#005f79"
-      colorBoton={Color}
+      manejadorClick={manejadorClick}
+      colorEfecto={colorEfecto}
+      colorFondo={colorFondo}
+      colorBorde={colorBorde}
       estilo={boton}
       maxOpacity={0.42}
     >
-      {Cargando
-        ? <ActivityIndicator style={estilos.actividad} size="large" color="#0084a8" />
+      {cargando
+        ? <ActivityIndicator style={estilos.actividad} size="large" color="white" />
         : <Text style={estilos.texto}>{children}</Text>}
     </BotonRipple>
   );
+};
+
+BotonRedondeado.defaultProps = {
+  colorFondo: '#0084a8',
+  colorBorde: '#fff',
+  cargando: false,
+  colorEfecto: "#005f79"
 };
 
 export default BotonRedondeado;

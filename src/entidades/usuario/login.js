@@ -79,18 +79,18 @@ const Login = ({ navigation }) => {
       { loginIncorrecto
         && <Text style={styles.mensajeError}>Usuario o contraseña incorrectos.</Text>}
       <BotonRedondeado
-        ManejadorClick={manejarLogin}
-        Cargando={cargando}
-        Color="#fff"
+        manejadorClick={manejarLogin}
+        cargando={cargando}
       >
         INGRESAR
       </BotonRedondeado>
       { !cargando
         && (
           <BotonRedondeado
-            ManejadorClick={registrarse}
-            Cargando={false}
-            Color="#005f79"
+            manejadorClick={registrarse}
+            colorBorde="#005f79"
+            colorFondo="#005f79"
+            colorEfecto="#fff"
           >
             REGISTRARSE
           </BotonRedondeado>

@@ -28,6 +28,24 @@ const Registro = () => (
       Value=""
       SoloLectura={false}
     />
+    <TextoIngreso
+      PlaceholderText="Nombre"
+      ManejadorCambioTexto={null}
+      Value=""
+      SoloLectura={false}
+    />
+    <TextoIngreso
+      PlaceholderText="Apellido"
+      ManejadorCambioTexto={null}
+      Value=""
+      SoloLectura={false}
+    />
+    <TextoIngreso
+      PlaceholderText="DNI"
+      ManejadorCambioTexto={null}
+      Value=""
+      SoloLectura={false}
+    />
     <BotonRedondeado
       ManejadorClick={null}
       Cargando={false}
