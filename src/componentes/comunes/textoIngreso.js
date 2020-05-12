@@ -29,7 +29,7 @@ const TextoIngreso = (props: Props) => {
   const {
     ManejadorClick = null,
     PlaceholderText,
-    ManejadorCambioTexto,
+    // ManejadorCambioTexto,
     Value,
     SoloLectura,
     EsconderTexto = false
@@ -39,7 +39,7 @@ const TextoIngreso = (props: Props) => {
       style={styles.ingresos}
       placeholder={PlaceholderText}
       underlineColorAndroid="transparent"
-      onChangeText={text => ManejadorCambioTexto(text)}
+      // onChangeText={text => ManejadorCambioTexto(text)}
       value={Value}
       editable={!SoloLectura}
       secureTextEntry={EsconderTexto}
