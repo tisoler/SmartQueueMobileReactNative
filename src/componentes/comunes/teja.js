@@ -66,7 +66,7 @@ const Teja = (props: Props) => {
       flex: 1,
       flexDirection: 'row',
       alignItems: 'center',
-      borderWidth: 0.25,
+      borderWidth: 0.3,
       borderColor: '#005f79',
       width,
       height

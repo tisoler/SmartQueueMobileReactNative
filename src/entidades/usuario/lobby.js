@@ -37,8 +37,6 @@ const Lobby = ({ navigation }) => {
     navigation.navigate('Turno', { turno });
   };
 
-  const maximoTejas = Math.round(Dimensions.get('window').height / 100) - 3;
-
   const estilos = StyleSheet.create({
     contenedor: {
       flex: 1,
@@ -50,13 +48,10 @@ const Lobby = ({ navigation }) => {
       backgroundColor: '#026F8E',
       width: '100%',
       marginBottom: 8,
-      height: turnosActivos?.length <= maximoTejas
-        ? turnosActivos.length * 100
-        : (maximoTejas * 100) + 18
+      flex: 0.94
     },
     titulo: {
-      fontSize: 22,
-      fontWeight: 'bold',
+      fontSize: 20.5,
       color: '#FFF',
       lineHeight: 50,
       textAlign: 'center'
@@ -105,6 +100,51 @@ const Lobby = ({ navigation }) => {
       { turnosActivos.length > 0 && (
         <View style={estilos.contenedorTurnos}>
           <ScrollView>
+            { turnosActivos.map(turno => (
+              <Teja
+                key={turno.id}
+                appIcon={turno.Center.app_icon}
+                manejadorClick={() => seleccionarTurnoActivo(turno)}
+              >
+                <View style={estilos.contenedorHijos}>
+                  <Text style={estilos.centro}>{turno.Center.name}</Text>
+                  <Text style={estilos.categoria}>{turno.Category.name}</Text>
+                  <Text style={turno.status === 'waiting' ? estilos.espera : estilos.enLugar}>
+                    {turno.status === 'waiting' ? 'Esperando' : 'En el lugar'}
+                  </Text>
+                </View>
+              </Teja>
+            ))}
+            { turnosActivos.map(turno => (
+              <Teja
+                key={turno.id}
+                appIcon={turno.Center.app_icon}
+                manejadorClick={() => seleccionarTurnoActivo(turno)}
+              >
+                <View style={estilos.contenedorHijos}>
+                  <Text style={estilos.centro}>{turno.Center.name}</Text>
+                  <Text style={estilos.categoria}>{turno.Category.name}</Text>
+                  <Text style={turno.status === 'waiting' ? estilos.espera : estilos.enLugar}>
+                    {turno.status === 'waiting' ? 'Esperando' : 'En el lugar'}
+                  </Text>
+                </View>
+              </Teja>
+            ))}
+            { turnosActivos.map(turno => (
+              <Teja
+                key={turno.id}
+                appIcon={turno.Center.app_icon}
+                manejadorClick={() => seleccionarTurnoActivo(turno)}
+              >
+                <View style={estilos.contenedorHijos}>
+                  <Text style={estilos.centro}>{turno.Center.name}</Text>
+                  <Text style={estilos.categoria}>{turno.Category.name}</Text>
+                  <Text style={turno.status === 'waiting' ? estilos.espera : estilos.enLugar}>
+                    {turno.status === 'waiting' ? 'Esperando' : 'En el lugar'}
+                  </Text>
+                </View>
+              </Teja>
+            ))}
             { turnosActivos.map(turno => (
               <Teja
                 key={turno.id}

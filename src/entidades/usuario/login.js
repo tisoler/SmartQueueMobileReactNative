@@ -3,6 +3,7 @@ import React, { useState, useContext } from 'react';
 import {
   StyleSheet, View, Text, Image, Alert
 } from 'react-native';
+import { faIdCard, faKey } from '@fortawesome/free-solid-svg-icons';
 import withErrorBoundary from '../../enhancers/withErrorBoundary';
 import TextoIngreso from '../../componentes/comunes/textoIngreso';
 import { login } from '../../lib/servicios';
@@ -11,7 +12,7 @@ import { ContextoStates } from '../../lib/contextoStates';
 import { imagenLogo } from '../../lib/constantes';
 import { setearUsuarioLogueado } from './usuarioAcciones';
 
-const styles = StyleSheet.create({
+const estilos = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#0084a8',
@@ -26,6 +27,13 @@ const styles = StyleSheet.create({
   logo: {
     marginTop: 25,
     marginBottom: 30
+  },
+  botonera: {
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'center',
+    width: '100%',
+    marginTop: 20
   }
 });
 
@@ -59,42 +67,46 @@ const Login = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Image source={imagenLogo} style={styles.logo} />
+    <View style={estilos.container}>
+      <Image source={imagenLogo} style={estilos.logo} />
       <TextoIngreso
-        PlaceholderText="Email"
-        ManejadorCambioTexto={cambioEmail}
-        Value={emailUsuario}
-        SoloLectura={cargando}
-        ManejadorClick={() => cambioLogin(false)}
+        placeholderText="e-mail"
+        manejadorCambioTexto={cambioEmail}
+        value={emailUsuario}
+        soloLectura={cargando}
+        manejadorClick={() => cambioLogin(false)}
+        icono={faIdCard}
       />
       <TextoIngreso
-        PlaceholderText="Contraseña"
-        ManejadorCambioTexto={cambioPassword}
-        Value={passwordUsuario}
-        SoloLectura={cargando}
-        EsconderTexto
-        ManejadorClick={() => cambioLogin(false)}
+        placeholderText="contraseña"
+        manejadorCambioTexto={cambioPassword}
+        value={passwordUsuario}
+        soloLectura={cargando}
+        esconderTexto
+        manejadorClick={() => cambioLogin(false)}
+        icono={faKey}
       />
       { loginIncorrecto
-        && <Text style={styles.mensajeError}>Usuario o contraseña incorrectos.</Text>}
-      <BotonRedondeado
-        manejadorClick={manejarLogin}
-        cargando={cargando}
-      >
-        INGRESAR
-      </BotonRedondeado>
-      { !cargando
-        && (
-          <BotonRedondeado
-            manejadorClick={registrarse}
-            colorBorde="#005f79"
-            colorFondo="#005f79"
-            colorEfecto="#fff"
-          >
-            REGISTRARSE
-          </BotonRedondeado>
-        )}
+        && <Text style={estilos.mensajeError}>Usuario o contraseña incorrectos.</Text>}
+      <View style={estilos.botonera}>
+        <BotonRedondeado
+          manejadorClick={manejarLogin}
+          cargando={cargando}
+        >
+          INGRESAR
+        </BotonRedondeado>
+        { !cargando
+          && (
+            <BotonRedondeado
+              manejadorClick={registrarse}
+              colorBorde="#005f79"
+              colorFondo="#005f79"
+              colorEfecto="#fff"
+            >
+              REGISTRARSE
+            </BotonRedondeado>
+          )}
+      </View>
     </View>
   );
 };

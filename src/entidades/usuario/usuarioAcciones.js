@@ -27,6 +27,13 @@ export const cancelarTurnoState = (dispatch, turno) => {
   });
 };
 
+export const confirmarAsistenciaTurnoState = (dispatch, turno) => {
+  dispatch({
+    type: 'CONFIRMAR_ASISTENCIA_TURNO',
+    payload: { turno }
+  });
+};
+
 export const evaluarTurnoState = (dispatch, turno) => {
   dispatch({
     type: 'EVALUAR_TURNO',

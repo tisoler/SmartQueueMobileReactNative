@@ -32,6 +32,14 @@ const loginReducer = (state: Object = estadoInicial, action: Object) => {
         ...state,
         turnosActivos: state.turnosActivos.filter(t => t.id !== payload.turno.id)
       };
+    case 'CONFIRMAR_ASISTENCIA_TURNO':
+      const turnosActivosTemp = state.turnosActivos;
+      const indice = turnosActivosTemp.findIndex(turno => turno.id === payload.turno.id);
+      turnosActivosTemp[indice].status = 'ready';
+      return {
+        ...state,
+        turnosActivos: turnosActivosTemp
+      };
     case 'EVALUAR_TURNO':
       return {
         ...state,

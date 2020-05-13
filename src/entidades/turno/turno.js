@@ -8,7 +8,7 @@ import { iconosCentros } from '../../lib/constantes';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import { ContextoStates } from '../../lib/contextoStates';
 import { estimarDemora, cancelarTicket, confirmarAsistencia } from '../../lib/servicios';
-import { cancelarTurnoState } from '../usuario/usuarioAcciones';
+import { cancelarTurnoState, confirmarAsistenciaTurnoState } from '../usuario/usuarioAcciones';
 
 const estilos = StyleSheet.create({
   contenedor: {
@@ -101,6 +101,7 @@ const Turno = ({ route, navigation }) => {
     confirmarAsistencia(loginState.token, turno.Center.id)
       .then(res => res.json())
       .then(() => {
+        confirmarAsistenciaTurnoState(loginDispatch, turno);
         setConfirmoPresencia(true);
       })
       .catch(() => {
