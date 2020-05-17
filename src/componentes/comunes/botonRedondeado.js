@@ -65,7 +65,7 @@ BotonRedondeado.defaultProps = {
   colorFondo: '#0084a8',
   colorBorde: '#fff',
   cargando: false,
-  colorEfecto: "#005f79"
+  colorEfecto: '#005f79'
 };
 
 export default BotonRedondeado;

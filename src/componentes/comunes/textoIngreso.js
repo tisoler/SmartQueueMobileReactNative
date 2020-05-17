@@ -38,9 +38,11 @@ type Props = {
   placeholderText: string,
   manejadorCambioTexto: Function,
   value: string,
-  soloLectura: boolean,
+  soloLectura?: boolean,
   esconderTexto?: boolean,
-  icono?: string
+  icono?: string | null,
+  esNumerico?: boolean,
+  largoMaximo?: number
 }
 
 const TextoIngreso = (props: Props) => {
@@ -49,9 +51,11 @@ const TextoIngreso = (props: Props) => {
     placeholderText,
     manejadorCambioTexto,
     value,
-    soloLectura,
+    soloLectura = false,
     esconderTexto = false,
-    icono = null
+    icono = null,
+    esNumerico = false,
+    largoMaximo = 150
   } = props;
   return (
     <View style={estilos.contenedor}>
@@ -65,12 +69,14 @@ const TextoIngreso = (props: Props) => {
           style={estilos.cajaTexto}
           placeholder={placeholderText}
           underlineColorAndroid="transparent"
-          onChangeText={text => manejadorCambioTexto(text)}
+          onChangeText={text => manejadorCambioTexto(!esNumerico ? text : text.replace(/[^0-9]/g, ''))}
           value={value}
           editable={!soloLectura}
           secureTextEntry={esconderTexto}
           onTouchStart={manejadorClick}
           placeholderTextColor="#B0E1F0"
+          keyboardType={!esNumerico ? 'default' : 'numeric'}
+          maxLength={largoMaximo}
         />
       </View>
     </View>
@@ -80,7 +86,10 @@ const TextoIngreso = (props: Props) => {
 TextoIngreso.defaultProps = {
   manejadorClick: null,
   esconderTexto: false,
-  icono: null
+  soloLectura: false,
+  icono: null,
+  esNumerico: false,
+  largoMaximo: 150
 };
 
 export default TextoIngreso;

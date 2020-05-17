@@ -13,7 +13,7 @@ import { imagenLogo } from '../../lib/constantes';
 import { setearUsuarioLogueado } from './usuarioAcciones';
 
 const estilos = StyleSheet.create({
-  container: {
+  contenedor: {
     flex: 1,
     backgroundColor: '#0084a8',
     flexDirection: 'column',
@@ -39,7 +39,7 @@ const estilos = StyleSheet.create({
 
 const Login = ({ navigation }) => {
   const [emailUsuario, cambioEmail] = useState('');
-  const [passwordUsuario, cambioPassword] = useState('');
+  const [contrasenaUsuario, cambioContrasena] = useState('');
   const [cargando, cambioCargando] = useState(false);
   const [loginIncorrecto, cambioLogin] = useState(false);
   const { loginDispatch } = useContext(ContextoStates);
@@ -47,7 +47,7 @@ const Login = ({ navigation }) => {
   const manejarLogin = () => {
     cambioLogin(false);
     cambioCargando(true);
-    const payload = { email: emailUsuario, password: passwordUsuario };
+    const payload = { email: emailUsuario, password: contrasenaUsuario };
     login(payload)
       .then(res => res.json())
       .then(response => {
@@ -67,7 +67,7 @@ const Login = ({ navigation }) => {
   };
 
   return (
-    <View style={estilos.container}>
+    <View style={estilos.contenedor}>
       <Image source={imagenLogo} style={estilos.logo} />
       <TextoIngreso
         placeholderText="e-mail"
@@ -78,9 +78,9 @@ const Login = ({ navigation }) => {
         icono={faIdCard}
       />
       <TextoIngreso
-        placeholderText="contraseña"
-        manejadorCambioTexto={cambioPassword}
-        value={passwordUsuario}
+        placeholderText="Contraseña"
+        manejadorCambioTexto={cambioContrasena}
+        value={contrasenaUsuario}
         soloLectura={cargando}
         esconderTexto
         manejadorClick={() => cambioLogin(false)}
