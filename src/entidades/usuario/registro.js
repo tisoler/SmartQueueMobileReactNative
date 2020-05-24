@@ -1,25 +1,26 @@
 // @flow
 import React, { useState } from 'react';
 import {
-  StyleSheet, View, Text, TouchableOpacity
+  StyleSheet, View, Text, ScrollView
 } from 'react-native';
 import {
-  FontAwesomeIcon, faAt, faKey, faUserAstronaut, faIdCard, faCameraRetro
+  faAt, faKey, faUserAstronaut, faIdCard
 } from '@fortawesome/free-solid-svg-icons';
-import { RNCamera, FaceDetector } from 'react-native-camera';
 import withErrorBoundary from '../../enhancers/withErrorBoundary';
 import TextoIngreso from '../../componentes/comunes/textoIngreso';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 
 const estilos = StyleSheet.create({
+  contenedorScroll: {
+    backgroundColor: '#0084a8'
+  },
   contenedor: {
     flex: 1,
     backgroundColor: '#0084a8',
-    alignItems: 'center',
-    justifyContent: 'center'
+    alignItems: 'center'
   },
   subContenedor: {
-    flex: 0.65,
+    flex: 0.75,
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'flex-end',
@@ -27,7 +28,7 @@ const estilos = StyleSheet.create({
     marginBottom: 20
   },
   subContenedorFoto: {
-    flex: 0.2,
+    flex: 0.5,
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'flex-end',
@@ -35,10 +36,10 @@ const estilos = StyleSheet.create({
     marginBottom: 20
   },
   subContenedorBotones: {
-    flex: 0.35,
+    flex: 0.25,
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'flex-start',
+    justifyContent: 'flex-end',
     width: '95%'
   },
   textoAviso: {
@@ -95,7 +96,7 @@ const Registro = () => {
     </View>
   );
 
-  const pantallaFotografia = (
+  const pantallaSolicitarFotografia = (
     <View style={estilos.subContenedorFoto}>
       <Text style={estilos.textoAviso}>
         Es necesario que se tome una foto a fin de ser reconocida/o al momento de ser atendida/o.
@@ -104,24 +105,17 @@ const Registro = () => {
   );
 
   const pantallaCamara = (
-    <View style={estilos.contenedor}>
-      <RNCamera
-        captureAudio={false}
-      >
-        <View>
-          <TouchableOpacity>
-            <FontAwesomeIcon style={{ lineHeight: 70 }} size={30} fill="#fff" icon={faCameraRetro} />
-            <Text>Take Photo</Text>
-          </TouchableOpacity>
-        </View>
-      </RNCamera>
+    <View style={estilos.subContenedorFoto}>
+      <Text style={estilos.textoAviso}>
+        Es necesario que se tome una foto a fin de ser reconocida/o al momento de ser atendida/o.
+      </Text>
     </View>
   );
 
   const pantallas = {
     /* eslint-disable no-useless-computed-key */
     [1]: pantallaDatosPrincipales,
-    [2]: pantallaFotografia,
+    [2]: pantallaSolicitarFotografia,
     [3]: pantallaCamara
     /* eslint-enable no-useless-computed-key */
   };
@@ -134,21 +128,23 @@ const Registro = () => {
   };
 
   return (
-    <View style={estilos.contenedor}>
-      { pantallas[numeroPantalla] }
-      { numeroPantalla !== 3
-        && (
-          <View style={estilos.subContenedorBotones}>
-            <BotonRedondeado
-              manejadorClick={() => cambioPantalla(numeroPantalla + 1)}
-              cargando={false}
-              color="#fff"
-            >
-              {textoBoton[numeroPantalla]}
-            </BotonRedondeado>
-          </View>
-        )}
-    </View>
+    <ScrollView>
+      <View style={estilos.contenedor}>
+        { pantallas[numeroPantalla] }
+        { numeroPantalla !== 3
+          && (
+            <View style={estilos.subContenedorBotones}>
+              <BotonRedondeado
+                manejadorClick={() => cambioPantalla(numeroPantalla + 1)}
+                cargando={false}
+                color="#fff"
+              >
+                {textoBoton[numeroPantalla]}
+              </BotonRedondeado>
+            </View>
+          )}
+      </View>
+    </ScrollView>
   );
 };
 

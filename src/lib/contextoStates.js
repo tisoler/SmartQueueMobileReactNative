@@ -8,7 +8,7 @@ export const ContextoStates: Object = createContext();
 
 type Props = {
   children: React.Element<any>
-}
+};
 
 export const ContextoStatesProvider = (props: Props) => {
   const { children } = props;

@@ -123,14 +123,16 @@ const CentrosAtencion = ({ route, navigation }) => {
           height={80}
           width="50%"
           manejadorClick={() => setTurnoPedido(false)}
-          colorFondo="#044F58">
+          colorFondo="#044F58"
+        >
           NO
         </BotonPopup>
         <BotonPopup
           height={80}
           width="50%"
           manejadorClick={() => confirmarTurno()}
-          colorFondo="#1CA3B3">
+          colorFondo="#1CA3B3"
+        >
           SÍ
         </BotonPopup>
       </View>

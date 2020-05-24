@@ -115,51 +115,6 @@ const Lobby = ({ navigation }) => {
                 </View>
               </Teja>
             ))}
-            { turnosActivos.map(turno => (
-              <Teja
-                key={turno.id}
-                appIcon={turno.Center.app_icon}
-                manejadorClick={() => seleccionarTurnoActivo(turno)}
-              >
-                <View style={estilos.contenedorHijos}>
-                  <Text style={estilos.centro}>{turno.Center.name}</Text>
-                  <Text style={estilos.categoria}>{turno.Category.name}</Text>
-                  <Text style={turno.status === 'waiting' ? estilos.espera : estilos.enLugar}>
-                    {turno.status === 'waiting' ? 'Esperando' : 'En el lugar'}
-                  </Text>
-                </View>
-              </Teja>
-            ))}
-            { turnosActivos.map(turno => (
-              <Teja
-                key={turno.id}
-                appIcon={turno.Center.app_icon}
-                manejadorClick={() => seleccionarTurnoActivo(turno)}
-              >
-                <View style={estilos.contenedorHijos}>
-                  <Text style={estilos.centro}>{turno.Center.name}</Text>
-                  <Text style={estilos.categoria}>{turno.Category.name}</Text>
-                  <Text style={turno.status === 'waiting' ? estilos.espera : estilos.enLugar}>
-                    {turno.status === 'waiting' ? 'Esperando' : 'En el lugar'}
-                  </Text>
-                </View>
-              </Teja>
-            ))}
-            { turnosActivos.map(turno => (
-              <Teja
-                key={turno.id}
-                appIcon={turno.Center.app_icon}
-                manejadorClick={() => seleccionarTurnoActivo(turno)}
-              >
-                <View style={estilos.contenedorHijos}>
-                  <Text style={estilos.centro}>{turno.Center.name}</Text>
-                  <Text style={estilos.categoria}>{turno.Category.name}</Text>
-                  <Text style={turno.status === 'waiting' ? estilos.espera : estilos.enLugar}>
-                    {turno.status === 'waiting' ? 'Esperando' : 'En el lugar'}
-                  </Text>
-                </View>
-              </Teja>
-            ))}
           </ScrollView>
         </View>
       )}

@@ -8,12 +8,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 const estilos = StyleSheet.create({
   contenedor: {
     flexDirection: 'row',
-    width: '75%',
+    width: '80%',
     marginBottom: 15,
     height: 50
   },
   contenedorTexto: {
-    width: '91%',
+    flex: 1,
+    flexDirection: 'row',
     marginLeft: 7,
     borderBottomColor: 'white',
     borderBottomWidth: 1,
@@ -22,13 +23,12 @@ const estilos = StyleSheet.create({
   cajaTexto: {
     color: '#fff',
     fontSize: 20,
-    height: 65,
-    lineHeight: 65,
+    lineHeight: 30,
+    height: 60,
     marginLeft: 5,
-    width: '85%'
+    width: '100%'
   },
   contenedorIcono: {
-    height: 70,
     paddingTop: 20,
   }
 });
