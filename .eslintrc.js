@@ -2,6 +2,7 @@ module.exports = {
   env: {
     browser: true,
     node: true,
+    jest: true
   },
   extends: [
     'plugin:react/recommended',
@@ -31,7 +32,3 @@ module.exports = {
   },
   ignorePatterns: ["web-build/"],
 };
-<<<<<<< HEAD
-=======
-
->>>>>>> Cambio de CLI (EXPO a React Native).

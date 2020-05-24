@@ -1,4 +1,3 @@
-
 // @flow
 const estadoInicial = {
   centros: [],

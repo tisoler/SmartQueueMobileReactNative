@@ -1,5 +1,6 @@
+// @flow
 
-const setearCentros = (dispatch, centros) => {
+const setearCentros = (dispatch: Function, centros: Array<Object>) => {
   dispatch({
     type: 'SET_CENTROS',
     payload: { centros }
