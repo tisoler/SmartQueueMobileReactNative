@@ -15,7 +15,7 @@ import { agregarTurnoActivoState } from '../usuario/usuarioAcciones';
 const estilos = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0084a8',
+    backgroundColor: '#026F8E',
     flexDirection: 'column',
     alignItems: 'center'
   },

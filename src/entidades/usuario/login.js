@@ -13,13 +13,9 @@ import { imagenLogo } from '../../lib/constantes';
 import { setearUsuarioLogueado } from './usuarioAcciones';
 
 const estilos = StyleSheet.create({
-  contenedorScroll: {
-    flex: 1,
-    backgroundColor: '#0084a8'
-  },
   contenedor: {
     flex: 1,
-    backgroundColor: '#0084a8',
+    backgroundColor: '#026F8E',
     flexDirection: 'column',
     alignItems: 'center'
   },
@@ -46,7 +42,7 @@ const Login = ({ navigation }) => {
   const [loginIncorrecto, cambioLogin] = useState(false);
   const { loginDispatch } = useContext(ContextoStates);
 
-  const manejarLogin = () => {
+  const loguear = () => {
     cambioLogin(false);
     cambioCargando(true);
     const payload = { email: emailUsuario, password: contrasenaUsuario };
@@ -72,7 +68,7 @@ const Login = ({ navigation }) => {
   };
 
   return (
-    <ScrollView style={estilos.contenedorScroll}>
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
       <View style={estilos.contenedor}>
         <Image source={imagenLogo} style={estilos.logo} />
         <TextoIngreso
@@ -92,16 +88,16 @@ const Login = ({ navigation }) => {
           manejadorClick={() => cambioLogin(false)}
           icono={faKey}
         />
-        { loginIncorrecto
+        {loginIncorrecto
           && <Text style={estilos.mensajeError}>Usuario o contraseña incorrectos.</Text>}
         <View style={estilos.botonera}>
           <BotonRedondeado
-            manejadorClick={manejarLogin}
+            manejadorClick={loguear}
             cargando={cargando}
           >
             INGRESAR
           </BotonRedondeado>
-          { !cargando
+          {!cargando
             && (
               <BotonRedondeado
                 manejadorClick={registrarse}

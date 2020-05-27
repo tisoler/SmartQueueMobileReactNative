@@ -13,7 +13,7 @@ import { cancelarTurnoState, confirmarAsistenciaTurnoState } from '../usuario/us
 const estilos = StyleSheet.create({
   contenedor: {
     flex: 1,
-    backgroundColor: '#0084a8',
+    backgroundColor: '#026F8E',
     flexDirection: 'column',
     alignItems: 'center',
     width: '100%'
@@ -24,6 +24,7 @@ const estilos = StyleSheet.create({
   },
   subContenedorSaludo: {
     alignItems: 'center',
+    backgroundColor: '#0A5164',
     width: '95%',
     borderColor: '#005f79',
     borderWidth: 1,

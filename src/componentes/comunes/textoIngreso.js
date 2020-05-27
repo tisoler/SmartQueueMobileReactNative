@@ -74,7 +74,7 @@ const TextoIngreso = (props: Props) => {
           editable={!soloLectura}
           secureTextEntry={esconderTexto}
           onTouchStart={manejadorClick}
-          placeholderTextColor="#B0E1F0"
+          placeholderTextColor="#B5B7B7"
           keyboardType={!esNumerico ? 'default' : 'numeric'}
           maxLength={largoMaximo}
         />

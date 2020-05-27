@@ -78,7 +78,7 @@ const BotonRipple = (props: Props) => {
     width: widthContainer,
     height: heightContainer,
     borderWidth: 1.7,
-    borderColor: !presiono ? colorBorde : '#0084a8',
+    borderColor: !presiono ? colorBorde : '#016E8B',
     backgroundColor: colorFondo ?? 'none',
     borderRadius
   };
@@ -101,8 +101,8 @@ BotonRipple.defaultProps = {
   borderRadius: 7,
   manejadorClick: () => {},
   colorEfecto: 'black',
-  colorFondo: '#0084a8',
-  colorBorde: '#fff',
+  colorFondo: '#16817a',
+  colorBorde: '#16817a',
   estilo: {},
   maxOpacity: 0.2,
   amplitudEfecto: 1

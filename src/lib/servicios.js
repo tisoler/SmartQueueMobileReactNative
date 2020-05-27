@@ -82,3 +82,31 @@ export const evaluarTurno = (token: string, idCentro: number, calificacion: numb
       }
     });
 };
+
+export const validarExistenciaEmanil: Function = (email: string) => fetch(`${apiURI}client-email-exists/${email}`);
+
+export const validarExistenciaDNI: Function = (dni: string) => fetch(`${apiURI}client-dni-exists/${dni}`);
+
+export const guardarAvatar: Function = (payload: Object) => {
+  const url = `${apiURI}client-avatar/`;
+  return fetch(url, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json'
+    }
+  });
+};
+
+export const guardarUsuario = (payload: Object) => {
+  const url = `${apiURI}client/`;
+  return fetch(url, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json'
+    }
+  });
+};

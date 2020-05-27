@@ -1,5 +1,6 @@
 // @flow
 import React from 'react';
+import { StyleSheet } from 'react-native';
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, TransitionSpecs } from '@react-navigation/stack';
@@ -13,6 +14,14 @@ import EvaluacionTurno from '../entidades/turno/evaluacionTurno';
 
 const Stack = createStackNavigator();
 
+const estilos = StyleSheet.create({
+  encabezadoNavegacion: {
+    backgroundColor: '#0A5164'
+  }
+});
+
+const colorLetraEncabezado = '#fff';
+
 const Navegacion = () => (
   <NavigationContainer>
     <Stack.Navigator>
@@ -21,10 +30,8 @@ const Navegacion = () => (
         component={Login}
         options={{
           title: 'Smart queue',
-          headerStyle: {
-            backgroundColor: '#005f79'
-          },
-          headerTintColor: '#fff'
+          headerStyle: estilos.encabezadoNavegacion,
+          headerTintColor: colorLetraEncabezado
         }}
       />
       <Stack.Screen
@@ -32,10 +39,8 @@ const Navegacion = () => (
         component={Registro}
         options={{
           title: 'Smart queue - Registro',
-          headerStyle: {
-            backgroundColor: '#005f79'
-          },
-          headerTintColor: '#fff'
+          headerStyle: estilos.encabezadoNavegacion,
+          headerTintColor: colorLetraEncabezado
         }}
       />
       <Stack.Screen
@@ -43,10 +48,8 @@ const Navegacion = () => (
         component={Lobby}
         options={{
           title: 'Smart queue',
-          headerStyle: {
-            backgroundColor: '#005f79'
-          },
-          headerTintColor: '#fff'
+          headerStyle: estilos.encabezadoNavegacion,
+          headerTintColor: colorLetraEncabezado
         }}
       />
       <Stack.Screen
@@ -54,10 +57,8 @@ const Navegacion = () => (
         component={ListaCentrosAtencion}
         options={{
           title: 'Centros de atención',
-          headerStyle: {
-            backgroundColor: '#005f79'
-          },
-          headerTintColor: '#fff'
+          headerStyle: estilos.encabezadoNavegacion,
+          headerTintColor: colorLetraEncabezado
         }}
       />
       <Stack.Screen
@@ -65,10 +66,8 @@ const Navegacion = () => (
         component={CentroAtencion}
         options={{
           title: 'Centro de atención',
-          headerStyle: {
-            backgroundColor: '#005f79'
-          },
-          headerTintColor: '#fff'
+          headerStyle: estilos.encabezadoNavegacion,
+          headerTintColor: colorLetraEncabezado
         }}
       />
       <Stack.Screen
@@ -76,10 +75,8 @@ const Navegacion = () => (
         component={Turno}
         options={{
           title: 'Turno',
-          headerStyle: {
-            backgroundColor: '#005f79'
-          },
-          headerTintColor: '#fff',
+          headerStyle: estilos.encabezadoNavegacion,
+          headerTintColor: colorLetraEncabezado,
           transitionSpec: {
             open: TransitionSpecs.TransitionIOSSpec,
             close: TransitionSpecs.TransitionIOSSpec,
@@ -91,10 +88,8 @@ const Navegacion = () => (
         component={EvaluacionTurno}
         options={{
           title: 'Evaluación',
-          headerStyle: {
-            backgroundColor: '#005f79'
-          },
-          headerTintColor: '#fff',
+          headerStyle: estilos.encabezadoNavegacion,
+          headerTintColor: colorLetraEncabezado,
           transitionSpec: {
             open: TransitionSpecs.TransitionIOSSpec,
             close: TransitionSpecs.TransitionIOSSpec,

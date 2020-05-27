@@ -40,7 +40,7 @@ const Lobby = ({ navigation }) => {
   const estilos = StyleSheet.create({
     contenedor: {
       flex: 1,
-      backgroundColor: '#0084a8',
+      backgroundColor: '#0A5164',
       flexDirection: 'column',
       alignItems: 'center'
     },

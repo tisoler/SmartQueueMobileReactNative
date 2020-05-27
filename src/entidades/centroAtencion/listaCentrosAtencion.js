@@ -12,7 +12,7 @@ import setearCentros from './centroAtencionAcciones';
 const estilos = StyleSheet.create({
   contenedor: {
     flex: 1,
-    backgroundColor: '#0084a8',
+    backgroundColor: '#026F8E',
     flexDirection: 'column',
     justifyContent: 'center'
   },

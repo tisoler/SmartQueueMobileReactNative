@@ -62,8 +62,8 @@ const BotonRedondeado = (props: Props) => {
 };
 
 BotonRedondeado.defaultProps = {
-  colorFondo: '#0084a8',
-  colorBorde: '#fff',
+  colorFondo: '#16817a',
+  colorBorde: '#16817a',
   cargando: false,
   colorEfecto: '#005f79'
 };
