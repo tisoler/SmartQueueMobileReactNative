@@ -1,12 +1,15 @@
 // @flow
 import React from 'react';
 import Navegador from './src/componentes/navegacion';
-import { ContextoStatesProvider } from './src/lib/contextoStates';
+import { ContextoStatesProveedor } from './src/lib/contextoStates';
+import { ContextoEstilosGlobalesProveedor } from './src/lib/contextoEstilosGlobales';
 
 export default function App() {
   return (
-    <ContextoStatesProvider>
-      <Navegador />
-    </ContextoStatesProvider>
+    <ContextoStatesProveedor>
+      <ContextoEstilosGlobalesProveedor>
+        <Navegador />
+      </ContextoEstilosGlobalesProveedor>
+    </ContextoStatesProveedor>
   );
 }

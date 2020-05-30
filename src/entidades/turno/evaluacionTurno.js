@@ -9,52 +9,49 @@ import Estrella from '../../componentes/comunes/svg/estrella';
 import { iconosCentros } from '../../lib/constantes';
 import { evaluarTurno } from '../../lib/servicios';
 import { evaluarTurnoState } from '../usuario/usuarioAcciones';
-
-const estilos = StyleSheet.create({
-  contenedor: {
-    flex: 1,
-    backgroundColor: '#0084a8',
-    flexDirection: 'column',
-    alignItems: 'center',
-    width: '100%',
-    paddingRight: 20,
-    paddingLeft: 20
-  },
-  imagen: {
-    height: 150,
-    width: 150
-  },
-  titulo: {
-    fontSize: 26,
-    color: '#fff',
-    fontWeight: 'bold'
-  },
-  subtitulo: {
-    fontSize: 22,
-    color: '#fff',
-    fontWeight: 'bold'
-  },
-  margen: {
-    marginTop: 30
-  },
-  contenedorEstrellas: {
-    display: 'flex',
-    flexDirection: 'row',
-    marginTop: 30
-  },
-  texto: {
-    fontSize: 22,
-    color: '#fff',
-    marginTop: 5,
-    textAlign: 'center'
-  }
-});
+import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 
 const EvaluacionTurno = ({ navigation }) => {
+  const { estilosGlobales } = useContext(ContextoEstilosGlobales);
   const { loginState, loginDispatch } = useContext(ContextoStates);
   const { turnosParaEvaluar } = loginState;
   const turnoEvaluado = turnosParaEvaluar[0];
   const [cantidadEstrellas, setCantidadEstrellas] = useState(0);
+  const estilos = StyleSheet.create({
+    contenedor: {
+      flex: 1,
+      backgroundColor: estilosGlobales.colorFondoContenedorDatos,
+      flexDirection: 'column',
+      alignItems: 'center',
+      width: '100%',
+      paddingRight: 20,
+      paddingLeft: 20
+    },
+    titulo: {
+      fontSize: 26,
+      color: '#fff',
+      fontWeight: 'bold'
+    },
+    subtitulo: {
+      fontSize: 22,
+      color: '#fff',
+      fontWeight: 'bold'
+    },
+    margen: {
+      marginTop: 30
+    },
+    contenedorEstrellas: {
+      display: 'flex',
+      flexDirection: 'row',
+      marginTop: 30
+    },
+    texto: {
+      fontSize: 22,
+      color: '#fff',
+      marginTop: 5,
+      textAlign: 'center'
+    }
+  });
 
   const evaluar = (cantEstrellas) => {
     setCantidadEstrellas(cantEstrellas);
@@ -84,7 +81,7 @@ const EvaluacionTurno = ({ navigation }) => {
 
   return (
     <View style={estilos.contenedor}>
-      <Image style={estilos.imagen} source={iconosCentros[turnoEvaluado.Center.app_icon]} />
+      <Image style={estilosGlobales.imagenLogoCentro} source={iconosCentros[turnoEvaluado.Center.app_icon]} />
       <Text style={estilos.titulo}>{turnoEvaluado.code}</Text>
       <Text style={estilos.subtitulo}>
         {turnoEvaluado.Category.name}

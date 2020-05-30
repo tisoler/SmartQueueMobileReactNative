@@ -9,8 +9,10 @@ import withErrorBoundary from '../../enhancers/withErrorBoundary';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import Teja from '../../componentes/comunes/teja';
 import { setearTurnosActivos } from './usuarioAcciones';
+import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 
 const Lobby = ({ navigation }) => {
+  const { estilosGlobales } = useContext(ContextoEstilosGlobales);
   const { loginState, loginDispatch } = useContext(ContextoStates);
   const { turnosActivos } = loginState;
   useEffect(() => {
@@ -40,21 +42,14 @@ const Lobby = ({ navigation }) => {
   const estilos = StyleSheet.create({
     contenedor: {
       flex: 1,
-      backgroundColor: '#0A5164',
+      backgroundColor: estilosGlobales.colorFondoGlobal,
       flexDirection: 'column',
       alignItems: 'center'
     },
     contenedorTurnos: {
-      backgroundColor: '#026F8E',
+      backgroundColor: estilosGlobales.colorFondoContenedorDatos,
       width: '100%',
-      marginBottom: 8,
-      flex: 0.94
-    },
-    titulo: {
-      fontSize: 20.5,
-      color: '#FFF',
-      lineHeight: 50,
-      textAlign: 'center'
+      flex: 3
     },
     centro: {
       color: '#FFF',
@@ -82,6 +77,18 @@ const Lobby = ({ navigation }) => {
       flexDirection: 'column',
       width: Math.round(Dimensions.get('window').width) - 110
     },
+    subContenedorTitulo: {
+      alignItems: 'center',
+      width: '100%',
+      backgroundColor: estilosGlobales.colorFondoEncabezadoTitulos
+    },
+    subContenedorBotones: {
+      flex: 1,
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '100%'
+    },
   });
 
   if (turnosActivos == null) {
@@ -94,9 +101,11 @@ const Lobby = ({ navigation }) => {
 
   return (
     <View style={estilos.contenedor}>
-      <Text style={estilos.titulo}>
-        { turnosActivos.length > 0 ? 'Turnos pedidos:' : 'Usted no tiene turnos pedidos' }
-      </Text>
+      <View style={estilos.subContenedorTitulo}>
+        <Text style={estilosGlobales.tituloSeccion}>
+          { turnosActivos.length > 0 ? 'Turnos pedidos:' : 'Usted no tiene turnos pedidos' }
+        </Text>
+      </View>
       { turnosActivos.length > 0 && (
         <View style={estilos.contenedorTurnos}>
           <ScrollView>
@@ -118,9 +127,11 @@ const Lobby = ({ navigation }) => {
           </ScrollView>
         </View>
       )}
-      <BotonRedondeado manejadorClick={() => pedirTurno()}>
-        NUEVO TURNO
-      </BotonRedondeado>
+      <View style={estilos.subContenedorBotones}>
+        <BotonRedondeado manejadorClick={() => pedirTurno()}>
+          NUEVO TURNO
+        </BotonRedondeado>
+      </View>
     </View>
   );
 };

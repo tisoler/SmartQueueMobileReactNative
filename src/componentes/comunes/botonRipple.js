@@ -1,9 +1,10 @@
 // @flow
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import {
   View, TouchableWithoutFeedback, Animated, Easing, Platform
 } from 'react-native';
+import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 
 type Props = {
   width: number | string,
@@ -16,22 +17,25 @@ type Props = {
   estilo?: Object,
   children: React.Element<any> | React.Element<any>[],
   maxOpacity?: number,
-  amplitudEfecto?: number
+  amplitudEfecto?: number,
+  deshabilitado?: boolean
 };
 
 const BotonRipple = (props: Props) => {
+  const { estilosGlobales } = useContext(ContextoEstilosGlobales);
   const {
     width,
     height,
-    colorFondo,
-    colorBorde = colorFondo,
+    colorFondo = estilosGlobales.colorFondoBotonPrincipal,
+    colorBorde = estilosGlobales.colorBordeBotonPrincipal,
     borderRadius = 10,
     manejadorClick = () => {},
-    colorEfecto = 'black',
+    colorEfecto = estilosGlobales.colorEfectoClickBotonPrincipal,
     estilo = {},
     children,
     maxOpacity = 0.2,
-    amplitudEfecto = 1
+    amplitudEfecto = 1,
+    deshabilitado = false
   } = props;
 
   const [scaleValue] = useState(new Animated.Value(0.01));
@@ -78,7 +82,7 @@ const BotonRipple = (props: Props) => {
     width: widthContainer,
     height: heightContainer,
     borderWidth: 1.7,
-    borderColor: !presiono ? colorBorde : '#016E8B',
+    borderColor: !presiono ? colorBorde : estilosGlobales.colorFondoGlobal,
     backgroundColor: colorFondo ?? 'none',
     borderRadius
   };
@@ -86,6 +90,7 @@ const BotonRipple = (props: Props) => {
   return (
     <TouchableWithoutFeedback
       onPress={onPressed}
+      disabled={deshabilitado}
     >
       <View style={[iconContainer, estilo]}>
         {renderRippleView()}
@@ -95,17 +100,6 @@ const BotonRipple = (props: Props) => {
       </View>
     </TouchableWithoutFeedback>
   );
-};
-
-BotonRipple.defaultProps = {
-  borderRadius: 7,
-  manejadorClick: () => {},
-  colorEfecto: 'black',
-  colorFondo: '#16817a',
-  colorBorde: '#16817a',
-  estilo: {},
-  maxOpacity: 0.2,
-  amplitudEfecto: 1
 };
 
 export default BotonRipple;

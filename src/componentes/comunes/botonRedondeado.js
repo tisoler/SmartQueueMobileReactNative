@@ -1,9 +1,10 @@
 // @flow
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   StyleSheet, Text, ActivityIndicator
 } from 'react-native';
 import BotonRipple from './botonRipple';
+import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 
 const estilos = StyleSheet.create({
   actividad: {
@@ -26,46 +27,41 @@ type Props = {
   colorFondo?: string,
   cargando?: boolean,
   children: string,
-  colorEfecto?: string
+  colorEfecto?: string,
+  estilo?: Object,
+  deshabilitado?: boolean
 };
 
 const BotonRedondeado = (props: Props) => {
+  const { estilosGlobales } = useContext(ContextoEstilosGlobales);
   const {
     manejadorClick,
-    colorBorde,
-    colorFondo,
+    colorBorde = estilosGlobales.colorBordeBotonPrincipal,
+    colorFondo = estilosGlobales.colorFondoBotonPrincipal,
     cargando = false,
     children,
-    colorEfecto = '#005f79'
+    colorEfecto = estilosGlobales.colorEfectoClickBotonPrincipal,
+    estilo = {},
+    deshabilitado = false
   } = props;
-  const boton = {
-    marginTop: 20
-  };
 
   return (
     <BotonRipple
       height={59}
       width="85%"
-      style={boton}
       manejadorClick={manejadorClick}
       colorEfecto={colorEfecto}
       colorFondo={colorFondo}
       colorBorde={colorBorde}
-      estilo={boton}
+      estilo={estilo}
       maxOpacity={0.42}
+      deshabilitado={deshabilitado}
     >
       {cargando
         ? <ActivityIndicator style={estilos.actividad} size="large" color="white" />
         : <Text style={estilos.texto}>{children}</Text>}
     </BotonRipple>
   );
-};
-
-BotonRedondeado.defaultProps = {
-  colorFondo: '#16817a',
-  colorBorde: '#16817a',
-  cargando: false,
-  colorEfecto: '#005f79'
 };
 
 export default BotonRedondeado;

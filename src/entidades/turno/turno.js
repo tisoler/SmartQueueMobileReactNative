@@ -9,59 +9,46 @@ import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import { ContextoStates } from '../../lib/contextoStates';
 import { estimarDemora, cancelarTicket, confirmarAsistencia } from '../../lib/servicios';
 import { cancelarTurnoState, confirmarAsistenciaTurnoState } from '../usuario/usuarioAcciones';
-
-const estilos = StyleSheet.create({
-  contenedor: {
-    flex: 1,
-    backgroundColor: '#026F8E',
-    flexDirection: 'column',
-    alignItems: 'center',
-    width: '100%'
-  },
-  subContenedor: {
-    alignItems: 'center',
-    width: '95%'
-  },
-  subContenedorSaludo: {
-    alignItems: 'center',
-    backgroundColor: '#0A5164',
-    width: '95%',
-    borderColor: '#005f79',
-    borderWidth: 1,
-    paddingTop: 5,
-    paddingBottom: 10
-  },
-  imagen: {
-    height: 150,
-    width: 150
-  },
-  titulo: {
-    fontSize: 26,
-    color: '#fff',
-    fontWeight: 'bold'
-  },
-  subtitulo: {
-    fontSize: 22,
-    color: '#fff',
-    fontWeight: 'bold',
-    textAlign: 'center'
-  },
-  margenUltimoTexto: {
-    marginBottom: 20
-  },
-  textoTurno: {
-    fontSize: 19,
-    color: '#fff',
-    marginTop: 5
-  }
-});
+import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 
 const Turno = ({ route, navigation }) => {
+  const { estilosGlobales } = useContext(ContextoEstilosGlobales);
   const { turno, demoraTurnoCreado } = route.params;
   const { loginState, loginDispatch } = useContext(ContextoStates);
   const [demora, setDemora] = useState(null);
   const [confirmoPresencia, setConfirmoPresencia] = useState(false);
   const [cargando, setCargando] = useState(true);
+  const estilos = StyleSheet.create({
+    contenedor: {
+      flex: 1,
+      backgroundColor: estilosGlobales.colorFondoContenedorDatos,
+      flexDirection: 'column',
+      alignItems: 'center',
+      width: '100%'
+    },
+    subContenedor: {
+      flexDirection: 'column',
+      alignItems: 'center',
+      width: '95%'
+    },
+    subContenedorSaludo: {
+      flexDirection: 'column',
+      alignItems: 'center',
+      backgroundColor: '#0A5164',
+      width: '95%',
+      paddingTop: 5,
+      paddingBottom: 10,
+      marginTop: 8,
+    },
+    margenUltimoTexto: {
+      marginBottom: 20
+    },
+    textoTurno: {
+      fontSize: 19,
+      color: '#fff',
+      marginTop: 5
+    }
+  });
 
   useEffect(() => {
     // Si viene de crear el turno usa la misma demora que le informaó en la pantalla anterior.
@@ -113,10 +100,10 @@ const Turno = ({ route, navigation }) => {
 
   const obtenerAccionesTurno = () => (
     <View style={estilos.subContenedor}>
-      <BotonRedondeado manejadorClick={() => confirmarPresencia()}>
+      <BotonRedondeado manejadorClick={() => confirmarPresencia()} estilo={{ marginTop: 10 }}>
         YA ESTOY AQUÍ
       </BotonRedondeado>
-      <BotonRedondeado manejadorClick={() => cancelarTurno()}>
+      <BotonRedondeado manejadorClick={() => cancelarTurno()} estilo={{ marginTop: 22 }}>
         CANCELAR TURNO
       </BotonRedondeado>
     </View>
@@ -124,15 +111,17 @@ const Turno = ({ route, navigation }) => {
 
   const obtenerSaludo = () => (
     <View style={estilos.subContenedorSaludo}>
-      <Text style={estilos.titulo}>Bienvenida/o.</Text>
-      <Text style={estilos.subtitulo}>Ya hemos recibido la notificación de su llegada.</Text>
+      <Text style={estilosGlobales.tituloGrande}>Bienvenida/o.</Text>
+      <Text style={estilosGlobales.subtituloGrande}>
+        Ya hemos recibido la notificación de su llegada.
+      </Text>
     </View>
   );
 
   const obtenerVista = () => (
     <View style={estilos.subContenedor}>
-      <Text style={estilos.titulo}>{turno.code}</Text>
-      <Text style={estilos.subtitulo}>
+      <Text style={estilosGlobales.tituloGrande}>{turno.code}</Text>
+      <Text style={estilosGlobales.subtituloGrande}>
         {turno.Category.name}
       </Text>
       <Text style={estilos.textoTurno}>
@@ -152,7 +141,10 @@ const Turno = ({ route, navigation }) => {
   if (cargando) {
     return (
       <View style={estilos.contenedor}>
-        <Image style={estilos.imagen} source={iconosCentros[turno.Center.app_icon]} />
+        <Image
+          style={estilosGlobales.imagenLogoCentro}
+          source={iconosCentros[turno.Center.app_icon]}
+        />
         <ActivityIndicator size="large" color="#FFF" />
       </View>
     );
@@ -160,7 +152,10 @@ const Turno = ({ route, navigation }) => {
 
   return (
     <View style={estilos.contenedor}>
-      <Image style={estilos.imagen} source={iconosCentros[turno.Center.app_icon]} />
+      <Image
+        style={estilosGlobales.imagenLogoCentro}
+        source={iconosCentros[turno.Center.app_icon]}
+      />
       { obtenerVista() }
     </View>
   );

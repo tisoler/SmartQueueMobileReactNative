@@ -11,36 +11,37 @@ import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import { ContextoStates } from '../../lib/contextoStates';
 import { imagenLogo } from '../../lib/constantes';
 import { setearUsuarioLogueado } from './usuarioAcciones';
-
-const estilos = StyleSheet.create({
-  contenedor: {
-    flex: 1,
-    backgroundColor: '#026F8E',
-    flexDirection: 'column',
-    alignItems: 'center'
-  },
-  mensajeError: {
-    color: '#910904',
-    fontSize: 16,
-    fontWeight: 'bold'
-  },
-  logo: {
-    marginTop: 25,
-    marginBottom: 30
-  },
-  botonera: {
-    alignItems: 'center',
-    width: '100%',
-    marginTop: 20
-  }
-});
+import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 
 const Login = ({ navigation }) => {
+  const { estilosGlobales } = useContext(ContextoEstilosGlobales);
   const [emailUsuario, cambioEmail] = useState('');
   const [contrasenaUsuario, cambioContrasena] = useState('');
   const [cargando, cambioCargando] = useState(false);
   const [loginIncorrecto, cambioLogin] = useState(false);
   const { loginDispatch } = useContext(ContextoStates);
+  const estilos = StyleSheet.create({
+    contenedor: {
+      flexGrow: 1,
+      backgroundColor: estilosGlobales.colorFondoPantallaLogin,
+      flexDirection: 'column',
+      alignItems: 'center'
+    },
+    subContenedor: {
+      flexGrow: 1,
+      alignItems: 'center',
+      width: '100%'
+    },
+    logo: {
+      marginTop: 25,
+      marginBottom: 30
+    },
+    botonera: {
+      flexGrow: 4,
+      alignItems: 'center',
+      width: '100%',
+    }
+  });
 
   const loguear = () => {
     cambioLogin(false);
@@ -64,36 +65,41 @@ const Login = ({ navigation }) => {
   };
 
   const registrarse = () => {
+    cambioCargando(true);
     navigation.navigate('Registro');
+    cambioCargando(false);
   };
 
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
       <View style={estilos.contenedor}>
-        <Image source={imagenLogo} style={estilos.logo} />
-        <TextoIngreso
-          placeholderText="e-mail"
-          manejadorCambioTexto={cambioEmail}
-          value={emailUsuario}
-          soloLectura={cargando}
-          manejadorClick={() => cambioLogin(false)}
-          icono={faIdCard}
-        />
-        <TextoIngreso
-          placeholderText="Contraseña"
-          manejadorCambioTexto={cambioContrasena}
-          value={contrasenaUsuario}
-          soloLectura={cargando}
-          esconderTexto
-          manejadorClick={() => cambioLogin(false)}
-          icono={faKey}
-        />
-        {loginIncorrecto
-          && <Text style={estilos.mensajeError}>Usuario o contraseña incorrectos.</Text>}
+        <View style={estilos.subContenedor}>
+          <Image source={imagenLogo} style={estilos.logo} />
+          <TextoIngreso
+            placeholderText="e-mail"
+            manejadorCambioTexto={cambioEmail}
+            value={emailUsuario}
+            soloLectura={cargando}
+            manejadorClick={() => cambioLogin(false)}
+            icono={faIdCard}
+          />
+          <TextoIngreso
+            placeholderText="Contraseña"
+            manejadorCambioTexto={cambioContrasena}
+            value={contrasenaUsuario}
+            soloLectura={cargando}
+            esconderTexto
+            manejadorClick={() => cambioLogin(false)}
+            icono={faKey}
+          />
+          {loginIncorrecto
+            && <Text style={estilosGlobales.mensajeError}>Usuario o contraseña incorrectos.</Text>}
+        </View>
         <View style={estilos.botonera}>
           <BotonRedondeado
             manejadorClick={loguear}
             cargando={cargando}
+            deshabilitado={cargando}
           >
             INGRESAR
           </BotonRedondeado>
@@ -101,9 +107,11 @@ const Login = ({ navigation }) => {
             && (
               <BotonRedondeado
                 manejadorClick={registrarse}
-                colorBorde="#005f79"
-                colorFondo="#005f79"
-                colorEfecto="#fff"
+                colorBorde={estilosGlobales.colorBordeBotonSecundario}
+                colorFondo={estilosGlobales.colorFondoBotonSecundario}
+                colorEfecto={estilosGlobales.colorEfectoClickBotonSecundario}
+                estilo={{ marginTop: 22 }}
+                deshabilitado={cargando}
               >
                 REGISTRARSE
               </BotonRedondeado>

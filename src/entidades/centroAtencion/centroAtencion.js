@@ -11,54 +11,51 @@ import { estimarDemora, generarTicket } from '../../lib/servicios';
 import BotonPopup from '../../componentes/comunes/botonPopup';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import { agregarTurnoActivoState } from '../usuario/usuarioAcciones';
-
-const estilos = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#026F8E',
-    flexDirection: 'column',
-    alignItems: 'center'
-  },
-  imagen: {
-    height: 150,
-    width: 150
-  },
-  contenedorConfirmacion: {
-    width: '90%',
-    backgroundColor: '#fff',
-    alignItems: 'center'
-  },
-  contenedorMensaje: {
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    width: '100%',
-    paddingBottom: 15
-  },
-  titulo: {
-    fontSize: 22,
-    paddingBottom: 10,
-    paddingTop: 15,
-    fontWeight: 'bold'
-  },
-  mensaje: {
-    fontSize: 18,
-    padding: 10,
-    textAlign: 'justify'
-  },
-  contenedorBotonesConfirmacion: {
-    flexDirection: 'row',
-    backgroundColor: '#fff',
-    width: '100%'
-  }
-});
+import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 
 const CentrosAtencion = ({ route, navigation }) => {
+  const { estilosGlobales } = useContext(ContextoEstilosGlobales);
   const { centro } = route.params;
   const [turnoPedido, setTurnoPedido] = useState(false);
   const [cargando, setCargando] = useState(false);
   const [categoriaSeleccionada, setCategoria] = useState({});
   const [demora, setDemora] = useState({});
   const { loginState, loginDispatch } = useContext(ContextoStates);
+  const estilos = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: estilosGlobales.colorFondoContenedorDatos,
+      flexDirection: 'column',
+      alignItems: 'center'
+    },
+    contenedorConfirmacion: {
+      width: '90%',
+      backgroundColor: '#fff',
+      alignItems: 'center'
+    },
+    contenedorMensaje: {
+      alignItems: 'center',
+      backgroundColor: '#fff',
+      width: '100%',
+      paddingBottom: 15
+    },
+    titulo: {
+      fontSize: 22,
+      paddingBottom: 10,
+      paddingTop: 15,
+      fontWeight: 'bold'
+    },
+    mensaje: {
+      fontSize: 18,
+      padding: 10,
+      textAlign: 'justify'
+    },
+    contenedorBotonesConfirmacion: {
+      flexDirection: 'row',
+      backgroundColor: '#fff',
+      width: '100%'
+    }
+  });
 
   const pedirTurno = (categoria) => {
     setTurnoPedido(true);
@@ -89,7 +86,11 @@ const CentrosAtencion = ({ route, navigation }) => {
 
   const obtenerBotonesCategorias = () => (
     centro.Categories.map(categ => (
-      <BotonRedondeado key={categ.id} manejadorClick={() => pedirTurno(categ)}>
+      <BotonRedondeado
+        key={categ.id}
+        manejadorClick={() => pedirTurno(categ)}
+        estilo={{ marginTop: 22 }}
+      >
         { categ.description }
       </BotonRedondeado>
     ))
@@ -123,7 +124,7 @@ const CentrosAtencion = ({ route, navigation }) => {
           height={80}
           width="50%"
           manejadorClick={() => setTurnoPedido(false)}
-          colorFondo="#044F58"
+          colorFondo={estilosGlobales.colorFondoGlobal}
         >
           NO
         </BotonPopup>
@@ -131,7 +132,7 @@ const CentrosAtencion = ({ route, navigation }) => {
           height={80}
           width="50%"
           manejadorClick={() => confirmarTurno()}
-          colorFondo="#1CA3B3"
+          colorFondo={estilosGlobales.colorFondoBotonPrincipal}
         >
           SÍ
         </BotonPopup>
@@ -151,7 +152,7 @@ const CentrosAtencion = ({ route, navigation }) => {
 
   return (
     <View style={estilos.container}>
-      <Image style={estilos.imagen} source={iconosCentros[centro.app_icon]} />
+      <Image style={estilosGlobales.imagenLogoCentro} source={iconosCentros[centro.app_icon]} />
       { obtenerRender() }
     </View>
   );

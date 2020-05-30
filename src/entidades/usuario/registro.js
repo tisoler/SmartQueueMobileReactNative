@@ -12,6 +12,7 @@ import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import Etiqueta from '../../componentes/comunes/etiqueta';
 import Camara from '../../componentes/comunes/camara';
 import { ContextoStates } from '../../lib/contextoStates';
+import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 import {
   validarExistenciaEmanil,
   validarExistenciaDNI,
@@ -21,81 +22,8 @@ import {
 } from '../../lib/servicios';
 import { setearUsuarioLogueado } from './usuarioAcciones';
 
-const estilos = StyleSheet.create({
-  contenedorGlobal: {
-    flex: 1,
-    flexDirection: 'column',
-    backgroundColor: '#2A4D57'
-  },
-  contenedorCampos: {
-    flexGrow: 2,
-    flexDirection: 'column',
-    alignItems: 'center'
-  },
-  subContenedorCampos: {
-    flexGrow: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    backgroundColor: '#005f79'
-  },
-  subContenedorMensajeFoto: {
-    flexGrow: 1.2,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    paddingBottom: 20,
-    backgroundColor: '#026F8E'
-  },
-  subContenedorBotones: {
-    flexGrow: 1,
-    alignItems: 'center',
-    width: '100%'
-  },
-  encabezadoPantallaConfirmar: {
-    flexDirection: 'row',
-    height: 130,
-    width: '100%',
-    backgroundColor: '#00566D',
-    alignItems: 'center',
-    paddingLeft: 5
-  },
-  contenedorDatosConfirmar: {
-    flexGrow: 1,
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    width: '100%',
-    paddingLeft: 7,
-    paddingTop: 30,
-    paddingBottom: 30,
-    backgroundColor: '#005f79'
-  },
-  contenedorFotografia: {
-    position: 'absolute',
-    width: 130,
-    height: 130,
-    right: 0,
-    paddingRight: 10,
-    paddingTop: 5,
-    paddingBottom: 5
-  },
-  textoAviso: {
-    fontSize: 21,
-    color: '#fff',
-    margin: 20,
-    textAlign: 'center'
-  },
-  mensajeError: {
-    color: '#852E1D',
-    fontSize: 17
-  },
-  titulo: {
-    fontSize: 20.5,
-    color: '#FFF',
-    lineHeight: 50
-  }
-});
-
 const Registro = ({ navigation }) => {
+  const { estilosGlobales } = useContext(ContextoEstilosGlobales);
   const [numeroPantalla, cambioPantalla] = useState(1);
   const [emailUsuario, cambioEmail] = useState('');
   const [contrasenaUsuario, cambioContrasena] = useState('');
@@ -108,12 +36,79 @@ const Registro = ({ navigation }) => {
   const [mostrarValidaciones, cambiarMostrarValidaciones] = useState(false);
   const [uriFoto, guardarUriFoto] = useState();
   const { loginDispatch } = useContext(ContextoStates);
+  const estilos = StyleSheet.create({
+    contenedorGlobal: {
+      flex: 1,
+      flexDirection: 'column',
+      backgroundColor: estilosGlobales.colorFondoGlobal
+    },
+    contenedorCampos: {
+      flexGrow: 2,
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
+    encabezadoDatosUsuario: {
+      width: '100%',
+      alignItems: 'center',
+      backgroundColor: estilosGlobales.colorFondoEncabezadoTitulos
+    },
+    subContenedorCampos: {
+      flexGrow: 5,
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '100%',
+      backgroundColor: estilosGlobales.colorFondoContenedorDatos
+    },
+    subContenedorMensajeFoto: {
+      flexGrow: 1.2,
+      alignItems: 'center',
+      justifyContent: 'flex-end',
+      paddingBottom: 20,
+      backgroundColor: estilosGlobales.colorFondoContenedorDatos
+    },
+    subContenedorBotones: {
+      flexGrow: 1,
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      width: '100%'
+    },
+    encabezadoPantallaConfirmar: {
+      flexDirection: 'row',
+      height: 130,
+      width: '100%',
+      backgroundColor: estilosGlobales.colorFondoEncabezadoTitulos,
+      alignItems: 'center',
+      paddingLeft: 5
+    },
+    contenedorDatosConfirmar: {
+      flexGrow: 1,
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      width: '100%',
+      paddingLeft: 7,
+      paddingTop: 30,
+      paddingBottom: 30,
+      backgroundColor: estilosGlobales.colorFondoContenedorDatos
+    },
+    contenedorFotografia: {
+      position: 'absolute',
+      width: 130,
+      height: 130,
+      right: 0,
+      paddingRight: 10,
+      paddingTop: 5,
+      paddingBottom: 5
+    }
+  });
 
   const pantallaDatosPrincipales = (
     <View style={estilos.contenedorCampos}>
-      <Text style={estilos.titulo}>
-        Mis datos:
-      </Text>
+      <View style={estilos.encabezadoDatosUsuario}>
+        <Text style={estilosGlobales.tituloSeccion}>
+          Mis datos:
+        </Text>
+      </View>
       <View style={estilos.subContenedorCampos}>
         <TextoIngreso
           placeholderText="e-mail"
@@ -122,9 +117,13 @@ const Registro = ({ navigation }) => {
           manejadorCambioTexto={cambioEmail}
         />
         {emailExistente && mostrarValidaciones
-            && <Text style={estilos.mensajeError}>El email ingresado ya está registrado.</Text>}
+          && (
+          <Text style={estilosGlobales.mensajeError}>
+            El email ingresado ya está registrado.
+          </Text>
+          )}
         {!emailUsuario && mostrarValidaciones
-            && <Text style={estilos.mensajeError}>Dato requerido.</Text>}
+            && <Text style={estilosGlobales.mensajeError}>Dato requerido.</Text>}
         <TextoIngreso
           placeholderText="Contraseña"
           value={contrasenaUsuario}
@@ -133,7 +132,7 @@ const Registro = ({ navigation }) => {
           esconderTexto
         />
         {!contrasenaUsuario && mostrarValidaciones
-            && <Text style={estilos.mensajeError}>Dato requerido.</Text>}
+            && <Text style={estilosGlobales.mensajeError}>Dato requerido.</Text>}
         <TextoIngreso
           placeholderText="Nombre"
           value={nombreUsuario}
@@ -141,7 +140,7 @@ const Registro = ({ navigation }) => {
           manejadorCambioTexto={cambioNombre}
         />
         {!nombreUsuario && mostrarValidaciones
-            && <Text style={estilos.mensajeError}>Dato requerido.</Text>}
+            && <Text style={estilosGlobales.mensajeError}>Dato requerido.</Text>}
         <TextoIngreso
           placeholderText="Apellido"
           value={apellidoUsuario}
@@ -149,7 +148,7 @@ const Registro = ({ navigation }) => {
           manejadorCambioTexto={cambioApellido}
         />
         {!apellidoUsuario && mostrarValidaciones
-            && <Text style={estilos.mensajeError}>Dato requerido.</Text>}
+            && <Text style={estilosGlobales.mensajeError}>Dato requerido.</Text>}
         <TextoIngreso
           placeholderText="DNI"
           value={dniUsuario}
@@ -159,16 +158,16 @@ const Registro = ({ navigation }) => {
           largoMaximo={8}
         />
         {DNIExistente && mostrarValidaciones
-            && <Text style={estilos.mensajeError}>El DNI ingresado ya está registrado.</Text>}
+          && <Text style={estilosGlobales.mensajeError}>El DNI ingresado ya está registrado.</Text>}
         {!dniUsuario && mostrarValidaciones
-            && <Text style={estilos.mensajeError}>Dato requerido.</Text>}
+            && <Text style={estilosGlobales.mensajeError}>Dato requerido.</Text>}
       </View>
     </View>
   );
 
   const pantallaSolicitarFotografia = (
     <View style={estilos.subContenedorMensajeFoto}>
-      <Text style={estilos.textoAviso}>
+      <Text style={estilosGlobales.textoAviso}>
         Es necesario que se tome una foto a fin de ser reconocida/o al momento de ser atendida/o.
       </Text>
     </View>
@@ -207,12 +206,20 @@ const Registro = ({ navigation }) => {
     </View>
   );
 
+  const pantallaRegistroCompletado = (
+    <View style={estilos.contenedorCampos}>
+      <Text style={estilosGlobales.subtituloGrande}>Registro completado.</Text>
+      <Text style={estilosGlobales.tituloSeccion}>Ya puedo comenzar a pedir turnos...</Text>
+    </View>
+  );
+
   const pantallas = {
     /* eslint-disable no-useless-computed-key */
     [1]: pantallaDatosPrincipales,
     [2]: pantallaSolicitarFotografia,
     [3]: pantallaCamara,
-    [4]: pantallaConfirmarDatos
+    [4]: pantallaConfirmarDatos,
+    [5]: pantallaRegistroCompletado
     /* eslint-enable no-useless-computed-key */
   };
 
@@ -220,7 +227,8 @@ const Registro = ({ navigation }) => {
     /* eslint-disable no-useless-computed-key */
     [1]: 'SIGUIENTE',
     [2]: 'TOMAR FOTO',
-    [4]: 'CONFIRMAR DATOS'
+    [4]: 'CONFIRMAR DATOS',
+    [5]: 'COMENZAR'
     /* eslint-enable no-useless-computed-key */
   };
 
@@ -251,15 +259,6 @@ const Registro = ({ navigation }) => {
     }
 
     return esValido;
-  };
-
-  const validacionesPantallas = {
-    /* eslint-disable no-useless-computed-key */
-    [1]: validarDatosRegistro,
-    [2]: () => true,
-    [3]: () => true,
-    [4]: () => true
-    /* eslint-enable no-useless-computed-key */
   };
 
   const loguearUsuario = async () => {
@@ -310,7 +309,7 @@ const Registro = ({ navigation }) => {
       const respuestaLogin = await loguearUsuario();
       if (respuestaLogin.success) {
         setearUsuarioLogueado(loginDispatch, emailUsuario, respuestaLogin.token);
-        navigation.navigate('Lobby');
+        cambioPantalla(5);
       } else {
         navigation.navigate('Login');
       }
@@ -318,49 +317,49 @@ const Registro = ({ navigation }) => {
     setearBotonCargando(false);
   };
 
+  const accionesBotonPrincipalDatosPrincipales = async () => {
+    setearBotonCargando(true);
+    const sonDatosValidos = await validarDatosRegistro();
+    if (sonDatosValidos) {
+      cambioPantalla(numeroPantalla + 1);
+      cambiarMostrarValidaciones(false);
+    }
+    setearBotonCargando(false);
+  };
+
+  const accionesBotonPrincipalPorPantalla = {
+    /* eslint-disable no-useless-computed-key */
+    [1]: accionesBotonPrincipalDatosPrincipales,
+    [2]: () => cambioPantalla(numeroPantalla + 1),
+    [4]: () => {
+      setearBotonCargando(true);
+      guardar();
+    },
+    [5]: () => navigation.navigate('Lobby')
+    /* eslint-enable no-useless-computed-key */
+  };
+
   const Botonera = () => (
     <View style={estilos.subContenedorBotones}>
-      { numeroPantalla !== 4 // ---> Botón para avanzar en el proceso
+      { [1, 2, 4, 5].includes(numeroPantalla) // ---> Botón para avanzar en el proceso
         && (
         <BotonRedondeado
-          manejadorClick={async () => {
-            setearBotonCargando(true);
-            const sonDatosValidos = validacionesPantallas[numeroPantalla]
-              ? await validacionesPantallas[numeroPantalla]()
-              : true;
-            if (sonDatosValidos) {
-              cambioPantalla(numeroPantalla + 1);
-              cambiarMostrarValidaciones(false);
-            }
-            setearBotonCargando(false);
-          }}
+          manejadorClick={accionesBotonPrincipalPorPantalla[numeroPantalla]}
           cargando={botonCargando}
+          estilo={{ marginTop: 20 }}
         >
           {textoBotonSiguientePorPantalla[numeroPantalla]}
         </BotonRedondeado>
         )}
 
-      { numeroPantalla === 4 // ---> Botón confirmación final
-        && (
-        <BotonRedondeado
-          manejadorClick={async () => {
-            setearBotonCargando(true);
-            guardar();
-          }}
-          cargando={botonCargando}
-        >
-          {textoBotonSiguientePorPantalla[numeroPantalla]}
-        </BotonRedondeado>
-        )}
-
-      { (numeroPantalla === 2 || numeroPantalla === 4) // ---> Botón para modificar datos
+      { [2, 4].includes(numeroPantalla) // ---> Botón para modificar datos
         && (
           <BotonRedondeado
             manejadorClick={() => cambioPantalla(1)}
-            cargando={botonCargando}
-            colorBorde="#005f79"
-            colorFondo="#005f79"
-            colorEfecto="#fff"
+            colorBorde={estilosGlobales.colorBordeBotonSecundario}
+            colorFondo={estilosGlobales.colorFondoBotonSecundario}
+            colorEfecto={estilosGlobales.colorEfectoClickBotonSecundario}
+            estilo={{ marginTop: 20 }}
           >
             MODIFICAR MIS DATOS
           </BotonRedondeado>

@@ -10,7 +10,7 @@ type Props = {
   children: React.Element<any>
 };
 
-export const ContextoStatesProvider = (props: Props) => {
+export const ContextoStatesProveedor = (props: Props) => {
   const { children } = props;
   const [loginState, loginDispatch] = useReducer(loginReducer);
   const [centrosState, centrosDispatch] = useReducer(centroAtencionReducer);

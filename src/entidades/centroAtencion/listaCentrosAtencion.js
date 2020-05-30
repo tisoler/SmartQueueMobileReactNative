@@ -8,23 +8,25 @@ import { ContextoStates } from '../../lib/contextoStates';
 import { obtenerCentrosAtencion } from '../../lib/servicios';
 import Teja from '../../componentes/comunes/teja';
 import setearCentros from './centroAtencionAcciones';
-
-const estilos = StyleSheet.create({
-  contenedor: {
-    flex: 1,
-    backgroundColor: '#026F8E',
-    flexDirection: 'column',
-    justifyContent: 'center'
-  },
-  texto: {
-    color: '#FFF',
-    fontSize: 19,
-    paddingLeft: 10
-  }
-});
+import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 
 const ListaCentrosAtencion = ({ navigation }) => {
+  const { estilosGlobales } = useContext(ContextoEstilosGlobales);
   const { loginState, centrosState, centrosDispatch } = useContext(ContextoStates);
+  const estilos = StyleSheet.create({
+    contenedor: {
+      flex: 1,
+      backgroundColor: estilosGlobales.colorFondoContenedorDatos,
+      flexDirection: 'column',
+      justifyContent: 'center'
+    },
+    texto: {
+      color: '#FFF',
+      fontSize: 19,
+      paddingLeft: 10
+    }
+  });
+
   useEffect(() => {
     if (centrosState == null || centrosState.centros.length === 0) {
       obtenerCentrosAtencion(loginState.token)
