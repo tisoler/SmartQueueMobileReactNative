@@ -11,6 +11,7 @@ type Props = {
 export const ContextoEstilosGlobalesProveedor = (props: Props) => {
   const { children } = props;
   const estilosGlobales = {
+    colorBarraNavegacion: '#0A5164',
     colorFondoPantallaLogin: '#026F8E',
     colorFondoGlobal: '#2A4D57',
     colorFondoEncabezadoTitulos: '#00566D',

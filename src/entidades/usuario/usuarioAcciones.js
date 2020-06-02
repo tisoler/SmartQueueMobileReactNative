@@ -1,4 +1,28 @@
 // @flow
+import AsyncStorage from '@react-native-community/async-storage';
+
+const guardarDatosLocalmente = async (clave: string, valor: string) => {
+  try {
+    await AsyncStorage.setItem(
+      clave,
+      valor
+    );
+  } catch (error) {
+    // Error
+  }
+};
+
+export const recuperarDatosLocalmente = async (clave: string) => {
+  try {
+    const value = await AsyncStorage.getItem(clave);
+    if (value !== null) {
+      return value;
+    }
+  } catch (error) {
+    // Error
+  }
+  return null;
+};
 
 export const agregarTurnoActivoState = (dispatch: Function, turnoActivo: Object) => {
   dispatch({
@@ -14,7 +38,14 @@ export const setearTurnosActivos = (dispatch: Function, turnosActivos: Array<Obj
   });
 };
 
-export const setearUsuarioLogueado = (dispatch: Function, email: string, token: string) => {
+export const setearUsuarioLogueado = (
+  dispatch: Function,
+  email: string,
+  token: string,
+  contrasena: string
+) => {
+  guardarDatosLocalmente('@email', email);
+  guardarDatosLocalmente('@contraseña', contrasena);
   dispatch({
     type: 'SET_LOGIN',
     payload: { email, token }

@@ -63,7 +63,7 @@ const EvaluacionTurno = ({ navigation }) => {
           if (turnosParaEvaluar.length === 1) {
             setTimeout(() => {
               navigation.navigate('Lobby');
-            }, 500);
+            }, 1500);
           } else {
             setCantidadEstrellas(0);
           }

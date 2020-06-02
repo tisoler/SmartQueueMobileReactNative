@@ -20,6 +20,7 @@ const Login = ({ navigation }) => {
   const [cargando, cambioCargando] = useState(false);
   const [loginIncorrecto, cambioLogin] = useState(false);
   const { loginDispatch } = useContext(ContextoStates);
+
   const estilos = StyleSheet.create({
     contenedor: {
       flexGrow: 1,
@@ -49,11 +50,10 @@ const Login = ({ navigation }) => {
     const payload = { email: emailUsuario, password: contrasenaUsuario };
     login(payload)
       .then(res => res.json())
-      .then(response => {
+      .then(respuesta => {
         cambioCargando(false);
-        if (response.success) {
-          setearUsuarioLogueado(loginDispatch, payload.email, response.token);
-          navigation.navigate('Lobby');
+        if (respuesta.success) {
+          setearUsuarioLogueado(loginDispatch, emailUsuario, respuesta.token, contrasenaUsuario);
         } else {
           cambioLogin(true);
         }

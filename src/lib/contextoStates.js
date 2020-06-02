@@ -16,7 +16,10 @@ export const ContextoStatesProveedor = (props: Props) => {
   const [centrosState, centrosDispatch] = useReducer(centroAtencionReducer);
   return (
     <ContextoStates.Provider value={{
-      loginState, loginDispatch, centrosState, centrosDispatch
+      loginState,
+      loginDispatch,
+      centrosState,
+      centrosDispatch
     }}
     >
       {children}

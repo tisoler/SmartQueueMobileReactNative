@@ -30,12 +30,14 @@ const Registro = ({ navigation }) => {
   const [nombreUsuario, cambioNombre] = useState('');
   const [apellidoUsuario, cambioApellido] = useState('');
   const [dniUsuario, cambioDNI] = useState('');
+  const [tokenUsuario, cambioToken] = useState('');
   const [emailExistente, setearEmailExistente] = useState(false);
   const [DNIExistente, setearDNIExistente] = useState(false);
   const [botonCargando, setearBotonCargando] = useState(false);
   const [mostrarValidaciones, cambiarMostrarValidaciones] = useState(false);
   const [uriFoto, guardarUriFoto] = useState();
   const { loginDispatch } = useContext(ContextoStates);
+
   const estilos = StyleSheet.create({
     contenedorGlobal: {
       flex: 1,
@@ -209,7 +211,7 @@ const Registro = ({ navigation }) => {
   const pantallaRegistroCompletado = (
     <View style={estilos.contenedorCampos}>
       <Text style={estilosGlobales.subtituloGrande}>Registro completado.</Text>
-      <Text style={estilosGlobales.tituloSeccion}>Ya puedo comenzar a pedir turnos...</Text>
+      <Text style={estilosGlobales.tituloSeccion}>Ya puede comenzar a pedir turnos...</Text>
     </View>
   );
 
@@ -308,7 +310,9 @@ const Registro = ({ navigation }) => {
     if (respuesta.success) {
       const respuestaLogin = await loguearUsuario();
       if (respuestaLogin.success) {
-        setearUsuarioLogueado(loginDispatch, emailUsuario, respuestaLogin.token);
+        // Almacena temporalmente el token para notificar al usuario
+        // y permitir que acepte comenzar a operar la app.
+        cambioToken(respuestaLogin.token);
         cambioPantalla(5);
       } else {
         navigation.navigate('Login');
@@ -335,7 +339,8 @@ const Registro = ({ navigation }) => {
       setearBotonCargando(true);
       guardar();
     },
-    [5]: () => navigation.navigate('Lobby')
+    // Almacena credenciales, esto cambia el navegador (Autenticado) y pasa a la Lobby.
+    [5]: () => setearUsuarioLogueado(loginDispatch, emailUsuario, tokenUsuario, contrasenaUsuario)
     /* eslint-enable no-useless-computed-key */
   };
 

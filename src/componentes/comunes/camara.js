@@ -60,21 +60,18 @@ export default (props: Props) => {
   const { guardarUriFoto, uriFoto, aceptarFoto } = props;
   const [camaraFrontal, cambiarTipoCamara] = useState(true);
   let camera;
-  let colorCamara = '#fff';
-  let colorCambioCamara = '#fff';
+  const colorCamara = '#fff';
+  const colorCambioCamara = '#fff';
 
   const tomarFoto = async () => {
-    colorCamara = '#0084a8';
     if (camera) {
       const options = { quality: 0.5, base64: true };
       const data = await camera.takePictureAsync(options);
-      colorCamara = '#fff';
       guardarUriFoto(data.uri);
     }
   };
 
   const cambiarCamara = async () => {
-    colorCambioCamara = '#0084a8';
     if (camera) {
       cambiarTipoCamara(!camaraFrontal);
     }
