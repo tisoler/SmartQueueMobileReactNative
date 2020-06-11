@@ -10,9 +10,9 @@ type Props = {
   ManejadorClick?: Function
 }
 
-const Estrella = (props: Props) => {
+export default (props: Props) => {
   const {
-    height = 70, width = 70, rellenar = false, ManejadorClick = () => {}
+    height = 65, width = 65, rellenar = false, ManejadorClick = () => {}
   } = props;
 
   const estilo = {
@@ -36,12 +36,3 @@ const Estrella = (props: Props) => {
     </TouchableWithoutFeedback>
   );
 };
-
-Estrella.defaultProps = {
-  width: 60,
-  height: 60,
-  rellenar: false,
-  ManejadorClick: () => {}
-};
-
-export default Estrella;

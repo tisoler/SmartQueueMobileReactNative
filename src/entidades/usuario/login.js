@@ -3,15 +3,14 @@ import React, { useState, useContext } from 'react';
 import {
   StyleSheet, View, Text, Image, Alert, ScrollView
 } from 'react-native';
-import { faIdCard, faKey } from '@fortawesome/free-solid-svg-icons';
 import withErrorBoundary from '../../enhancers/withErrorBoundary';
 import TextoIngreso from '../../componentes/comunes/textoIngreso';
 import { login } from '../../lib/servicios';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
-import { ContextoStates } from '../../lib/contextoStates';
-import { imagenLogo } from '../../lib/constantes';
-import { setearUsuarioLogueado } from './usuarioAcciones';
+import { ContextoEstados } from '../../lib/contextoEstados';
+import { ImagenLogo, NombresIconosGenerales } from '../../lib/constantes';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
+
 
 const Login = ({ navigation }) => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
@@ -19,7 +18,7 @@ const Login = ({ navigation }) => {
   const [contrasenaUsuario, cambioContrasena] = useState('');
   const [cargando, cambioCargando] = useState(false);
   const [loginIncorrecto, cambioLogin] = useState(false);
-  const { loginDispatch } = useContext(ContextoStates);
+  const { fijarUsuarioLogueadoEnEstado } = useContext(ContextoEstados);
 
   const estilos = StyleSheet.create({
     contenedor: {
@@ -53,7 +52,7 @@ const Login = ({ navigation }) => {
       .then(respuesta => {
         cambioCargando(false);
         if (respuesta.success) {
-          setearUsuarioLogueado(loginDispatch, emailUsuario, respuesta.token, contrasenaUsuario);
+          fijarUsuarioLogueadoEnEstado(emailUsuario, respuesta.token, contrasenaUsuario);
         } else {
           cambioLogin(true);
         }
@@ -74,14 +73,14 @@ const Login = ({ navigation }) => {
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
       <View style={estilos.contenedor}>
         <View style={estilos.subContenedor}>
-          <Image source={imagenLogo} style={estilos.logo} />
+          <Image source={ImagenLogo} style={estilos.logo} />
           <TextoIngreso
             placeholderText="e-mail"
             manejadorCambioTexto={cambioEmail}
             value={emailUsuario}
             soloLectura={cargando}
             manejadorClick={() => cambioLogin(false)}
-            icono={faIdCard}
+            icono={NombresIconosGenerales.correo}
           />
           <TextoIngreso
             placeholderText="Contraseña"
@@ -90,7 +89,7 @@ const Login = ({ navigation }) => {
             soloLectura={cargando}
             esconderTexto
             manejadorClick={() => cambioLogin(false)}
-            icono={faKey}
+            icono={NombresIconosGenerales.contrasena}
           />
           {loginIncorrecto
             && <Text style={estilosGlobales.mensajeError}>Usuario o contraseña incorrectos.</Text>}

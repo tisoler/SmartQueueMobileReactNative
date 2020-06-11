@@ -52,7 +52,10 @@ export const ContextoEstilosGlobalesProveedor = (props: Props) => {
     imagenLogoCentro: {
       height: 150,
       width: 150
-    }
+    },
+    colorLetraEncabezado: '#fff',
+    colorAvatarLetra: '#16817a',
+    tamanoLetraEtiqueta: 19
   };
 
   return (

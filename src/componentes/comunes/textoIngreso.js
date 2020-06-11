@@ -3,35 +3,9 @@ import React from 'react';
 import {
   StyleSheet, TextInput, View
 } from 'react-native';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import IconosGenerales from '../../lib/iconos';
+import { NombresIconosGenerales } from '../../lib/constantes';
 
-const estilos = StyleSheet.create({
-  contenedor: {
-    flexDirection: 'row',
-    width: '80%',
-    marginBottom: 15,
-    height: 50
-  },
-  contenedorTexto: {
-    flex: 1,
-    flexDirection: 'row',
-    marginLeft: 7,
-    borderBottomColor: 'white',
-    borderBottomWidth: 1,
-    borderRadius: 7
-  },
-  cajaTexto: {
-    color: '#fff',
-    fontSize: 20,
-    lineHeight: 30,
-    height: 60,
-    marginLeft: 5,
-    width: '100%'
-  },
-  contenedorIcono: {
-    paddingTop: 20,
-  }
-});
 
 type Props = {
   manejadorClick?: Function,
@@ -57,11 +31,44 @@ const TextoIngreso = (props: Props) => {
     esNumerico = false,
     largoMaximo = 150
   } = props;
+
+  const estilos = StyleSheet.create({
+    contenedor: {
+      flexDirection: 'row',
+      width: '80%',
+      marginBottom: 15,
+      height: 50
+    },
+    contenedorTexto: {
+      flex: 1,
+      flexDirection: 'row',
+      marginLeft: 7,
+      borderBottomColor: 'white',
+      borderBottomWidth: 1,
+      borderRadius: 7
+    },
+    cajaTexto: {
+      color: '#fff',
+      fontSize: 20,
+      lineHeight: 30,
+      height: 60,
+      marginLeft: 5,
+      width: '100%'
+    },
+    contenedorIcono: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: 30,
+      height: 60,
+      paddingTop: icono === NombresIconosGenerales.dni ? 12 : 0
+    }
+  });
+
   return (
     <View style={estilos.contenedor}>
       { icono && (
         <View style={estilos.contenedorIcono}>
-          <FontAwesomeIcon style={{ lineHeight: 70 }} size={30} fill="#fff" icon={icono} />
+          { IconosGenerales[icono] }
         </View>
       )}
       <View style={estilos.contenedorTexto}>

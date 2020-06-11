@@ -3,15 +3,12 @@ import React, { useState, useContext } from 'react';
 import {
   StyleSheet, View, Text, ScrollView, Image
 } from 'react-native';
-import {
-  faAt, faKey, faUserAstronaut, faIdCard
-} from '@fortawesome/free-solid-svg-icons';
 import withErrorBoundary from '../../enhancers/withErrorBoundary';
 import TextoIngreso from '../../componentes/comunes/textoIngreso';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import Etiqueta from '../../componentes/comunes/etiqueta';
 import Camara from '../../componentes/comunes/camara';
-import { ContextoStates } from '../../lib/contextoStates';
+import { ContextoEstados } from '../../lib/contextoEstados';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 import {
   validarExistenciaEmanil,
@@ -20,7 +17,7 @@ import {
   guardarUsuario,
   login,
 } from '../../lib/servicios';
-import { setearUsuarioLogueado } from './usuarioAcciones';
+import { NombresIconosGenerales } from '../../lib/constantes';
 
 const Registro = ({ navigation }) => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
@@ -36,7 +33,7 @@ const Registro = ({ navigation }) => {
   const [botonCargando, setearBotonCargando] = useState(false);
   const [mostrarValidaciones, cambiarMostrarValidaciones] = useState(false);
   const [uriFoto, guardarUriFoto] = useState();
-  const { loginDispatch } = useContext(ContextoStates);
+  const { fijarUsuarioLogueadoEnEstado } = useContext(ContextoEstados);
 
   const estilos = StyleSheet.create({
     contenedorGlobal: {
@@ -115,7 +112,7 @@ const Registro = ({ navigation }) => {
         <TextoIngreso
           placeholderText="e-mail"
           value={emailUsuario}
-          icono={faAt}
+          icono={NombresIconosGenerales.correo}
           manejadorCambioTexto={cambioEmail}
         />
         {emailExistente && mostrarValidaciones
@@ -129,7 +126,7 @@ const Registro = ({ navigation }) => {
         <TextoIngreso
           placeholderText="Contraseña"
           value={contrasenaUsuario}
-          icono={faKey}
+          icono={NombresIconosGenerales.contrasena}
           manejadorCambioTexto={cambioContrasena}
           esconderTexto
         />
@@ -138,7 +135,7 @@ const Registro = ({ navigation }) => {
         <TextoIngreso
           placeholderText="Nombre"
           value={nombreUsuario}
-          icono={faUserAstronaut}
+          icono={NombresIconosGenerales.usuario}
           manejadorCambioTexto={cambioNombre}
         />
         {!nombreUsuario && mostrarValidaciones
@@ -146,7 +143,7 @@ const Registro = ({ navigation }) => {
         <TextoIngreso
           placeholderText="Apellido"
           value={apellidoUsuario}
-          icono={faUserAstronaut}
+          icono={NombresIconosGenerales.usuario}
           manejadorCambioTexto={cambioApellido}
         />
         {!apellidoUsuario && mostrarValidaciones
@@ -154,7 +151,7 @@ const Registro = ({ navigation }) => {
         <TextoIngreso
           placeholderText="DNI"
           value={dniUsuario}
-          icono={faIdCard}
+          icono={NombresIconosGenerales.dni}
           manejadorCambioTexto={cambioDNI}
           esNumerico
           largoMaximo={8}
@@ -191,7 +188,7 @@ const Registro = ({ navigation }) => {
     <View style={estilos.contenedorCampos}>
       <View style={estilos.encabezadoPantallaConfirmar}>
         <View style={{ width: '60%' }}>
-          <Etiqueta value={`${nombreUsuario} ${apellidoUsuario}`} icono={faUserAstronaut} />
+          <Etiqueta value={`${nombreUsuario} ${apellidoUsuario}`} icono={NombresIconosGenerales.usuario} />
         </View>
         <View style={estilos.contenedorFotografia}>
           <Image
@@ -201,9 +198,13 @@ const Registro = ({ navigation }) => {
         </View>
       </View>
       <View style={estilos.contenedorDatosConfirmar}>
-        <Etiqueta value={dniUsuario} icono={faIdCard} />
-        <Etiqueta value={emailUsuario} icono={faAt} />
-        <Etiqueta value={contrasenaUsuario} icono={faKey} esconderTexto />
+        <Etiqueta value={dniUsuario} icono={NombresIconosGenerales.dni} />
+        <Etiqueta value={emailUsuario} icono={NombresIconosGenerales.correo} />
+        <Etiqueta
+          value={contrasenaUsuario}
+          icono={NombresIconosGenerales.contrasena}
+          esconderTexto
+        />
       </View>
     </View>
   );
@@ -340,7 +341,7 @@ const Registro = ({ navigation }) => {
       guardar();
     },
     // Almacena credenciales, esto cambia el navegador (Autenticado) y pasa a la Lobby.
-    [5]: () => setearUsuarioLogueado(loginDispatch, emailUsuario, tokenUsuario, contrasenaUsuario)
+    [5]: () => fijarUsuarioLogueadoEnEstado(emailUsuario, tokenUsuario, contrasenaUsuario)
     /* eslint-enable no-useless-computed-key */
   };
 

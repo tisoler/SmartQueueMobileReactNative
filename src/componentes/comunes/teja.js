@@ -4,7 +4,7 @@ import { useState } from 'react';
 import {
   StyleSheet, Image, View, TouchableWithoutFeedback, Animated, Easing, Platform
 } from 'react-native';
-import { iconosCentros } from '../../lib/constantes';
+import { IconosCentros } from '../../lib/constantes';
 
 type Props = {
   manejadorClick: Function,
@@ -79,7 +79,7 @@ const Teja = (props: Props) => {
         {renderRippleView()}
         <Image
           style={estilo.imagen}
-          source={iconosCentros[appIcon]}
+          source={IconosCentros[appIcon]}
         />
         {children}
       </View>

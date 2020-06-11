@@ -1,10 +1,11 @@
 // @flow
 
-const setearCentros = (dispatch: Function, centros: Array<Object>) => {
-  dispatch({
-    type: 'SET_CENTROS',
-    payload: { centros }
-  });
+const fijarCentrosAccion = (
+  estadoLogin: Object,
+  asignarEstadoLogin: Function,
+  centros: Array<Object>
+) => {
+  asignarEstadoLogin({ centros });
 };
 
-export default setearCentros;
+export default fijarCentrosAccion;

@@ -4,17 +4,20 @@ import {
   View, StyleSheet, Text, Image, ActivityIndicator, Alert
 } from 'react-native';
 import withErrorBoundary from '../../enhancers/withErrorBoundary';
-import { iconosCentros } from '../../lib/constantes';
+import { IconosCentros } from '../../lib/constantes';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
-import { ContextoStates } from '../../lib/contextoStates';
+import { ContextoEstados } from '../../lib/contextoEstados';
 import { estimarDemora, cancelarTicket, confirmarAsistencia } from '../../lib/servicios';
-import { cancelarTurnoState, confirmarAsistenciaTurnoState } from '../usuario/usuarioAcciones';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 
 const Turno = ({ route, navigation }) => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
   const { turno, demoraTurnoCreado } = route.params;
-  const { loginState, loginDispatch } = useContext(ContextoStates);
+  const {
+    estadoLogin,
+    cancelarTurnoEnEstado,
+    confirmarAsistenciaTurnoEnEstado
+  } = useContext(ContextoEstados);
   const [demora, setDemora] = useState(null);
   const [confirmoPresencia, setConfirmoPresencia] = useState(false);
   const [cargando, setCargando] = useState(true);
@@ -54,7 +57,7 @@ const Turno = ({ route, navigation }) => {
     // Si viene de crear el turno usa la misma demora que le informaó en la pantalla anterior.
     // Si está consultando un turno llama al estimador de demora.
     if (demoraTurnoCreado == null) {
-      estimarDemora(loginState.token, turno.Category.id, turno.Center.id)
+      estimarDemora(estadoLogin.token, turno.Category.id, turno.Center.id)
         .then(res => res.json())
         .then(respuesta => {
           setDemora(respuesta.response.wait);
@@ -72,11 +75,11 @@ const Turno = ({ route, navigation }) => {
 
   const cancelarTurno = () => {
     setCargando(true);
-    cancelarTicket(loginState.token, turno.Center.id)
+    cancelarTicket(estadoLogin.token, turno.Center.id)
       .then(res => res.json())
       .then(respuesta => {
         if (respuesta.success) {
-          cancelarTurnoState(loginDispatch, turno);
+          cancelarTurnoEnEstado(turno);
           navigation.navigate('Lobby');
         } else {
           Alert.alert('Error al cancelar el turno.');
@@ -86,10 +89,10 @@ const Turno = ({ route, navigation }) => {
   };
 
   const confirmarPresencia = () => {
-    confirmarAsistencia(loginState.token, turno.Center.id)
+    confirmarAsistencia(estadoLogin.token, turno.Center.id)
       .then(res => res.json())
       .then(() => {
-        confirmarAsistenciaTurnoState(loginDispatch, turno);
+        confirmarAsistenciaTurnoEnEstado(turno);
         setConfirmoPresencia(true);
       })
       .catch(() => {
@@ -143,7 +146,7 @@ const Turno = ({ route, navigation }) => {
       <View style={estilos.contenedor}>
         <Image
           style={estilosGlobales.imagenLogoCentro}
-          source={iconosCentros[turno.Center.app_icon]}
+          source={IconosCentros[turno.Center.app_icon]}
         />
         <ActivityIndicator size="large" color="#FFF" />
       </View>
@@ -154,7 +157,7 @@ const Turno = ({ route, navigation }) => {
     <View style={estilos.contenedor}>
       <Image
         style={estilosGlobales.imagenLogoCentro}
-        source={iconosCentros[turno.Center.app_icon]}
+        source={IconosCentros[turno.Center.app_icon]}
       />
       { obtenerVista() }
     </View>

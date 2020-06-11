@@ -7,13 +7,8 @@ import {
   Text
 } from 'react-native';
 import { RNCamera } from 'react-native-camera';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import {
-  faCameraRetro,
-  faCheck,
-  faTimes,
-  faSyncAlt
-} from '@fortawesome/free-solid-svg-icons';
+import { NombresIconosGenerales } from '../../lib/constantes';
+import IconosGenerales from '../../lib/iconos';
 
 type Props = {
   aceptarFoto: Function
@@ -60,8 +55,6 @@ export default (props: Props) => {
   const { guardarUriFoto, uriFoto, aceptarFoto } = props;
   const [camaraFrontal, cambiarTipoCamara] = useState(true);
   let camera;
-  const colorCamara = '#fff';
-  const colorCambioCamara = '#fff';
 
   const tomarFoto = async () => {
     if (camera) {
@@ -111,23 +104,23 @@ export default (props: Props) => {
           ? (
             <View style={{ flex: 1, flexDirection: 'row' }}>
               <TouchableOpacity onPress={cambiarCamara} style={estilos.captura}>
-                <FontAwesomeIcon size={30} fill={colorCambioCamara} icon={faSyncAlt} />
+                {IconosGenerales[NombresIconosGenerales.girarCamara]}
                 <Text style={{ fontSize: 17, color: '#fff' }}>
                   {camaraFrontal ? 'Frontal' : 'Trasera'}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={tomarFoto} style={estilos.captura}>
-                <FontAwesomeIcon size={50} fill={colorCamara} icon={faCameraRetro} />
+                {IconosGenerales[NombresIconosGenerales.camara]}
               </TouchableOpacity>
             </View>
           )
           : (
             <View style={estilos.accionesFoto}>
               <TouchableOpacity style={{ paddingRight: 30 }} onPress={() => guardarUriFoto(null)}>
-                <FontAwesomeIcon size={50} fill={colorCamara} icon={faTimes} />
+                {IconosGenerales[NombresIconosGenerales.cancelar]}
               </TouchableOpacity>
               <TouchableOpacity style={{ paddingLeft: 30 }} onPress={aceptarFoto}>
-                <FontAwesomeIcon size={50} fill={colorCamara} icon={faCheck} />
+                {IconosGenerales[NombresIconosGenerales.aceptar]}
               </TouchableOpacity>
             </View>
           )}

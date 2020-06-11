@@ -4,17 +4,16 @@ import {
   View, Text, ActivityIndicator, StyleSheet, Image
 } from 'react-native';
 import withErrorBoundary from '../../enhancers/withErrorBoundary';
-import { ContextoStates } from '../../lib/contextoStates';
+import { ContextoEstados } from '../../lib/contextoEstados';
 import Estrella from '../../componentes/comunes/svg/estrella';
-import { iconosCentros } from '../../lib/constantes';
+import { IconosCentros } from '../../lib/constantes';
 import { evaluarTurno } from '../../lib/servicios';
-import { evaluarTurnoState } from '../usuario/usuarioAcciones';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 
 const EvaluacionTurno = ({ navigation }) => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
-  const { loginState, loginDispatch } = useContext(ContextoStates);
-  const { turnosParaEvaluar } = loginState;
+  const { estadoLogin, evaluarTurnoEnEstado } = useContext(ContextoEstados);
+  const { turnosParaEvaluar } = estadoLogin;
   const turnoEvaluado = turnosParaEvaluar[0];
   const [cantidadEstrellas, setCantidadEstrellas] = useState(0);
   const estilos = StyleSheet.create({
@@ -55,15 +54,15 @@ const EvaluacionTurno = ({ navigation }) => {
 
   const evaluar = (cantEstrellas) => {
     setCantidadEstrellas(cantEstrellas);
-    evaluarTurno(loginState.token, turnoEvaluado.Center.id, cantEstrellas)
+    evaluarTurno(estadoLogin.token, turnoEvaluado.Center.id, cantEstrellas)
       .then(respuesta => respuesta.json())
       .then(respuesta => {
         if (respuesta.success) {
-          evaluarTurnoState(loginDispatch, turnoEvaluado);
+          evaluarTurnoEnEstado(turnoEvaluado);
           if (turnosParaEvaluar.length === 1) {
             setTimeout(() => {
               navigation.navigate('Lobby');
-            }, 1500);
+            }, 4500);
           } else {
             setCantidadEstrellas(0);
           }
@@ -81,7 +80,10 @@ const EvaluacionTurno = ({ navigation }) => {
 
   return (
     <View style={estilos.contenedor}>
-      <Image style={estilosGlobales.imagenLogoCentro} source={iconosCentros[turnoEvaluado.Center.app_icon]} />
+      <Image
+        style={estilosGlobales.imagenLogoCentro}
+        source={IconosCentros[turnoEvaluado.Center.app_icon]}
+      />
       <Text style={estilos.titulo}>{turnoEvaluado.code}</Text>
       <Text style={estilos.subtitulo}>
         {turnoEvaluado.Category.name}

@@ -5,12 +5,11 @@ import {
   View, StyleSheet, Text, Image, ActivityIndicator, Alert
 } from 'react-native';
 import withErrorBoundary from '../../enhancers/withErrorBoundary';
-import { ContextoStates } from '../../lib/contextoStates';
-import { iconosCentros } from '../../lib/constantes';
+import { ContextoEstados } from '../../lib/contextoEstados';
+import { IconosCentros } from '../../lib/constantes';
 import { estimarDemora, generarTicket } from '../../lib/servicios';
 import BotonPopup from '../../componentes/comunes/botonPopup';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
-import { agregarTurnoActivoState } from '../usuario/usuarioAcciones';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 
 const CentrosAtencion = ({ route, navigation }) => {
@@ -20,7 +19,7 @@ const CentrosAtencion = ({ route, navigation }) => {
   const [cargando, setCargando] = useState(false);
   const [categoriaSeleccionada, setCategoria] = useState({});
   const [demora, setDemora] = useState({});
-  const { loginState, loginDispatch } = useContext(ContextoStates);
+  const { estadoLogin, agregarTurnoActivoEnEstado } = useContext(ContextoEstados);
   const estilos = StyleSheet.create({
     container: {
       flex: 1,
@@ -61,7 +60,7 @@ const CentrosAtencion = ({ route, navigation }) => {
     setTurnoPedido(true);
     setCargando(true);
     setCategoria({}); // resetea demora estimada y la vuelve a consultar
-    estimarDemora(loginState.token, categoria.id, centro.id)
+    estimarDemora(estadoLogin.token, categoria.id, centro.id)
       .then(res => res.json())
       .then(respuesta => {
         setDemora(respuesta.response.wait);
@@ -73,11 +72,11 @@ const CentrosAtencion = ({ route, navigation }) => {
 
   const confirmarTurno = () => {
     setCargando(true);
-    generarTicket(loginState.token, categoriaSeleccionada.id, centro.id)
+    generarTicket(estadoLogin.token, categoriaSeleccionada.id, centro.id)
       .then(res => res.json())
       .then(respuesta => {
         setCargando(false);
-        agregarTurnoActivoState(loginDispatch, respuesta.response.ticket);
+        agregarTurnoActivoEnEstado(respuesta.response.ticket);
         navigation.navigate('Turno', { turno: respuesta.response.ticket, demoraTurnoCreado: demora });
         setTurnoPedido(false);
       })
@@ -152,7 +151,7 @@ const CentrosAtencion = ({ route, navigation }) => {
 
   return (
     <View style={estilos.container}>
-      <Image style={estilosGlobales.imagenLogoCentro} source={iconosCentros[centro.app_icon]} />
+      <Image style={estilosGlobales.imagenLogoCentro} source={IconosCentros[centro.app_icon]} />
       { obtenerRender() }
     </View>
   );

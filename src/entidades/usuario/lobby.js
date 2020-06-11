@@ -4,23 +4,22 @@ import {
   View, StyleSheet, Alert, ActivityIndicator, Text, ScrollView, Dimensions
 } from 'react-native';
 import { obtenerTicketsParaUsuario } from '../../lib/servicios';
-import { ContextoStates } from '../../lib/contextoStates';
+import { ContextoEstados } from '../../lib/contextoEstados';
 import withErrorBoundary from '../../enhancers/withErrorBoundary';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import Teja from '../../componentes/comunes/teja';
-import { setearTurnosActivos } from './usuarioAcciones';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 
 const Lobby = ({ navigation }) => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
-  const { loginState, loginDispatch } = useContext(ContextoStates);
-  const { turnosActivos } = loginState;
+  const { estadoLogin, fijarTurnosActivosEnEstado } = useContext(ContextoEstados);
+  const { turnosActivos } = estadoLogin;
   useEffect(() => {
-    obtenerTicketsParaUsuario(loginState.token)
+    obtenerTicketsParaUsuario(estadoLogin.token)
       .then(res => res.json())
       .then(respuesta => {
         if (respuesta.success) {
-          setearTurnosActivos(loginDispatch, respuesta.response);
+          fijarTurnosActivosEnEstado(respuesta.response);
           if (respuesta.response.some(turno => turno.status === 'finished')) {
             navigation.navigate('EvaluacionTurno');
           }
@@ -91,7 +90,7 @@ const Lobby = ({ navigation }) => {
     },
   });
 
-  if (turnosActivos == null) {
+  if (!turnosActivos) {
     return (
       <View style={estilos.contenedor}>
         <ActivityIndicator size="large" color="#FFF" />

@@ -1,12 +1,15 @@
 // @flow
 import React, { useContext, useEffect, useState } from 'react';
-import { StyleSheet, Dimensions, TouchableOpacity, View, Text } from 'react-native';
+import {
+  StyleSheet,
+  Dimensions,
+  TouchableOpacity,
+  View
+} from 'react-native';
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, TransitionSpecs } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faBars } from '@fortawesome/free-solid-svg-icons';
 import Login from '../entidades/usuario/login';
 import ListaCentrosAtencion from '../entidades/centroAtencion/listaCentrosAtencion';
 import CentroAtencion from '../entidades/centroAtencion/centroAtencion';
@@ -16,20 +19,23 @@ import Lobby from '../entidades/usuario/lobby';
 import EvaluacionTurno from '../entidades/turno/evaluacionTurno';
 import MenuLateral from './menuLateral';
 import { ContextoEstilosGlobales } from '../lib/contextoEstilosGlobales';
-import { ContextoStates } from '../lib/contextoStates';
-import { recuperarDatosLocalmente, setearUsuarioLogueado } from '../entidades/usuario/usuarioAcciones';
+import { ContextoEstados } from '../lib/contextoEstados';
+import { recuperarDatosLocalmente } from '../entidades/usuario/usuarioAcciones';
+import IconosGenerales from '../lib/iconos';
+import { NombresIconosGenerales } from '../lib/constantes';
 import { login } from '../lib/servicios';
+import PantallaCargando from './pantallaCargando';
 
 const Stack = createStackNavigator();
-
-const colorLetraEncabezado = '#fff';
 
 const BotonMenuHamburguesa = (props) => {
   const { estilos, navigation } = props;
   return (
-    <TouchableOpacity style={estilos.botonHamburguesa} onPress={() => navigation.openDrawer()}>
-      <FontAwesomeIcon style={{ lineHeight: 70 }} size={30} fill="#fff" icon={faBars} />
-    </TouchableOpacity>
+    <View style={estilos.botonHamburguesa}>
+      <TouchableOpacity onPress={() => navigation.openDrawer()}>
+        {IconosGenerales[NombresIconosGenerales.menu]}
+      </TouchableOpacity>
+    </View>
   );
 };
 
@@ -50,7 +56,7 @@ const NavegadorFijoNoAutenticado = () => {
           options={{
             title: 'Smart queue',
             headerStyle: estilos.encabezadoNavegacion,
-            headerTintColor: colorLetraEncabezado
+            headerTintColor: estilosGlobales.colorLetraEncabezado
           }}
           gestureEnabled={false}
         />
@@ -60,7 +66,7 @@ const NavegadorFijoNoAutenticado = () => {
           options={{
             title: 'Smart queue - Registro',
             headerStyle: estilos.encabezadoNavegacion,
-            headerTintColor: colorLetraEncabezado
+            headerTintColor: estilosGlobales.colorLetraEncabezado
           }}
         />
       </Stack.Navigator>
@@ -75,11 +81,12 @@ const NavegadorFijoAutenticado = ({ navigation }) => {
       backgroundColor: estilosGlobales.colorBarraNavegacion
     },
     botonHamburguesa: {
+      flexGrow: 1,
+      flexDirection: 'column',
       justifyContent: 'center',
-      paddingLeft: 5,
-      paddingRight: 5,
-      marginLeft: 10,
-      height: '100%'
+      alignItems: 'center',
+      marginLeft: 6,
+      width: 50
     }
   });
 
@@ -91,7 +98,7 @@ const NavegadorFijoAutenticado = ({ navigation }) => {
         options={{
           title: 'Smart queue',
           headerStyle: estilos.encabezadoNavegacion,
-          headerTintColor: colorLetraEncabezado,
+          headerTintColor: estilosGlobales.colorLetraEncabezado,
           headerLeft: () => <BotonMenuHamburguesa navigation={navigation} estilos={estilos} />
         }}
       />
@@ -101,7 +108,7 @@ const NavegadorFijoAutenticado = ({ navigation }) => {
         options={{
           title: 'Centros de atención',
           headerStyle: estilos.encabezadoNavegacion,
-          headerTintColor: colorLetraEncabezado
+          headerTintColor: estilosGlobales.colorLetraEncabezado
         }}
       />
       <Stack.Screen
@@ -110,7 +117,7 @@ const NavegadorFijoAutenticado = ({ navigation }) => {
         options={{
           title: 'Centro de atención',
           headerStyle: estilos.encabezadoNavegacion,
-          headerTintColor: colorLetraEncabezado
+          headerTintColor: estilosGlobales.colorLetraEncabezado
         }}
       />
       <Stack.Screen
@@ -119,7 +126,7 @@ const NavegadorFijoAutenticado = ({ navigation }) => {
         options={{
           title: 'Turno',
           headerStyle: estilos.encabezadoNavegacion,
-          headerTintColor: colorLetraEncabezado,
+          headerTintColor: estilosGlobales.colorLetraEncabezado,
           transitionSpec: {
             open: TransitionSpecs.TransitionIOSSpec,
             close: TransitionSpecs.TransitionIOSSpec,
@@ -130,9 +137,10 @@ const NavegadorFijoAutenticado = ({ navigation }) => {
         name="EvaluacionTurno"
         component={EvaluacionTurno}
         options={{
+          headerLeft: () => null,
           title: 'Evaluación',
           headerStyle: estilos.encabezadoNavegacion,
-          headerTintColor: colorLetraEncabezado,
+          headerTintColor: estilosGlobales.colorLetraEncabezado,
           transitionSpec: {
             open: TransitionSpecs.TransitionIOSSpec,
             close: TransitionSpecs.TransitionIOSSpec,
@@ -158,35 +166,35 @@ const NavegadorAutenticado = () => (
   </NavigationContainer>
 );
 
-const recuperarCredencialesAlmacenadas = async (loginDispatch) => {
+const recuperarCredencialesAlmacenadas = async (fijarUsuarioLogueadoEnEstado) => {
   const [email, contrasena] = [await recuperarDatosLocalmente('@email'), await recuperarDatosLocalmente('@contraseña')];
   if (email && contrasena) {
     const payload = { email, password: contrasena };
     const res = await login(payload);
     const respuesta = await res.json();
     if (respuesta.success) {
-      setearUsuarioLogueado(loginDispatch, email, respuesta.token, contrasena);
+      fijarUsuarioLogueadoEnEstado(email, respuesta.token, contrasena);
     }
   }
 };
 
 export default () => {
-  const { loginState, loginDispatch } = useContext(ContextoStates);
+  const { estadoLogin, fijarUsuarioLogueadoEnEstado } = useContext(ContextoEstados);
   const [listo, cambiarListo] = useState(false);
   // Recuperar credenciales almacenadas localmente
   useEffect(() => {
     const recuperarCredenciales = async () => {
-      await recuperarCredencialesAlmacenadas(loginDispatch);
+      await recuperarCredencialesAlmacenadas(fijarUsuarioLogueadoEnEstado);
       cambiarListo(true);
     };
     recuperarCredenciales();
   }, []);
 
   if (!listo) {
-    return <View><Text>Cargando</Text></View>;
+    return <PantallaCargando />;
   }
 
-  if (loginState?.email && loginState?.token) {
+  if (estadoLogin?.email && estadoLogin?.token) {
     return NavegadorAutenticado();
   }
   return NavegadorFijoNoAutenticado();

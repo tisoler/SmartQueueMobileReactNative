@@ -4,15 +4,14 @@ import {
   View, StyleSheet, ActivityIndicator, Alert, ScrollView, Text
 } from 'react-native';
 import withErrorBoundary from '../../enhancers/withErrorBoundary';
-import { ContextoStates } from '../../lib/contextoStates';
+import { ContextoEstados } from '../../lib/contextoEstados';
 import { obtenerCentrosAtencion } from '../../lib/servicios';
 import Teja from '../../componentes/comunes/teja';
-import setearCentros from './centroAtencionAcciones';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 
 const ListaCentrosAtencion = ({ navigation }) => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
-  const { loginState, centrosState, centrosDispatch } = useContext(ContextoStates);
+  const { estadoLogin, estadoCentros, fijarCentrosEnEstado } = useContext(ContextoEstados);
   const estilos = StyleSheet.create({
     contenedor: {
       flex: 1,
@@ -28,17 +27,17 @@ const ListaCentrosAtencion = ({ navigation }) => {
   });
 
   useEffect(() => {
-    if (centrosState == null || centrosState.centros.length === 0) {
-      obtenerCentrosAtencion(loginState.token)
+    if (estadoCentros == null || estadoCentros.centros.length === 0) {
+      obtenerCentrosAtencion(estadoLogin.token)
         .then(res => res.json())
         .then(respuesta => {
-          setearCentros(centrosDispatch, respuesta.response);
+          fijarCentrosEnEstado(respuesta.response);
         })
         .catch(() => Alert.alert('Error durante la carga de centros.'));
     }
   }, []);
 
-  const obtenerTurnoParaCentro = (idCentro) => loginState.turnosActivos
+  const obtenerTurnoParaCentro = (idCentro) => estadoLogin.turnosActivos
     .find(turno => turno.Center.id === idCentro);
 
   const seleccionarCentro = (centro) => {
@@ -50,7 +49,7 @@ const ListaCentrosAtencion = ({ navigation }) => {
     }
   };
 
-  if (centrosState == null) {
+  if (estadoCentros == null) {
     return (
       <View style={estilos.contenedor}>
         <ActivityIndicator size="large" color="#FFF" />
@@ -61,7 +60,7 @@ const ListaCentrosAtencion = ({ navigation }) => {
   return (
     <View style={estilos.contenedor}>
       <ScrollView>
-        { centrosState.centros.map(centro => (
+        { estadoCentros.centros.map(centro => (
           <Teja
             key={centro.id}
             appIcon={centro.app_icon}
