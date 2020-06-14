@@ -54,7 +54,7 @@ const temaClaro = {
   colorFondoPantallaLogin: '#026F8E',
   colorFondoGlobal: '#f5a31a',
   colorFondoEncabezadoTitulos: '#dd7631',
-  colorFondoContenedorDatos: '#ddd',
+  colorFondoContenedorDatos: '#d1cebd',
   colorTextoGeneral: '#393e46',
   colorLetraEncabezado: '#393e46',
   colorTextoConfirmacionTurno: '#393e46',
