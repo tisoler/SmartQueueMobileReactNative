@@ -6,6 +6,8 @@ const temaOscuro = {
   colorFondoEncabezadoTitulos: '#00566D',
   colorFondoContenedorDatos: '#005f79',
   colorTextoGeneral: '#fff',
+  colorLetraEncabezado: '#fff',
+  colorTextoConfirmacionTurno: '#393e46',
   mensajeError: {
     color: '#852E1D',
     fontSize: 17
@@ -42,7 +44,6 @@ const temaOscuro = {
     height: 150,
     width: 150
   },
-  colorLetraEncabezado: '#fff',
   colorAvatarLetra: '#16817a',
   tamanoLetraEtiqueta: 19,
   colorIconos: '#fff'
@@ -55,6 +56,8 @@ const temaClaro = {
   colorFondoEncabezadoTitulos: '#dd7631',
   colorFondoContenedorDatos: '#ddd',
   colorTextoGeneral: '#393e46',
+  colorLetraEncabezado: '#393e46',
+  colorTextoConfirmacionTurno: '#393e46',
   mensajeError: {
     color: '#852E1D',
     fontSize: 17
@@ -91,7 +94,6 @@ const temaClaro = {
     height: 150,
     width: 150
   },
-  colorLetraEncabezado: '#393e46',
   colorAvatarLetra: '#3da4ab',
   tamanoLetraEtiqueta: 19,
   colorIconos: '#000'

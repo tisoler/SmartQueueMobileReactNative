@@ -10,12 +10,13 @@ import { IconosCentros } from '../../lib/constantes';
 import { evaluarTurno } from '../../lib/servicios';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 
-const EvaluacionTurno = ({ navigation }) => {
+const EvaluacionTurno = () => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
   const { estadoLogin, evaluarTurnoEnEstado } = useContext(ContextoEstados);
   const { turnosParaEvaluar } = estadoLogin;
   const turnoEvaluado = turnosParaEvaluar[0];
   const [cantidadEstrellas, setCantidadEstrellas] = useState(0);
+
   const estilos = StyleSheet.create({
     contenedor: {
       flex: 1,
@@ -58,12 +59,10 @@ const EvaluacionTurno = ({ navigation }) => {
       .then(respuesta => respuesta.json())
       .then(respuesta => {
         if (respuesta.success) {
-          evaluarTurnoEnEstado(turnoEvaluado);
-          if (turnosParaEvaluar.length === 1) {
-            setTimeout(() => {
-              navigation.navigate('Lobby');
-            }, 4500);
-          } else {
+          setTimeout(() => {
+            evaluarTurnoEnEstado(turnoEvaluado);
+          }, 2000);
+          if (turnosParaEvaluar.length > 1) {
             setCantidadEstrellas(0);
           }
         }

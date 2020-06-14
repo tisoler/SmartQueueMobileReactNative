@@ -39,6 +39,36 @@ const BotonMenuHamburguesa = (props) => {
   );
 };
 
+const NavegadorEvaluacion = () => {
+  const { estilosGlobales } = useContext(ContextoEstilosGlobales);
+  const estilos = StyleSheet.create({
+    encabezadoNavegacion: {
+      backgroundColor: estilosGlobales.colorBarraNavegacion
+    }
+  });
+
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="EvaluacionTurno"
+          component={EvaluacionTurno}
+          options={{
+            headerLeft: () => null,
+            title: 'Evaluación',
+            headerStyle: estilos.encabezadoNavegacion,
+            headerTintColor: estilosGlobales.colorLetraEncabezado,
+            transitionSpec: {
+              open: TransitionSpecs.TransitionIOSSpec,
+              close: TransitionSpecs.TransitionIOSSpec,
+            },
+          }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+
 const NavegadorFijoNoAutenticado = () => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
   const estilos = StyleSheet.create({
@@ -133,20 +163,6 @@ const NavegadorFijoAutenticado = ({ navigation }) => {
           },
         }}
       />
-      <Stack.Screen
-        name="EvaluacionTurno"
-        component={EvaluacionTurno}
-        options={{
-          headerLeft: () => null,
-          title: 'Evaluación',
-          headerStyle: estilos.encabezadoNavegacion,
-          headerTintColor: estilosGlobales.colorLetraEncabezado,
-          transitionSpec: {
-            open: TransitionSpecs.TransitionIOSSpec,
-            close: TransitionSpecs.TransitionIOSSpec,
-          },
-        }}
-      />
     </Stack.Navigator>
   );
 };
@@ -195,6 +211,9 @@ export default () => {
     return <PantallaCargando />;
   }
 
+  if (estadoLogin?.turnosParaEvaluar?.length > 0) {
+    return NavegadorEvaluacion();
+  }
   if (estadoLogin?.email && estadoLogin?.token) {
     return NavegadorAutenticado();
   }

@@ -42,12 +42,14 @@ const CentrosAtencion = ({ route, navigation }) => {
       fontSize: 22,
       paddingBottom: 10,
       paddingTop: 15,
-      fontWeight: 'bold'
+      fontWeight: 'bold',
+      color: estilosGlobales.colorTextoConfirmacionTurno
     },
     mensaje: {
       fontSize: 18,
       padding: 10,
-      textAlign: 'justify'
+      textAlign: 'justify',
+      color: estilosGlobales.colorTextoConfirmacionTurno
     },
     contenedorBotonesConfirmacion: {
       flexDirection: 'row',

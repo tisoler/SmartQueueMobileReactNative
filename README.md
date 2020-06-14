@@ -13,3 +13,8 @@ Correr flow: yarn flow
 
 Para correr los tests
 yarn test
+
+Para crear el bundle
+./gradlew bundleRelease
+Para crear el apk
+./gradlew assembleRelease

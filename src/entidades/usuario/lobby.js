@@ -20,9 +20,6 @@ const Lobby = ({ navigation }) => {
       .then(respuesta => {
         if (respuesta.success) {
           fijarTurnosActivosEnEstado(respuesta.response);
-          if (respuesta.response.some(turno => turno.status === 'finished')) {
-            navigation.navigate('EvaluacionTurno');
-          }
         } else {
           Alert.alert('Error durante la carga de turnos activos.');
         }
