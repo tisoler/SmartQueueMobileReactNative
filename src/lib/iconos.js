@@ -12,6 +12,7 @@ import CerrarSesion from '../componentes/comunes/svg/cerrarSesion';
 import Aceptar from '../componentes/comunes/svg/aceptar';
 import Cancelar from '../componentes/comunes/svg/cancelar';
 import Turnos from '../componentes/comunes/svg/turnos';
+import Paleta from '../componentes/comunes/svg/paleta';
 
 const IconosGenerales = {
   [NombresIconosGenerales.correo]: <Correo width={29} height={29} />,
@@ -24,7 +25,8 @@ const IconosGenerales = {
   [NombresIconosGenerales.cerrarSesion]: <CerrarSesion width={30} height={30} />,
   [NombresIconosGenerales.aceptar]: <Aceptar width={57} height={57} />,
   [NombresIconosGenerales.cancelar]: <Cancelar width={55} height={55} />,
-  [NombresIconosGenerales.turnos]: <Turnos width={35} height={35} />
+  [NombresIconosGenerales.turnos]: <Turnos width={35} height={35} />,
+  [NombresIconosGenerales.paleta]: <Paleta width={30} height={30} />,
 };
 
 export default IconosGenerales;

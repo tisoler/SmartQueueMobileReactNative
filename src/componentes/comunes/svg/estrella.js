@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
-import { TouchableWithoutFeedback } from 'react-native';
 import { Svg, Path } from 'react-native-svg';
+import { TouchableWithoutFeedback } from 'react-native';
 
 type Props = {
   width?: number,

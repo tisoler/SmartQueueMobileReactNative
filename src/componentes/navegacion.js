@@ -20,7 +20,7 @@ import EvaluacionTurno from '../entidades/turno/evaluacionTurno';
 import MenuLateral from './menuLateral';
 import { ContextoEstilosGlobales } from '../lib/contextoEstilosGlobales';
 import { ContextoEstados } from '../lib/contextoEstados';
-import { recuperarDatosLocalmente } from '../entidades/usuario/usuarioAcciones';
+import { recuperarDatosLocalmente, recuperarTokenFB } from '../lib/ayudante';
 import IconosGenerales from '../lib/iconos';
 import { NombresIconosGenerales } from '../lib/constantes';
 import { login } from '../lib/servicios';
@@ -167,13 +167,14 @@ const NavegadorAutenticado = () => (
 );
 
 const recuperarCredencialesAlmacenadas = async (fijarUsuarioLogueadoEnEstado) => {
-  const [email, contrasena] = [await recuperarDatosLocalmente('@email'), await recuperarDatosLocalmente('@contraseña')];
+  const [email, contrasena, temaUsuario] = [await recuperarDatosLocalmente('@email'), await recuperarDatosLocalmente('@contraseña'), await recuperarDatosLocalmente('@temaUsuario')];
   if (email && contrasena) {
-    const payload = { email, password: contrasena };
+    const fbtoken = await recuperarTokenFB();
+    const payload = { email, password: contrasena, fbtoken };
     const res = await login(payload);
     const respuesta = await res.json();
     if (respuesta.success) {
-      fijarUsuarioLogueadoEnEstado(email, respuesta.token, contrasena);
+      fijarUsuarioLogueadoEnEstado(email, respuesta.token, contrasena, fbtoken, temaUsuario);
     }
   }
 };

@@ -1,21 +1,23 @@
 
 // @flow
 import * as React from 'react';
+import { useContext } from 'react';
 import { Svg, Path } from 'react-native-svg';
+import { ContextoEstilosGlobales } from '../../../lib/contextoEstilosGlobales';
 
 type Props = {
   width?: number,
-  height?: number,
-  fill?: string
+  height?: number
 }
 
 export default (props: Props) => {
   const {
-    height = 40, width = 40, fill = '#fff'
+    height = 40, width = 40
   } = props;
+  const { estilosGlobales } = useContext(ContextoEstilosGlobales);
 
   return (
-    <Svg viewBox="0 0 512 512" width={width} height={height} fill={fill}>
+    <Svg viewBox="0 0 512 512" width={width} height={height} fill={estilosGlobales.colorIconos}>
       <Path d="M110.933,221.782c-4.71,0-8.533,3.823-8.533,8.533v51.2c0,4.71,3.823,8.533,8.533,8.533s8.533-3.823,8.533-8.533v-51.2     C119.467,225.605,115.644,221.782,110.933,221.782z" />
       <Path d="M111.855,2.304L31.172,34.586C8.448,43,0,54.418,0,76.715v358.477c0,22.298,8.448,33.715,30.959,42.061l81.058,32.427     c4.011,1.519,8.038,2.287,11.981,2.287c17.152,0,29.602-14.336,29.602-34.091V34.049C153.6,9.78,134.246-6.126,111.855,2.304z      M136.533,477.876c0,10.18-5.035,17.024-12.535,17.024c-1.869,0-3.883-0.401-5.803-1.118L37.103,461.33     c-16.102-5.965-20.036-11.102-20.036-26.138V76.715c0-15.036,3.934-20.164,20.241-26.206l80.725-32.29     c2.082-0.785,4.087-1.186,5.956-1.186c7.501,0,12.544,6.835,12.544,17.016V477.876z" />
       <Path d="M178.133,51.115h120.533c14.114,0,25.6,11.486,25.6,25.6v128c0,4.71,3.814,8.533,8.533,8.533     c4.719,0,8.533-3.823,8.533-8.533v-128c0-23.526-19.14-42.667-42.667-42.667H178.133c-4.71,0-8.533,3.823-8.533,8.533     S173.423,51.115,178.133,51.115z" />

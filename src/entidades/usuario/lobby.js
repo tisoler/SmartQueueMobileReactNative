@@ -51,12 +51,12 @@ const Lobby = ({ navigation }) => {
       flex: 3
     },
     centro: {
-      color: '#FFF',
+      color: estilosGlobales.colorTextoGeneral,
       fontSize: 19,
       paddingLeft: 10
     },
     categoria: {
-      color: '#FFF',
+      color: estilosGlobales.colorTextoGeneral,
       fontSize: 17,
       paddingLeft: 10
     },

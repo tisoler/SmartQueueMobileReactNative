@@ -22,5 +22,6 @@ export const NombresIconosGenerales = {
   cerrarSesion: 'cerrarSesion',
   aceptar: 'aceptar',
   cancelar: 'cancelar',
-  turnos: 'turnos'
+  turnos: 'turnos',
+  paleta: 'paleta'
 };

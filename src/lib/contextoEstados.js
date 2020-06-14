@@ -7,7 +7,9 @@ import {
   fijarUsuarioLogueadoAccion,
   cancelarTurnoAccion,
   confirmarAsistenciaTurnoAccion,
-  evaluarTurnoAccion
+  evaluarTurnoAccion,
+  fijarTemaUsuarioAccion,
+  cambiarTemaUsuarioAccion
 } from '../entidades/usuario/usuarioAcciones';
 import fijarCentrosAccion from '../entidades/centroAtencion/centroAtencionAcciones';
 
@@ -42,8 +44,14 @@ export const ProveedorContextoEstados = (props: Props) => {
   const fijarTurnosActivosEnEstado = (turnosUsuario: Array<Object>) => {
     fijarTurnosActivosAccion(estadoLogin, asignarEstadoLogin, turnosUsuario);
   };
-  const fijarUsuarioLogueadoEnEstado = (email: string, token: string, contrasena: string) => {
-    fijarUsuarioLogueadoAccion(asignarEstadoLogin, email, token, contrasena);
+  const fijarUsuarioLogueadoEnEstado = (
+    email: string,
+    token: string,
+    contrasena: string,
+    fbtoken: string,
+    temaUsuario = 'temaOscuro'
+  ) => {
+    fijarUsuarioLogueadoAccion(asignarEstadoLogin, email, token, contrasena, fbtoken, temaUsuario);
   };
   const cancelarTurnoEnEstado = (turno: Object) => {
     cancelarTurnoAccion(estadoLogin, asignarEstadoLogin, turno);
@@ -53,6 +61,12 @@ export const ProveedorContextoEstados = (props: Props) => {
   };
   const evaluarTurnoEnEstado = (turno: Object) => {
     evaluarTurnoAccion(estadoLogin, asignarEstadoLogin, turno);
+  };
+  const fijarTemaUsuarioEnEstado = (temaUsuario: string) => {
+    fijarTemaUsuarioAccion(estadoLogin, asignarEstadoLogin, temaUsuario);
+  };
+  const cambiarTemaUsuarioEnEstado = () => {
+    cambiarTemaUsuarioAccion(estadoLogin, asignarEstadoLogin);
   };
   // Centros
   const fijarCentrosEnEstado = (turno: Object) => {
@@ -70,7 +84,9 @@ export const ProveedorContextoEstados = (props: Props) => {
       cancelarTurnoEnEstado,
       confirmarAsistenciaTurnoEnEstado,
       evaluarTurnoEnEstado,
-      fijarCentrosEnEstado
+      fijarTemaUsuarioEnEstado,
+      fijarCentrosEnEstado,
+      cambiarTemaUsuarioEnEstado
     }}
     >
       {children}

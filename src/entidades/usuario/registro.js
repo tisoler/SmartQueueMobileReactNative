@@ -18,6 +18,7 @@ import {
   login,
 } from '../../lib/servicios';
 import { NombresIconosGenerales } from '../../lib/constantes';
+import { recuperarTokenFB } from '../../lib/ayudante';
 
 const Registro = ({ navigation }) => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
@@ -33,6 +34,7 @@ const Registro = ({ navigation }) => {
   const [botonCargando, setearBotonCargando] = useState(false);
   const [mostrarValidaciones, cambiarMostrarValidaciones] = useState(false);
   const [uriFoto, guardarUriFoto] = useState();
+  const [fbtoken, setFbtoken] = useState('');
   const { fijarUsuarioLogueadoEnEstado } = useContext(ContextoEstados);
 
   const estilos = StyleSheet.create({
@@ -265,7 +267,8 @@ const Registro = ({ navigation }) => {
   };
 
   const loguearUsuario = async () => {
-    const payload = { email: emailUsuario, password: contrasenaUsuario };
+    setFbtoken(await recuperarTokenFB());
+    const payload = { email: emailUsuario, password: contrasenaUsuario, fbtoken };
     const res = await login(payload);
     const respuesta = await res.json();
     return respuesta;
@@ -341,7 +344,7 @@ const Registro = ({ navigation }) => {
       guardar();
     },
     // Almacena credenciales, esto cambia el navegador (Autenticado) y pasa a la Lobby.
-    [5]: () => fijarUsuarioLogueadoEnEstado(emailUsuario, tokenUsuario, contrasenaUsuario)
+    [5]: () => fijarUsuarioLogueadoEnEstado(emailUsuario, tokenUsuario, contrasenaUsuario, fbtoken)
     /* eslint-enable no-useless-computed-key */
   };
 

@@ -1,20 +1,22 @@
 // @flow
 import * as React from 'react';
+import { useContext } from 'react';
 import { Svg, Path } from 'react-native-svg';
+import { ContextoEstilosGlobales } from '../../../lib/contextoEstilosGlobales';
 
 type Props = {
   width?: number,
-  height?: number,
-  fill?: string
+  height?: number
 }
 
 export default (props: Props) => {
   const {
-    height = 40, width = 40, fill = '#fff'
+    height = 40, width = 40
   } = props;
+  const { estilosGlobales } = useContext(ContextoEstilosGlobales);
 
   return (
-    <Svg viewBox="0 0 512 512" width={width} height={height} fill={fill}>
+    <Svg viewBox="0 0 512 512" width={width} height={height} fill={estilosGlobales.colorIconos}>
       <Path d="M511.872,195.725c-0.053-0.588-0.17-1.169-0.35-1.732c-0.117-0.503-0.28-0.994-0.486-1.468
         c-0.239-0.463-0.525-0.901-0.853-1.306c-0.329-0.481-0.71-0.924-1.135-1.323c-0.137-0.119-0.196-0.282-0.341-0.401
         l-82.065-63.735V59.704c0-14.138-11.462-25.6-25.6-25.6h-92.476L271.539,5.355c-9.147-7.134-21.974-7.134-31.121,0

@@ -6,21 +6,6 @@ import {
 import BotonRipple from './botonRipple';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 
-const estilos = StyleSheet.create({
-  actividad: {
-    height: 55,
-    zIndex: 2
-  },
-  texto: {
-    lineHeight: 55,
-    width: '100%',
-    textAlign: 'center',
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'white'
-  }
-});
-
 type Props = {
   manejadorClick: Function,
   colorBorde?: string,
@@ -44,6 +29,21 @@ const BotonRedondeado = (props: Props) => {
     estilo = {},
     deshabilitado = false
   } = props;
+
+  const estilos = StyleSheet.create({
+    actividad: {
+      height: 55,
+      zIndex: 2
+    },
+    texto: {
+      lineHeight: 55,
+      width: '100%',
+      textAlign: 'center',
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: estilosGlobales.colorTextoGeneral
+    }
+  });
 
   return (
     <BotonRipple

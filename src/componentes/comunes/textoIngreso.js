@@ -76,7 +76,7 @@ const TextoIngreso = (props: Props) => {
           style={estilos.cajaTexto}
           placeholder={placeholderText}
           underlineColorAndroid="transparent"
-          onChangeText={text => manejadorCambioTexto(!esNumerico ? text : text.replace(/[^0-9]/g, ''))}
+          onChangeText={text => manejadorCambioTexto(!esNumerico ? text : text?.replace(/[^0-9]/g, ''))}
           value={value}
           editable={!soloLectura}
           secureTextEntry={esconderTexto}

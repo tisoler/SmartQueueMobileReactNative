@@ -10,6 +10,7 @@ import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import { ContextoEstados } from '../../lib/contextoEstados';
 import { ImagenLogo, NombresIconosGenerales } from '../../lib/constantes';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
+import { recuperarTokenFB, recuperarDatosLocalmente } from '../../lib/ayudante';
 
 
 const Login = ({ navigation }) => {
@@ -43,16 +44,18 @@ const Login = ({ navigation }) => {
     }
   });
 
-  const loguear = () => {
+  const loguear = async () => {
     cambioLogin(false);
     cambioCargando(true);
-    const payload = { email: emailUsuario, password: contrasenaUsuario };
+    const fbtoken = await recuperarTokenFB();
+    const temaUsuario = await recuperarDatosLocalmente('@temaUsuario');
+    const payload = { email: emailUsuario, password: contrasenaUsuario, fbtoken };
     login(payload)
       .then(res => res.json())
       .then(respuesta => {
         cambioCargando(false);
         if (respuesta.success) {
-          fijarUsuarioLogueadoEnEstado(emailUsuario, respuesta.token, contrasenaUsuario);
+          fijarUsuarioLogueadoEnEstado(emailUsuario, respuesta.token, contrasenaUsuario, fbtoken, temaUsuario || '');
         } else {
           cambioLogin(true);
         }

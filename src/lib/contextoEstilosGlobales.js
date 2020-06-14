@@ -1,6 +1,8 @@
 // @flow
 import * as React from 'react';
-import { createContext } from 'react';
+import { createContext, useContext } from 'react';
+import { ContextoEstados } from './contextoEstados';
+import temas from './temasEstilo';
 
 export const ContextoEstilosGlobales: Object = createContext();
 
@@ -10,53 +12,10 @@ type Props = {
 
 export const ContextoEstilosGlobalesProveedor = (props: Props) => {
   const { children } = props;
-  const estilosGlobales = {
-    colorBarraNavegacion: '#0A5164',
-    colorFondoPantallaLogin: '#026F8E',
-    colorFondoGlobal: '#2A4D57',
-    colorFondoEncabezadoTitulos: '#00566D',
-    colorFondoContenedorDatos: '#005f79',
-    colorTextoGeneral: '#fff',
-    mensajeError: {
-      color: '#852E1D',
-      fontSize: 17
-    },
-    tituloSeccion: {
-      fontSize: 20.5,
-      color: '#FFF',
-      lineHeight: 50
-    },
-    textoAviso: {
-      fontSize: 21,
-      color: '#fff',
-      margin: 20,
-      textAlign: 'center'
-    },
-    tituloGrande: {
-      fontSize: 26,
-      color: '#fff',
-      fontWeight: 'bold'
-    },
-    subtituloGrande: {
-      fontSize: 22,
-      color: '#fff',
-      fontWeight: 'bold',
-      textAlign: 'center'
-    },
-    colorFondoBotonPrincipal: '#16817a',
-    colorBordeBotonPrincipal: '#16817a',
-    colorEfectoClickBotonPrincipal: '#005f79',
-    colorFondoBotonSecundario: '#005f79',
-    colorBordeBotonSecundario: '#005f79',
-    colorEfectoClickBotonSecundario: '#fff',
-    imagenLogoCentro: {
-      height: 150,
-      width: 150
-    },
-    colorLetraEncabezado: '#fff',
-    colorAvatarLetra: '#16817a',
-    tamanoLetraEtiqueta: 19
-  };
+  const { estadoLogin } = useContext(ContextoEstados);
+  const estilosGlobales = estadoLogin?.temaUsuario
+    ? temas[estadoLogin.temaUsuario]
+    : temas.temaOscuro;
 
   return (
     <ContextoEstilosGlobales.Provider value={{ estilosGlobales }}>

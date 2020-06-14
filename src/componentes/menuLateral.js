@@ -13,7 +13,11 @@ import { NombresIconosGenerales } from '../lib/constantes';
 
 const MenuLateral = (props: Object) => {
   const { navigation } = props;
-  const { estadoLogin, fijarUsuarioLogueadoEnEstado } = useContext(ContextoEstados);
+  const {
+    estadoLogin,
+    fijarUsuarioLogueadoEnEstado,
+    cambiarTemaUsuarioEnEstado
+  } = useContext(ContextoEstados);
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
 
   const estilos = StyleSheet.create({
@@ -39,11 +43,13 @@ const MenuLateral = (props: Object) => {
       width: 120,
       borderRadius: 100,
       backgroundColor: estilosGlobales.colorAvatarLetra,
-      marginBottom: 10
+      marginBottom: 10,
+      paddingBottom: 4
     },
     letraAvatar: {
-      fontSize: 60,
-      color: estilosGlobales.colorLetraEncabezado
+      fontSize: 55,
+      color: estilosGlobales.colorLetraEncabezado,
+      textAlign: 'center'
     },
     opcionMenu: {
       flex: 0.15,
@@ -53,18 +59,16 @@ const MenuLateral = (props: Object) => {
     }
   });
 
-  const nombreUsuario = estadoLogin?.nombre && estadoLogin?.apellido
-    ? `${estadoLogin?.nombre} ${estadoLogin?.apellido}`
-    : 'Mi Perfil';
+  const nombreUsuario = estadoLogin?.nombre?.trim() ? estadoLogin.nombre : 'Mi Perfil';
 
   return (
     <View style={estilos.contenedorGlobal}>
       <View style={estilos.encabezadoPantallaConfirmar}>
         <View style={estilos.contenedorFotografia}>
-          <Text style={estilos.letraAvatar}>X</Text>
+          <Text style={estilos.letraAvatar}>{estadoLogin.iniciales}</Text>
         </View>
         <View style={{ width: '90%' }}>
-          <Etiqueta value={nombreUsuario} icono={NombresIconosGenerales.usuario} />
+          <Etiqueta value={nombreUsuario} icono={NombresIconosGenerales.usuario} tamanoLetra={18} />
         </View>
       </View>
       <TouchableOpacity style={estilos.opcionMenu} onPress={() => navigation.navigate('Lobby')}>
@@ -72,9 +76,19 @@ const MenuLateral = (props: Object) => {
       </TouchableOpacity>
       <TouchableOpacity
         style={estilos.opcionMenu}
+        onPress={() => cambiarTemaUsuarioEnEstado()}
+      >
+        <Etiqueta
+          value={estadoLogin?.temaUsuario === 'temaClaro' ? 'Estilo oscuro' : 'Estilo claro'}
+          icono={NombresIconosGenerales.paleta}
+          tamanoLetra={18}
+        />
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={estilos.opcionMenu}
         onPress={
           () => {
-            fijarUsuarioLogueadoEnEstado('', '', '');
+            fijarUsuarioLogueadoEnEstado('', '', '', estadoLogin.fbtoken, estadoLogin.temaUsuario);
             navigation.closeDrawer();
           }
         }
