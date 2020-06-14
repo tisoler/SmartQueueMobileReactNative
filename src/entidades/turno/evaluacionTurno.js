@@ -38,12 +38,12 @@ const EvaluacionTurno = () => {
       fontWeight: 'bold'
     },
     margen: {
-      marginTop: 30
+      marginTop: 20
     },
     contenedorEstrellas: {
       display: 'flex',
       flexDirection: 'row',
-      marginTop: 30
+      marginTop: 20
     },
     texto: {
       fontSize: 22,
@@ -83,6 +83,7 @@ const EvaluacionTurno = () => {
         style={estilosGlobales.imagenLogoCentro}
         source={IconosCentros[turnoEvaluado.Center.app_icon]}
       />
+      <Text style={estilos.titulo}>{turnoEvaluado.Center.name}</Text>
       <Text style={estilos.titulo}>{turnoEvaluado.code}</Text>
       <Text style={estilos.subtitulo}>
         {turnoEvaluado.Category.name}
