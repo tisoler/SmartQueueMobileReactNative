@@ -37,8 +37,8 @@ const temaOscuro = {
   colorFondoBotonPrincipal: '#16817a',
   colorBordeBotonPrincipal: '#16817a',
   colorEfectoClickBotonPrincipal: '#005f79',
-  colorFondoBotonSecundario: '#35d0ba',
-  colorBordeBotonSecundario: '#35d0ba',
+  colorFondoBotonSecundario: '#005f79',
+  colorBordeBotonSecundario: '#005f79',
   colorEfectoClickBotonSecundario: '#fff',
   imagenLogoCentro: {
     height: 150,

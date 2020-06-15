@@ -1,6 +1,6 @@
 // @flow
 
-export const apiURI = 'http://sq.hopto.org:3000/mobile-app/';
+export const apiURI = 'https://sq.hopto.org:3000/mobile-app/';
 
 export const IconosCentros = {
   'afip_icon.png': require('../../recursos/imagenes/centros/afip_icon.png'),
