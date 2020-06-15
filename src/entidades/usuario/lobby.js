@@ -9,6 +9,7 @@ import withErrorBoundary from '../../enhancers/withErrorBoundary';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import Teja from '../../componentes/comunes/teja';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
+import { recuperarMensajeError } from '../../lib/ayudante';
 
 const Lobby = ({ navigation }) => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
@@ -24,7 +25,7 @@ const Lobby = ({ navigation }) => {
           Alert.alert('Error durante la carga de turnos activos.');
         }
       })
-      .catch(() => Alert.alert('Error durante la carga de turnos activos.'));
+      .catch((error) => Alert.alert(recuperarMensajeError(error.message, 'Error durante la carga de turnos activos.')));
   }, []);
 
   const pedirTurno = () => {

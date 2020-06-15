@@ -50,3 +50,10 @@ export const recuperarTokenFB = async () => {
   }
   return solicitarPermisoFB();
 };
+
+export const recuperarMensajeError = (mensajeError: string, mensajeGenerico?: string) => {
+  if (mensajeError?.trim().toLocaleLowerCase() === 'network request failed') {
+    return 'Parece que su dispositivo no tiene conexión a internet.';
+  }
+  return mensajeGenerico || mensajeError;
+};

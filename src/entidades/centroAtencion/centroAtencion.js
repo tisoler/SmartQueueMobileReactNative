@@ -11,6 +11,7 @@ import { estimarDemora, generarTicket } from '../../lib/servicios';
 import BotonPopup from '../../componentes/comunes/botonPopup';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
+import { recuperarMensajeError } from '../../lib/ayudante';
 
 const CentrosAtencion = ({ route, navigation }) => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
@@ -69,7 +70,7 @@ const CentrosAtencion = ({ route, navigation }) => {
         setCategoria(categoria);
         setCargando(false);
       })
-      .catch(() => Alert.alert('Error en la solicitud de turno.'));
+      .catch((error) => Alert.alert(recuperarMensajeError(error.message, 'Error en la solicitud de turno.')));
   };
 
   const confirmarTurno = () => {
@@ -82,7 +83,7 @@ const CentrosAtencion = ({ route, navigation }) => {
         navigation.navigate('Turno', { turno: respuesta.response.ticket, demoraTurnoCreado: demora });
         setTurnoPedido(false);
       })
-      .catch(() => Alert.alert('Error en la solicitud de turno.'));
+      .catch((error) => Alert.alert(recuperarMensajeError(error.message, 'Error en la solicitud de turno.')));
   };
 
   const obtenerBotonesCategorias = () => (

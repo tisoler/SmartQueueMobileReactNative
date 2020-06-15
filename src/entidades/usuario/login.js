@@ -10,7 +10,7 @@ import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import { ContextoEstados } from '../../lib/contextoEstados';
 import { ImagenLogo, NombresIconosGenerales } from '../../lib/constantes';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
-import { recuperarTokenFB, recuperarDatosLocalmente } from '../../lib/ayudante';
+import { recuperarTokenFB, recuperarDatosLocalmente, recuperarMensajeError } from '../../lib/ayudante';
 
 
 const Login = ({ navigation }) => {
@@ -61,7 +61,7 @@ const Login = ({ navigation }) => {
         }
       })
       .catch(error => {
-        Alert.alert(error.message);
+        Alert.alert(recuperarMensajeError(error.message, 'Error durante el login.'));
         cambioCargando(false);
       });
   };

@@ -9,6 +9,7 @@ import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import { ContextoEstados } from '../../lib/contextoEstados';
 import { estimarDemora, cancelarTicket, confirmarAsistencia } from '../../lib/servicios';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
+import { recuperarMensajeError } from '../../lib/ayudante';
 
 const Turno = ({ route, navigation }) => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
@@ -66,7 +67,7 @@ const Turno = ({ route, navigation }) => {
             setConfirmoPresencia(true);
           }
         })
-        .catch(() => Alert.alert('Error en la solicitud de turno.'));
+        .catch((error) => Alert.alert(recuperarMensajeError(error.message, 'Error en la solicitud de turno.')));
     } else {
       setDemora(demoraTurnoCreado);
       setCargando(false);
@@ -85,7 +86,7 @@ const Turno = ({ route, navigation }) => {
           Alert.alert('Error al cancelar el turno.');
         }
       })
-      .catch(() => Alert.alert('Error al cancelar el turno.'));
+      .catch((error) => Alert.alert(recuperarMensajeError(error.message, 'Error al cancelar el turno.')));
   };
 
   const confirmarPresencia = () => {
@@ -95,8 +96,8 @@ const Turno = ({ route, navigation }) => {
         confirmarAsistenciaTurnoEnEstado(turno);
         setConfirmoPresencia(true);
       })
-      .catch(() => {
-        Alert.alert('Error al confirmar presencia.');
+      .catch((error) => {
+        Alert.alert(recuperarMensajeError(error.message, 'Error al confirmar presencia.'));
         setConfirmoPresencia(false);
       });
   };

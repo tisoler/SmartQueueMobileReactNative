@@ -1,7 +1,7 @@
 // @flow
 import React, { useState, useContext } from 'react';
 import {
-  StyleSheet, View, Text, ScrollView, Image
+  StyleSheet, View, Text, ScrollView, Image, Alert
 } from 'react-native';
 import withErrorBoundary from '../../enhancers/withErrorBoundary';
 import TextoIngreso from '../../componentes/comunes/textoIngreso';
@@ -18,7 +18,7 @@ import {
   login,
 } from '../../lib/servicios';
 import { NombresIconosGenerales } from '../../lib/constantes';
-import { recuperarTokenFB } from '../../lib/ayudante';
+import { recuperarTokenFB, recuperarMensajeError } from '../../lib/ayudante';
 
 const Registro = ({ navigation }) => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
@@ -119,6 +119,7 @@ const Registro = ({ navigation }) => {
     }
   });
 
+  const textoValidacion = texto => <Text style={estilosGlobales.mensajeError}>{texto}</Text>;
   const pantallaDatosPrincipales = (
     <View style={estilos.contenedorCampos}>
       <View style={estilos.encabezadoDatosUsuario}>
@@ -133,14 +134,8 @@ const Registro = ({ navigation }) => {
           icono={NombresIconosGenerales.correo}
           manejadorCambioTexto={cambioEmail}
         />
-        {emailExistente && mostrarValidaciones
-          && (
-          <Text style={estilosGlobales.mensajeError}>
-            El email ingresado ya está registrado.
-          </Text>
-          )}
-        {!emailUsuario && mostrarValidaciones
-            && <Text style={estilosGlobales.mensajeError}>Dato requerido.</Text>}
+        {!emailUsuario?.trim() && mostrarValidaciones && textoValidacion('Dato requerido.')}
+        {emailExistente && mostrarValidaciones && textoValidacion('El email ingresado ya está registrado.')}
         <TextoIngreso
           placeholderText="Contraseña"
           value={contrasenaUsuario}
@@ -148,24 +143,23 @@ const Registro = ({ navigation }) => {
           manejadorCambioTexto={cambioContrasena}
           esconderTexto
         />
-        {!contrasenaUsuario && mostrarValidaciones
-            && <Text style={estilosGlobales.mensajeError}>Dato requerido.</Text>}
+        {!contrasenaUsuario?.trim() && mostrarValidaciones && textoValidacion('Dato requerido.')}
+        {contrasenaUsuario?.trim().length < 8 && textoValidacion('Debe tener 8 caracteres al menos.')}
+        {contrasenaUsuario?.includes(' ') && mostrarValidaciones && textoValidacion('No puede tener espacios en blanco.')}
         <TextoIngreso
           placeholderText="Nombre"
           value={nombreUsuario}
           icono={NombresIconosGenerales.usuario}
           manejadorCambioTexto={cambioNombre}
         />
-        {!nombreUsuario && mostrarValidaciones
-            && <Text style={estilosGlobales.mensajeError}>Dato requerido.</Text>}
+        {!nombreUsuario?.trim() && mostrarValidaciones && textoValidacion('Dato requerido.')}
         <TextoIngreso
           placeholderText="Apellido"
           value={apellidoUsuario}
           icono={NombresIconosGenerales.usuario}
           manejadorCambioTexto={cambioApellido}
         />
-        {!apellidoUsuario && mostrarValidaciones
-            && <Text style={estilosGlobales.mensajeError}>Dato requerido.</Text>}
+        {!apellidoUsuario?.trim() && mostrarValidaciones && textoValidacion('Dato requerido.')}
         <TextoIngreso
           placeholderText="DNI"
           value={dniUsuario}
@@ -174,10 +168,8 @@ const Registro = ({ navigation }) => {
           esNumerico
           largoMaximo={8}
         />
-        {DNIExistente && mostrarValidaciones
-          && <Text style={estilosGlobales.mensajeError}>El DNI ingresado ya está registrado.</Text>}
-        {!dniUsuario && mostrarValidaciones
-            && <Text style={estilosGlobales.mensajeError}>Dato requerido.</Text>}
+        {!dniUsuario?.trim() && mostrarValidaciones && textoValidacion('Dato requerido.')}
+        {DNIExistente && mostrarValidaciones && textoValidacion('El DNI ingresado ya está registrado.')}
       </View>
     </View>
   );
@@ -302,27 +294,37 @@ const Registro = ({ navigation }) => {
   };
 
   const loguearUsuario = async () => {
-    const firebaseToken = await recuperarTokenFB();
-    setFbtoken(firebaseToken);
-    const payload = { email: emailUsuario, password: contrasenaUsuario, fbtoken: firebaseToken };
-    const res = await login(payload);
-    const respuesta = await res.json();
-    return respuesta;
+    try {
+      const firebaseToken = await recuperarTokenFB();
+      setFbtoken(firebaseToken);
+      const payload = { email: emailUsuario, password: contrasenaUsuario, fbtoken: firebaseToken };
+      const res = await login(payload);
+      const respuesta = await res.json();
+      return respuesta;
+    } catch (error) {
+      Alert.alert(recuperarMensajeError(error.message, 'Error durante el login.'));
+    }
+    return { success: false };
   };
 
   const enviarUsuario: Function = async (idFoto = null) => {
-    const usuario = {
-      dni: dniUsuario,
-      name: nombreUsuario,
-      surname: apellidoUsuario,
-      email: emailUsuario,
-      password: contrasenaUsuario,
-      image: idFoto
-    };
+    try {
+      const usuario = {
+        dni: dniUsuario,
+        name: nombreUsuario,
+        surname: apellidoUsuario,
+        email: emailUsuario,
+        password: contrasenaUsuario,
+        image: idFoto
+      };
 
-    const res = await guardarUsuario(usuario);
-    const respuesta = await res.json();
-    return respuesta;
+      const res = await guardarUsuario(usuario);
+      const respuesta = await res.json();
+      return respuesta;
+    } catch (error) {
+      Alert.alert(recuperarMensajeError(error.message, 'Error durante el login.'));
+    }
+    return { success: false };
   };
 
   /*

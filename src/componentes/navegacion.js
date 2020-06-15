@@ -4,7 +4,8 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  View
+  View,
+  Alert
 } from 'react-native';
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
@@ -20,7 +21,7 @@ import EvaluacionTurno from '../entidades/turno/evaluacionTurno';
 import MenuLateral from './menuLateral';
 import { ContextoEstilosGlobales } from '../lib/contextoEstilosGlobales';
 import { ContextoEstados } from '../lib/contextoEstados';
-import { recuperarDatosLocalmente, recuperarTokenFB } from '../lib/ayudante';
+import { recuperarDatosLocalmente, recuperarTokenFB, recuperarMensajeError } from '../lib/ayudante';
 import IconosGenerales from '../lib/iconos';
 import { NombresIconosGenerales } from '../lib/constantes';
 import { login } from '../lib/servicios';
@@ -183,15 +184,19 @@ const NavegadorAutenticado = () => (
 );
 
 const recuperarCredencialesAlmacenadas = async (fijarUsuarioLogueadoEnEstado) => {
-  const [email, contrasena, temaUsuario] = [await recuperarDatosLocalmente('@email'), await recuperarDatosLocalmente('@contraseña'), await recuperarDatosLocalmente('@temaUsuario')];
-  if (email && contrasena) {
-    const fbtoken = await recuperarTokenFB();
-    const payload = { email, password: contrasena, fbtoken };
-    const res = await login(payload);
-    const respuesta = await res.json();
-    if (respuesta.success) {
-      fijarUsuarioLogueadoEnEstado(email, respuesta.token, contrasena, fbtoken, temaUsuario);
+  try {
+    const [email, contrasena, temaUsuario] = [await recuperarDatosLocalmente('@email'), await recuperarDatosLocalmente('@contraseña'), await recuperarDatosLocalmente('@temaUsuario')];
+    if (email && contrasena) {
+      const fbtoken = await recuperarTokenFB();
+      const payload = { email, password: contrasena, fbtoken };
+      const res = await login(payload);
+      const respuesta = await res.json();
+      if (respuesta.success) {
+        fijarUsuarioLogueadoEnEstado(email, respuesta.token, contrasena, fbtoken, temaUsuario);
+      }
     }
+  } catch (error) {
+    Alert.alert(recuperarMensajeError(error.message, 'Error durante el recupero de sus datos.'));
   }
 };
 

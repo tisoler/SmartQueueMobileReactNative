@@ -8,6 +8,7 @@ import { ContextoEstados } from '../../lib/contextoEstados';
 import { obtenerCentrosAtencion } from '../../lib/servicios';
 import Teja from '../../componentes/comunes/teja';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
+import { recuperarMensajeError } from '../../lib/ayudante';
 
 const ListaCentrosAtencion = ({ navigation }) => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
@@ -33,7 +34,7 @@ const ListaCentrosAtencion = ({ navigation }) => {
         .then(respuesta => {
           fijarCentrosEnEstado(respuesta.response);
         })
-        .catch(() => Alert.alert('Error durante la carga de centros.'));
+        .catch((error) => Alert.alert(recuperarMensajeError(error.message, 'Error durante la carga de centros.')));
     }
   }, []);
 
