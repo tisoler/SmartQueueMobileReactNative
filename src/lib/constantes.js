@@ -4,9 +4,10 @@ export const apiURI = 'https://sq.hopto.org:3000/mobile-app/';
 
 export const IconosCentros = {
   'afip_icon.png': require('../../recursos/imagenes/centros/afip_icon.png'),
-  'bna_icon.png': require('../../recursos/imagenes/centros/bna_icon.png'),
+  'bn_icon.png': require('../../recursos/imagenes/centros/bn_icon.png'),
   'ca_icon.png': require('../../recursos/imagenes/centros/ca_icon.png'),
-  'cmpaz_icon.png': require('../../recursos/imagenes/centros/cmpaz_icon.png')
+  'cmpaz_icon.png': require('../../recursos/imagenes/centros/cmpaz_icon.png'),
+  'test_icon.png': require('../../recursos/imagenes/centros/test_icon.png')
 };
 
 export const ImagenLogo = require('../../recursos/imagenes/login.png');
