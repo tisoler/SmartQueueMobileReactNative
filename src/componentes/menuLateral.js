@@ -33,8 +33,7 @@ const MenuLateral = (props: Object) => {
       justifyContent: 'center',
       width: '100%',
       backgroundColor: estilosGlobales.colorFondoGlobal,
-      padding: 10,
-      marginBottom: 15
+      padding: 10
     },
     contenedorFotografia: {
       alignItems: 'center',
@@ -43,8 +42,8 @@ const MenuLateral = (props: Object) => {
       width: 120,
       borderRadius: 100,
       backgroundColor: estilosGlobales.colorAvatarLetra,
-      marginBottom: 10,
-      paddingBottom: 4
+      paddingBottom: 4,
+      marginBottom: 10
     },
     letraAvatar: {
       fontSize: 55,
@@ -52,10 +51,16 @@ const MenuLateral = (props: Object) => {
       textAlign: 'center'
     },
     opcionMenu: {
-      flex: 0.15,
-      flexDirection: 'column',
       justifyContent: 'center',
+      height: 80,
       paddingLeft: 5
+    },
+    contenedorOpciones: {
+      flex: 0.67
+    },
+    contenedorCerrarSesion: {
+      flex: 0.92,
+      justifyContent: 'flex-end'
     }
   });
 
@@ -71,30 +76,34 @@ const MenuLateral = (props: Object) => {
           <Etiqueta value={nombreUsuario} icono={NombresIconosGenerales.usuario} tamanoLetra={18} />
         </View>
       </View>
-      <TouchableOpacity style={estilos.opcionMenu} onPress={() => navigation.navigate('Lobby')}>
-        <Etiqueta value="Mis turnos" icono={NombresIconosGenerales.turnos} tamanoLetra={18} />
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={estilos.opcionMenu}
-        onPress={() => cambiarTemaUsuarioEnEstado()}
-      >
-        <Etiqueta
-          value={estadoLogin?.temaUsuario === 'temaClaro' ? 'Estilo oscuro' : 'Estilo claro'}
-          icono={NombresIconosGenerales.paleta}
-          tamanoLetra={18}
-        />
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={estilos.opcionMenu}
-        onPress={
-          () => {
-            fijarUsuarioLogueadoEnEstado('', '', '', estadoLogin.fbtoken, estadoLogin.temaUsuario);
-            navigation.closeDrawer();
-          }
-        }
-      >
-        <Etiqueta value="Cerrar sesión" icono={NombresIconosGenerales.cerrarSesion} tamanoLetra={18} />
-      </TouchableOpacity>
+      <View style={estilos.contenedorOpciones}>
+        <TouchableOpacity style={estilos.opcionMenu} onPress={() => navigation.navigate('Lobby')}>
+          <Etiqueta value="Mis turnos" icono={NombresIconosGenerales.turnos} tamanoLetra={18} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={estilos.opcionMenu}
+          onPress={() => cambiarTemaUsuarioEnEstado()}
+        >
+          <Etiqueta
+            value={estadoLogin?.temaUsuario === 'temaClaro' ? 'Estilo oscuro' : 'Estilo claro'}
+            icono={NombresIconosGenerales.paleta}
+            tamanoLetra={18}
+          />
+        </TouchableOpacity>
+        <View style={estilos.contenedorCerrarSesion}>
+          <TouchableOpacity
+            style={estilos.opcionMenu}
+            onPress={
+              () => {
+                fijarUsuarioLogueadoEnEstado('', '', '', estadoLogin.fbtoken, estadoLogin.temaUsuario);
+                navigation.closeDrawer();
+              }
+            }
+          >
+            <Etiqueta value="Cerrar sesión" icono={NombresIconosGenerales.cerrarSesion} tamanoLetra={18} />
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   );
 };

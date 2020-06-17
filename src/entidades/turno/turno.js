@@ -130,10 +130,10 @@ const Turno = ({ route, navigation }) => {
         {turno.Category.name}
       </Text>
       <Text style={estilos.textoTurno}>
-        {`Turnos antes: ${demora ? demora.tickets : ''}`}
+        {`Turnos antes: ${demora?.tickets || '?'}`}
       </Text>
       <Text style={[estilos.textoTurno, estilos.margenUltimoTexto]}>
-        {`Tiempo estimado: ${demora ? demora.hours : ''} hs. ${demora ? demora.minutes : ''} minutos`}
+        {`Tiempo estimado: ${demora?.hours || '?'} hs. ${demora?.minutes || '?'} minutos`}
       </Text>
       { !confirmoPresencia ? (
         obtenerAccionesTurno()
