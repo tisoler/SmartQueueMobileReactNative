@@ -15,8 +15,9 @@ type Props = {
   soloLectura?: boolean,
   puedeEsconderTexto?: boolean,
   icono?: string | null,
-  esNumerico?: boolean,
-  largoMaximo?: number
+  largoMaximo?: number,
+  tipoDeTeclado?: string,
+  sinPrimeraLetraMayuscula?: boolean
 }
 
 export default (props: Props) => {
@@ -28,8 +29,9 @@ export default (props: Props) => {
     soloLectura = false,
     puedeEsconderTexto = false,
     icono = null,
-    esNumerico = false,
-    largoMaximo = 150
+    largoMaximo = 150,
+    tipoDeTeclado = 'default',
+    sinPrimeraLetraMayuscula = false
   } = props;
 
   const [esconderTexto, cambiarEsconderTexto] = useState(puedeEsconderTexto);
@@ -88,14 +90,15 @@ export default (props: Props) => {
           style={estilos.cajaTexto}
           placeholder={placeholderText}
           underlineColorAndroid="transparent"
-          onChangeText={text => manejadorCambioTexto(!esNumerico ? text : text?.replace(/[^0-9]/g, ''))}
+          onChangeText={text => manejadorCambioTexto(!tipoDeTeclado !== 'numeric' ? text : text?.replace(/[^0-9]/g, ''))}
           value={value}
           editable={!soloLectura}
           secureTextEntry={esconderTexto}
           onTouchStart={manejadorClick}
           placeholderTextColor="#B5B7B7"
-          keyboardType={!esNumerico ? 'default' : 'numeric'}
+          keyboardType={tipoDeTeclado}
           maxLength={largoMaximo}
+          autoCapitalize={!sinPrimeraLetraMayuscula && !puedeEsconderTexto ? 'words' : 'none'}
         />
         {puedeEsconderTexto && (
           <TouchableOpacity

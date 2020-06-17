@@ -133,6 +133,8 @@ const Registro = ({ navigation }) => {
           value={emailUsuario}
           icono={NombresIconosGenerales.correo}
           manejadorCambioTexto={cambioEmail}
+          tipoDeTeclado="email-address"
+          sinPrimeraLetraMayuscula
         />
         {!emailUsuario?.trim() && mostrarValidaciones && textoValidacion('Dato requerido.')}
         {emailExistente && mostrarValidaciones && textoValidacion('El email ingresado ya está registrado.')}
@@ -166,8 +168,8 @@ const Registro = ({ navigation }) => {
           value={dniUsuario}
           icono={NombresIconosGenerales.dni}
           manejadorCambioTexto={cambioDNI}
-          esNumerico
           largoMaximo={8}
+          tipoDeTeclado="numeric"
         />
         {!dniUsuario?.trim() && mostrarValidaciones && textoValidacion('Dato requerido.')}
         {DNIExistente && mostrarValidaciones && textoValidacion('El DNI ingresado ya está registrado.')}
@@ -202,7 +204,7 @@ const Registro = ({ navigation }) => {
     <View style={estilos.contenedorCampos}>
       <View style={estilos.encabezadoPantallaConfirmar}>
         <View style={{ width: '60%' }}>
-          <Etiqueta value={`${nombreUsuario} ${apellidoUsuario}`} icono={NombresIconosGenerales.usuario} />
+          <Etiqueta multilinea value={`${nombreUsuario} ${apellidoUsuario}`} icono={NombresIconosGenerales.usuario} />
         </View>
         {uriFoto ? (
           <View style={estilos.contenedorFotografia}>
@@ -267,7 +269,15 @@ const Registro = ({ navigation }) => {
 
   const validarDatosRegistro = async () => {
     cambiarMostrarValidaciones(true);
-    if (!emailUsuario || !contrasenaUsuario || !nombreUsuario || !apellidoUsuario || !dniUsuario) {
+    if (
+      !emailUsuario
+      || !contrasenaUsuario
+      || contrasenaUsuario?.trim().length < 8
+      || contrasenaUsuario?.includes(' ')
+      || !nombreUsuario
+      || !apellidoUsuario
+      || !dniUsuario
+    ) {
       return false;
     }
 

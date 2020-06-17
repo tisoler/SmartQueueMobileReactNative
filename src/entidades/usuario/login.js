@@ -84,6 +84,8 @@ const Login = ({ navigation }) => {
             soloLectura={cargando}
             manejadorClick={() => cambioLogin(false)}
             icono={NombresIconosGenerales.correo}
+            tipoDeTeclado="email-address"
+            sinPrimeraLetraMayuscula
           />
           <TextoIngreso
             placeholderText="Contraseña"

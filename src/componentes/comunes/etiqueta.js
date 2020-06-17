@@ -12,7 +12,8 @@ type Props = {
   puedeEsconderTexto?: boolean,
   icono?: string | null,
   color?: string,
-  tamanoLetra?: number
+  tamanoLetra?: number,
+  multilinea?: boolean
 }
 
 export default (props: Props) => {
@@ -21,7 +22,8 @@ export default (props: Props) => {
     puedeEsconderTexto = false,
     icono = null,
     color,
-    tamanoLetra
+    tamanoLetra,
+    multilinea = false
   } = props;
 
   const [esconderTexto, cambiarEsconderTexto] = useState(puedeEsconderTexto);
@@ -45,7 +47,8 @@ export default (props: Props) => {
     etiqueta: {
       color: color || estilosGlobales.colorLetraEncabezado,
       fontSize: tamanoLetra || estilosGlobales.tamanoLetraEtiqueta,
-      width: !puedeEsconderTexto ? '82%' : 'auto',
+      width: !puedeEsconderTexto ? '87%' : 'auto',
+      height: multilinea ? 100 : 'auto',
       marginLeft: 12
     },
     iconoOjo: {
@@ -63,7 +66,12 @@ export default (props: Props) => {
           {IconosGenerales[icono]}
         </View>
       )}
-      <TextInput style={estilos.etiqueta} editable={false} secureTextEntry={esconderTexto}>
+      <TextInput
+        style={estilos.etiqueta}
+        multiline={multilinea}
+        editable={false}
+        secureTextEntry={esconderTexto}
+      >
         {value}
       </TextInput>
       {puedeEsconderTexto && (
