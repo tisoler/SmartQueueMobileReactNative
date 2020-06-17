@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator, TransitionSpecs } from '@react-navigation/stack';
+import { createStackNavigator, TransitionSpecs, HeaderBackButton } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import Login from '../entidades/usuario/login';
 import ListaCentrosAtencion from '../entidades/centroAtencion/listaCentrosAtencion';
@@ -39,6 +39,32 @@ const BotonMenuHamburguesa = (props) => {
     </View>
   );
 };
+
+/*
+const BotonRefrescarTurnos = (props) => {
+  const { estilos, estadoLogin, fijarTurnosActivosEnEstado } = props;
+  const refrescarTurnos = () => {
+    obtenerTicketsParaUsuario(estadoLogin.token)
+      .then(res => res.json())
+      .then(respuesta => {
+        if (respuesta.success) {
+          fijarTurnosActivosEnEstado(respuesta.response);
+        } else {
+          Alert.alert('Error durante la carga de turnos activos.');
+        }
+      })
+      .catch((error) => Alert.alert(recuperarMensajeError(error.message,
+      'Error durante la carga de turnos activos.')));
+  };
+  return (
+    <View style={estilos.botonHamburguesa}>
+      <TouchableOpacity onPress={refrescarTurnos}>
+        {IconosGenerales[NombresIconosGenerales.menu]}
+      </TouchableOpacity>
+    </View>
+  );
+};
+*/
 
 const NavegadorEvaluacion = () => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
@@ -130,7 +156,14 @@ const NavegadorFijoAutenticado = ({ navigation }) => {
           title: 'Smart queue',
           headerStyle: estilos.encabezadoNavegacion,
           headerTintColor: estilosGlobales.colorLetraEncabezado,
-          headerLeft: () => <BotonMenuHamburguesa navigation={navigation} estilos={estilos} />
+          headerLeft: () => <BotonMenuHamburguesa navigation={navigation} estilos={estilos} />,
+          /* headerRight: () => (
+            <BotonRefrescarTurnos
+              estilos={estilos}
+              estadoLogin={estadoLogin}
+              fijarTurnosActivosEnEstado={fijarTurnosActivosEnEstado}
+            />
+          ) */
         }}
       />
       <Stack.Screen
@@ -162,6 +195,7 @@ const NavegadorFijoAutenticado = ({ navigation }) => {
             open: TransitionSpecs.TransitionIOSSpec,
             close: TransitionSpecs.TransitionIOSSpec,
           },
+          headerLeft: () => <HeaderBackButton tintColor={estilosGlobales.colorLetraEncabezado} onPress={() => navigation.navigate('Lobby')} />
         }}
       />
     </Stack.Navigator>
@@ -201,7 +235,11 @@ const recuperarCredencialesAlmacenadas = async (fijarUsuarioLogueadoEnEstado) =>
 };
 
 export default () => {
-  const { estadoLogin, fijarUsuarioLogueadoEnEstado } = useContext(ContextoEstados);
+  const {
+    estadoLogin,
+    fijarUsuarioLogueadoEnEstado,
+  } = useContext(ContextoEstados);
+
   const [listo, cambiarListo] = useState(false);
   // Recuperar credenciales almacenadas localmente
   useEffect(() => {

@@ -97,7 +97,7 @@ def enableSeparateBuildPerCPUArchitecture = false
 /**
  * Run Proguard to shrink the Java bytecode in release builds.
  */
-def enableProguardInReleaseBuilds = false
+def enableProguardInReleaseBuilds = true
 
 /**
  * The preferred build flavor of JavaScriptCore.
@@ -170,7 +170,16 @@ android {
             // Caution! In production, you need to generate your own keystore file.
             // see https://facebook.github.io/react-native/docs/signed-apk-android.
             signingConfig signingConfigs.release
+            // Enables code shrinking, obfuscation, and optimization for only
+            // your project's release build type.
+            // minifyEnabled enableProguardInReleaseBuilds
+            // Enables resource shrinking, which is performed by the
+            // Android Gradle plugin.
+            // shrinkResources true
+            shrinkResources enableProguardInReleaseBuilds
+            zipAlignEnabled enableProguardInReleaseBuilds
             minifyEnabled enableProguardInReleaseBuilds
+            useProguard enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }

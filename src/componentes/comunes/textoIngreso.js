@@ -1,7 +1,7 @@
 // @flow
-import React from 'react';
+import React, { useState } from 'react';
 import {
-  StyleSheet, TextInput, View
+  StyleSheet, TextInput, View, TouchableOpacity
 } from 'react-native';
 import IconosGenerales from '../../lib/iconos';
 import { NombresIconosGenerales } from '../../lib/constantes';
@@ -13,24 +13,26 @@ type Props = {
   manejadorCambioTexto: Function,
   value: string,
   soloLectura?: boolean,
-  esconderTexto?: boolean,
+  puedeEsconderTexto?: boolean,
   icono?: string | null,
   esNumerico?: boolean,
   largoMaximo?: number
 }
 
-const TextoIngreso = (props: Props) => {
+export default (props: Props) => {
   const {
     manejadorClick = null,
     placeholderText,
     manejadorCambioTexto,
     value,
     soloLectura = false,
-    esconderTexto = false,
+    puedeEsconderTexto = false,
     icono = null,
     esNumerico = false,
     largoMaximo = 150
   } = props;
+
+  const [esconderTexto, cambiarEsconderTexto] = useState(puedeEsconderTexto);
 
   const estilos = StyleSheet.create({
     contenedor: {
@@ -42,25 +44,35 @@ const TextoIngreso = (props: Props) => {
     contenedorTexto: {
       flex: 1,
       flexDirection: 'row',
+      alignItems: 'flex-end',
+      width: '100%',
+      height: 55,
       marginLeft: 7,
-      borderBottomColor: 'white',
-      borderBottomWidth: 1,
-      borderRadius: 7
+      borderRadius: 7,
+      borderBottomColor: '#fff',
+      borderBottomWidth: 1
     },
     cajaTexto: {
       color: '#fff',
       fontSize: 20,
+      height: 55,
       lineHeight: 30,
-      height: 60,
-      marginLeft: 5,
-      width: '100%'
+      width: !puedeEsconderTexto ? '100%' : '77%',
+      paddingBottom: 0
     },
     contenedorIcono: {
       alignItems: 'center',
       justifyContent: 'center',
       width: 30,
       height: 60,
-      paddingTop: icono === NombresIconosGenerales.dni ? 12 : 0
+      paddingTop: icono === NombresIconosGenerales.dni ? 15 : 0
+    },
+    iconoOjo: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: 55,
+      width: 50,
+      marginLeft: 15
     }
   });
 
@@ -85,18 +97,15 @@ const TextoIngreso = (props: Props) => {
           keyboardType={!esNumerico ? 'default' : 'numeric'}
           maxLength={largoMaximo}
         />
+        {puedeEsconderTexto && (
+          <TouchableOpacity
+            style={estilos.iconoOjo}
+            onPress={() => cambiarEsconderTexto(!esconderTexto)}
+          >
+            {IconosGenerales[NombresIconosGenerales.ojo](esconderTexto)}
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
 };
-
-TextoIngreso.defaultProps = {
-  manejadorClick: null,
-  esconderTexto: false,
-  soloLectura: false,
-  icono: null,
-  esNumerico: false,
-  largoMaximo: 150
-};
-
-export default TextoIngreso;

@@ -1,58 +1,79 @@
 // @flow
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import {
-  StyleSheet, Text, View
+  StyleSheet, TextInput, View, TouchableOpacity
 } from 'react-native';
-import IconosGenerales from '../../lib/iconos';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
+import IconosGenerales from '../../lib/iconos';
+import { NombresIconosGenerales } from '../../lib/constantes';
 
 type Props = {
   value: string,
-  esconderTexto?: boolean,
+  puedeEsconderTexto?: boolean,
   icono?: string | null,
   color?: string,
   tamanoLetra?: number
 }
 
-const Etiqueta = (props: Props) => {
+export default (props: Props) => {
   const {
     value,
-    esconderTexto = false,
+    puedeEsconderTexto = false,
     icono = null,
     color,
     tamanoLetra
   } = props;
 
+  const [esconderTexto, cambiarEsconderTexto] = useState(puedeEsconderTexto);
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
+
   const estilos = StyleSheet.create({
     contenedor: {
       flexDirection: 'row',
-      width: '80%',
-      margin: 10
+      alignItems: 'center',
+      width: '90%',
+      marginLeft: 10,
+      height: 50
+    },
+    contenedorIcono: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: 30,
+      height: 50,
+      paddingTop: icono === NombresIconosGenerales.dni ? 10 : 0
     },
     etiqueta: {
       color: color || estilosGlobales.colorLetraEncabezado,
       fontSize: tamanoLetra || estilosGlobales.tamanoLetraEtiqueta,
-      width: '90%',
+      width: !puedeEsconderTexto ? '82%' : 'auto',
       marginLeft: 12
+    },
+    iconoOjo: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: 50,
+      width: 50
     }
   });
 
   return (
     <View style={estilos.contenedor}>
       {icono && (
-        IconosGenerales[icono]
+        <View style={estilos.contenedorIcono}>
+          {IconosGenerales[icono]}
+        </View>
       )}
-      <Text style={estilos.etiqueta} secureTextEntry={esconderTexto}>
+      <TextInput style={estilos.etiqueta} editable={false} secureTextEntry={esconderTexto}>
         {value}
-      </Text>
+      </TextInput>
+      {puedeEsconderTexto && (
+        <TouchableOpacity
+          style={estilos.iconoOjo}
+          onPress={() => cambiarEsconderTexto(!esconderTexto)}
+        >
+          {IconosGenerales[NombresIconosGenerales.ojo](esconderTexto)}
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
-
-Etiqueta.defaultProps = {
-  esconderTexto: false,
-  icono: null
-};
-
-export default Etiqueta;

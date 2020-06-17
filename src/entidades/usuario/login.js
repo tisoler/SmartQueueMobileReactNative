@@ -90,7 +90,7 @@ const Login = ({ navigation }) => {
             manejadorCambioTexto={cambioContrasena}
             value={contrasenaUsuario}
             soloLectura={cargando}
-            esconderTexto
+            puedeEsconderTexto
             manejadorClick={() => cambioLogin(false)}
             icono={NombresIconosGenerales.contrasena}
           />

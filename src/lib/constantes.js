@@ -24,5 +24,7 @@ export const NombresIconosGenerales = {
   aceptar: 'aceptar',
   cancelar: 'cancelar',
   turnos: 'turnos',
-  paleta: 'paleta'
+  paleta: 'paleta',
+  refrescar: 'refrescar',
+  ojo: 'ojo'
 };

@@ -118,6 +118,7 @@ const Turno = ({ route, navigation }) => {
       <Text style={estilosGlobales.tituloGrande}>Bienvenida/o.</Text>
       <Text style={estilosGlobales.subtituloGrande}>
         Ya hemos recibido la notificación de su llegada.
+        Su turno aparecerá en pantalla y será atendido/a.
       </Text>
     </View>
   );

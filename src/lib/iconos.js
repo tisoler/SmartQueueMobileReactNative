@@ -13,6 +13,8 @@ import Aceptar from '../componentes/comunes/svg/aceptar';
 import Cancelar from '../componentes/comunes/svg/cancelar';
 import Turnos from '../componentes/comunes/svg/turnos';
 import Paleta from '../componentes/comunes/svg/paleta';
+import Refrescar from '../componentes/comunes/svg/refrescar';
+import Ojo from '../componentes/comunes/svg/ojo';
 
 const IconosGenerales = {
   [NombresIconosGenerales.correo]: <Correo width={29} height={29} />,
@@ -27,6 +29,14 @@ const IconosGenerales = {
   [NombresIconosGenerales.cancelar]: <Cancelar width={55} height={55} />,
   [NombresIconosGenerales.turnos]: <Turnos width={35} height={35} />,
   [NombresIconosGenerales.paleta]: <Paleta width={30} height={30} />,
+  [NombresIconosGenerales.refrescar]: <Refrescar width={30} height={30} />,
+  [NombresIconosGenerales.ojo]: (abierto: boolean) => (
+    <Ojo
+      width={32}
+      height={32}
+      abierto={abierto}
+    />
+  )
 };
 
 export default IconosGenerales;

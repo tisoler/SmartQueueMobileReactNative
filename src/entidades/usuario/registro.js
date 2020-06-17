@@ -141,7 +141,8 @@ const Registro = ({ navigation }) => {
           value={contrasenaUsuario}
           icono={NombresIconosGenerales.contrasena}
           manejadorCambioTexto={cambioContrasena}
-          esconderTexto
+          puedeEsconderTexto
+          largoMaximo={16}
         />
         {!contrasenaUsuario?.trim() && mostrarValidaciones && textoValidacion('Dato requerido.')}
         {contrasenaUsuario?.trim().length < 8 && textoValidacion('Debe tener 8 caracteres al menos.')}
@@ -222,7 +223,7 @@ const Registro = ({ navigation }) => {
         <Etiqueta
           value={contrasenaUsuario}
           icono={NombresIconosGenerales.contrasena}
-          esconderTexto
+          puedeEsconderTexto
         />
       </View>
     </View>

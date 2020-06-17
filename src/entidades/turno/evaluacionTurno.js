@@ -61,7 +61,7 @@ const EvaluacionTurno = () => {
         if (respuesta.success) {
           setTimeout(() => {
             evaluarTurnoEnEstado(turnoEvaluado);
-          }, 2000);
+          }, 1500);
           if (turnosParaEvaluar.length > 1) {
             setCantidadEstrellas(0);
           }

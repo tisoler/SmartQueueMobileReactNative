@@ -105,17 +105,7 @@ const CentrosAtencion = ({ route, navigation }) => {
           { categoriaSeleccionada.description }
         </Text>
         <Text style={estilos.mensaje}>
-          Hay
-          {' '}
-          {demora.tickets}
-          {' '}
-          trámites antes del suyo. Tiempo estimado:
-          {demora.hours}
-          {' '}
-          horas
-          {demora.minutes}
-          {' '}
-          minutos.
+          {`Hay ${demora.tickets} trámites antes del suyo. Tiempo estimado: ${demora.hours} horas ${demora.minutes} minutos.`}
         </Text>
         <Text style={estilos.mensaje}>
           ¿Desea tomar el turno?
