@@ -10,6 +10,7 @@ import { ContextoEstados } from '../lib/contextoEstados';
 import { ContextoEstilosGlobales } from '../lib/contextoEstilosGlobales';
 import Etiqueta from './comunes/etiqueta';
 import { NombresIconosGenerales } from '../lib/constantes';
+import { version } from '../../package.json';
 
 const MenuLateral = (props: Object) => {
   const { navigation } = props;
@@ -56,11 +57,18 @@ const MenuLateral = (props: Object) => {
       paddingLeft: 5
     },
     contenedorOpciones: {
-      flex: 0.67
+      flex: 0.66
     },
     contenedorCerrarSesion: {
-      flex: 0.92,
+      flex: 1,
       justifyContent: 'flex-end'
+    },
+    version: {
+      height: 20,
+      textAlign: 'right',
+      justifyContent: 'center',
+      paddingRight: 10,
+      color: estilosGlobales.colorVersion
     }
   });
 
@@ -104,6 +112,7 @@ const MenuLateral = (props: Object) => {
           </TouchableOpacity>
         </View>
       </View>
+      <Text style={estilos.version}>{`v${version}`}</Text>
     </View>
   );
 };

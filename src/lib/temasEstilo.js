@@ -8,6 +8,7 @@ const temaOscuro = {
   colorTextoGeneral: '#fff',
   colorLetraEncabezado: '#fff',
   colorTextoConfirmacionTurno: '#393e46',
+  colorVersion: '#CCCCCC',
   mensajeError: {
     color: '#852E1D',
     fontSize: 17
@@ -58,6 +59,7 @@ const temaClaro = {
   colorTextoGeneral: '#393e46',
   colorLetraEncabezado: '#393e46',
   colorTextoConfirmacionTurno: '#393e46',
+  colorVersion: '#393e46',
   mensajeError: {
     color: '#852E1D',
     fontSize: 17
