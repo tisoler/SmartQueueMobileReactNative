@@ -16,6 +16,7 @@ const MenuLateral = (props: Object) => {
   const { navigation } = props;
   const {
     estadoLogin,
+    estadoTemaUsuario,
     fijarUsuarioLogueadoEnEstado,
     cambiarTemaUsuarioEnEstado
   } = useContext(ContextoEstados);
@@ -93,7 +94,7 @@ const MenuLateral = (props: Object) => {
           onPress={() => cambiarTemaUsuarioEnEstado()}
         >
           <Etiqueta
-            value={estadoLogin?.temaUsuario === 'temaClaro' ? 'Estilo oscuro' : 'Estilo claro'}
+            value={estadoTemaUsuario === 'temaClaro' ? 'Estilo oscuro' : 'Estilo claro'}
             icono={NombresIconosGenerales.paleta}
             tamanoLetra={18}
           />
@@ -103,7 +104,7 @@ const MenuLateral = (props: Object) => {
             style={estilos.opcionMenu}
             onPress={
               () => {
-                fijarUsuarioLogueadoEnEstado('', '', '', estadoLogin.fbtoken, estadoLogin.temaUsuario);
+                fijarUsuarioLogueadoEnEstado('', '', '', estadoLogin.fbtoken, estadoTemaUsuario);
                 navigation.closeDrawer();
               }
             }

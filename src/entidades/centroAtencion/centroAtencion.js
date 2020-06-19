@@ -20,7 +20,12 @@ const CentrosAtencion = ({ route, navigation }) => {
   const [cargando, setCargando] = useState(false);
   const [categoriaSeleccionada, setCategoria] = useState({});
   const [demora, setDemora] = useState({});
-  const { estadoLogin, agregarTurnoActivoEnEstado } = useContext(ContextoEstados);
+  const {
+    estadoLogin,
+    estadoTurnosActivos,
+    agregarTurnoActivoEnEstado,
+    fijarTurnoActualEnEstado
+  } = useContext(ContextoEstados);
   const estilos = StyleSheet.create({
     container: {
       flex: 1,
@@ -78,10 +83,10 @@ const CentrosAtencion = ({ route, navigation }) => {
     generarTicket(estadoLogin.token, categoriaSeleccionada.id, centro.id)
       .then(res => res.json())
       .then(respuesta => {
-        setCargando(false);
         agregarTurnoActivoEnEstado(respuesta.response.ticket);
-        navigation.navigate('Turno', { turno: respuesta.response.ticket, demoraTurnoCreado: demora });
-        setTurnoPedido(false);
+        fijarTurnoActualEnEstado(demora);
+        navigation.navigate('Turno', { turno: respuesta.response.ticket });
+        setCargando(false);
       })
       .catch((error) => Alert.alert(recuperarMensajeError(error.message, 'Error en la solicitud de turno.')));
   };
@@ -131,6 +136,10 @@ const CentrosAtencion = ({ route, navigation }) => {
       </View>
     </View>
   );
+
+  if (estadoTurnosActivos.some(t => t.Center.id === centro.id)) {
+    navigation.navigate('Lobby');
+  }
 
   const obtenerRender = () => {
     if (!turnoPedido) {

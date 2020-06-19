@@ -3,15 +3,15 @@ import * as React from 'react';
 import { createContext, useState } from 'react';
 import {
   agregarTurnoActivoAccion,
-  fijarTurnosActivosAccion,
+  fijarTurnosAccion,
   fijarUsuarioLogueadoAccion,
   cancelarTurnoAccion,
   confirmarAsistenciaTurnoAccion,
   evaluarTurnoAccion,
-  fijarTemaUsuarioAccion,
   cambiarTemaUsuarioAccion
 } from '../entidades/usuario/usuarioAcciones';
 import fijarCentrosAccion from '../entidades/centroAtencion/centroAtencionAcciones';
+import fijarTurnoActualAccion from '../entidades/turno/turnoAcciones';
 
 export const ContextoEstados: Object = createContext();
 
@@ -22,27 +22,35 @@ type Props = {
 const estadoInicialLogin = {
   email: '',
   token: '',
-  turnosActivos: [],
-  turnosParaEvaluar: []
+  fbtoken: '',
+  nombre: '',
+  iniciales: ''
 };
-
-const estadoCentrosInicial = {
-  centros: [],
-  centroSeleccionado: []
-};
+const temaUsuarioInicial = 'temaOscuro';
 
 export const ProveedorContextoEstados = (props: Props) => {
   const { children } = props;
   const [estadoLogin, asignarEstadoLogin] = useState(estadoInicialLogin);
-  const [estadoCentros, asignarEstadoCentros] = useState(estadoCentrosInicial);
+  const [estadoCentros, asignarEstadoCentros] = useState();
+  const [estadoTurnosActivos, asignarEstadoTurnosActivos] = useState();
+  const [estadoTurnoActual, asignarEstadoTurnoActual] = useState();
+  const [
+    estadoTurnosParaEvaluar,
+    asignarEstadoTurnosParaEvaluar
+  ] = useState();
+  const [estadoTemaUsuario, asignarEstadoTemaUsuario] = useState(temaUsuarioInicial);
 
   // Interface contexto - acciones
   // Información usuario logueado
   const agregarTurnoActivoEnEstado = (turnoActivo: Object) => {
-    agregarTurnoActivoAccion(estadoLogin, asignarEstadoLogin, turnoActivo);
+    agregarTurnoActivoAccion(estadoTurnosActivos, asignarEstadoTurnosActivos, turnoActivo);
   };
-  const fijarTurnosActivosEnEstado = (turnosUsuario: Array<Object>) => {
-    fijarTurnosActivosAccion(estadoLogin, asignarEstadoLogin, turnosUsuario);
+  const fijarTurnosEnEstado = (turnosUsuario: Array<Object>) => {
+    fijarTurnosAccion(
+      asignarEstadoTurnosActivos,
+      asignarEstadoTurnosParaEvaluar,
+      turnosUsuario
+    );
   };
   const fijarUsuarioLogueadoEnEstado = (
     email: string,
@@ -51,26 +59,35 @@ export const ProveedorContextoEstados = (props: Props) => {
     fbtoken: string,
     temaUsuario = 'temaOscuro'
   ) => {
-    fijarUsuarioLogueadoAccion(asignarEstadoLogin, email, token, contrasena, fbtoken, temaUsuario);
+    fijarUsuarioLogueadoAccion(
+      email,
+      token,
+      contrasena,
+      fbtoken,
+      temaUsuario,
+      asignarEstadoLogin,
+      asignarEstadoTemaUsuario,
+    );
   };
   const cancelarTurnoEnEstado = (turno: Object) => {
-    cancelarTurnoAccion(estadoLogin, asignarEstadoLogin, turno);
+    cancelarTurnoAccion(estadoTurnosActivos, asignarEstadoTurnosActivos, turno);
   };
   const confirmarAsistenciaTurnoEnEstado = (turno: Object) => {
-    confirmarAsistenciaTurnoAccion(estadoLogin, asignarEstadoLogin, turno);
+    confirmarAsistenciaTurnoAccion(estadoTurnosActivos, asignarEstadoTurnosActivos, turno);
   };
   const evaluarTurnoEnEstado = (turno: Object) => {
-    evaluarTurnoAccion(estadoLogin, asignarEstadoLogin, turno);
-  };
-  const fijarTemaUsuarioEnEstado = (temaUsuario: string) => {
-    fijarTemaUsuarioAccion(estadoLogin, asignarEstadoLogin, temaUsuario);
+    evaluarTurnoAccion(estadoTurnosParaEvaluar, asignarEstadoTurnosParaEvaluar, turno);
   };
   const cambiarTemaUsuarioEnEstado = () => {
-    cambiarTemaUsuarioAccion(estadoLogin, asignarEstadoLogin);
+    cambiarTemaUsuarioAccion(estadoTemaUsuario, asignarEstadoTemaUsuario);
   };
   // Centros
   const fijarCentrosEnEstado = (turno: Object) => {
     fijarCentrosAccion(estadoCentros, asignarEstadoCentros, turno);
+  };
+  // Turno
+  const fijarTurnoActualEnEstado = (turno: Object, demora: Object) => {
+    fijarTurnoActualAccion(asignarEstadoTurnoActual, turno, demora);
   };
   // Fin interface contexto - acciones
 
@@ -78,15 +95,19 @@ export const ProveedorContextoEstados = (props: Props) => {
     <ContextoEstados.Provider value={{
       estadoLogin,
       estadoCentros,
+      estadoTurnosActivos,
+      estadoTurnosParaEvaluar,
+      estadoTemaUsuario,
+      estadoTurnoActual,
       agregarTurnoActivoEnEstado,
-      fijarTurnosActivosEnEstado,
+      fijarTurnosEnEstado,
       fijarUsuarioLogueadoEnEstado,
       cancelarTurnoEnEstado,
       confirmarAsistenciaTurnoEnEstado,
       evaluarTurnoEnEstado,
-      fijarTemaUsuarioEnEstado,
       fijarCentrosEnEstado,
-      cambiarTemaUsuarioEnEstado
+      cambiarTemaUsuarioEnEstado,
+      fijarTurnoActualEnEstado
     }}
     >
       {children}

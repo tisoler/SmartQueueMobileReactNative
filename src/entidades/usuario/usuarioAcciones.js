@@ -3,31 +3,33 @@ import jwt from 'jwt-decode';
 import { guardarDatosLocalmente } from '../../lib/ayudante';
 
 export const agregarTurnoActivoAccion = (
-  estadoLogin: Object,
-  asignarEstadoLogin: Function,
+  estadoTurnosActivos: Object,
+  asignarEstadoTurnosActivos: Function,
   turnoActivo: Object
 ) => {
-  const turnosActivos = [...estadoLogin.turnosActivos, turnoActivo];
-  asignarEstadoLogin({ ...estadoLogin, ...{ turnosActivos } });
+  const turnosActivos = [...estadoTurnosActivos, turnoActivo];
+  asignarEstadoTurnosActivos(turnosActivos);
 };
 
-export const fijarTurnosActivosAccion = (
-  estadoLogin: Object,
-  asignarEstadoLogin: Function,
+export const fijarTurnosAccion = (
+  asignarEstadoTurnosActivos: Function,
+  asignarEstadoTurnosParaEvaluar: Function,
   turnosUsuario: Array<Object>
 ) => {
   const turnosActivos = turnosUsuario.filter(t => ['waiting', 'ready'].includes(t.status));
   const turnosParaEvaluar = turnosUsuario.filter(t => t.status === 'finished');
-  asignarEstadoLogin({ ...estadoLogin, ...{ turnosActivos, turnosParaEvaluar } });
+  asignarEstadoTurnosActivos(turnosActivos);
+  asignarEstadoTurnosParaEvaluar(turnosParaEvaluar);
 };
 
 export const fijarUsuarioLogueadoAccion = (
-  asignarEstadoLogin: Function,
   email: string,
   token: string,
   contrasena: string,
   fbtoken: string,
-  temaUsuario: string
+  temaUsuario: string,
+  asignarEstadoLogin: Function,
+  asignarEstadoTemaUsuario: Function
 ) => {
   let inicialNombre = '';
   let inicialApellido = '';
@@ -49,50 +51,45 @@ export const fijarUsuarioLogueadoAccion = (
     token,
     fbtoken,
     nombre,
-    iniciales: (`${inicialNombre}${inicialApellido}`).toUpperCase(),
-    temaUsuario
+    iniciales: (`${inicialNombre}${inicialApellido}`).toUpperCase()
   });
+  asignarEstadoTemaUsuario(temaUsuario);
 };
 
 export const cancelarTurnoAccion = (
-  estadoLogin: Object,
-  asignarEstadoLogin: Function,
+  estadoTurnosActivos: Object,
+  asignarEstadoTurnosActivos: Function,
   turno: Object
 ) => {
-  const turnosActivos = estadoLogin.turnosActivos.filter(t => t.id !== turno.id);
-  asignarEstadoLogin({ ...estadoLogin, ...{ turnosActivos } });
+  const turnosActivos = estadoTurnosActivos.filter(t => t.id !== turno.id);
+  asignarEstadoTurnosActivos(turnosActivos);
 };
 
 export const confirmarAsistenciaTurnoAccion = (
-  estadoLogin: Object,
-  asignarEstadoLogin: Function,
+  estadoTurnosActivos: Object,
+  asignarEstadoTurnosActivos: Function,
   turno: Object
 ) => {
-  const { turnosActivos } = estadoLogin;
+  const turnosActivos = [...estadoTurnosActivos];
   const indice = turnosActivos.findIndex(t => t.id === turno.id);
   turnosActivos[indice].status = 'ready';
-  asignarEstadoLogin({ ...estadoLogin, ...{ turnosActivos } });
+  asignarEstadoTurnosActivos(turnosActivos);
 };
 
 export const evaluarTurnoAccion = (
-  estadoLogin: Object,
-  asignarEstadoLogin: Function,
+  estadoTurnosParaEvaluar: Object,
+  asignarEstadoTurnosParaEvaluar: Function,
   turno: Object
 ) => {
-  const turnosParaEvaluar = estadoLogin.turnosParaEvaluar.filter(t => t.id !== turno.id);
-  asignarEstadoLogin({ ...estadoLogin, ...{ turnosParaEvaluar } });
+  const turnosParaEvaluar = estadoTurnosParaEvaluar.filter(t => t.id !== turno.id);
+  asignarEstadoTurnosParaEvaluar(turnosParaEvaluar);
 };
 
-export const fijarTemaUsuarioAccion = (
-  estadoLogin: Object,
-  asignarEstadoLogin: Function,
-  temaUsuario: string
+export const cambiarTemaUsuarioAccion = (
+  estadoTemaUsuario: Object,
+  asignarEstadoTemaUsuario: Function
 ) => {
-  asignarEstadoLogin({ ...estadoLogin, ...{ temaUsuario } });
-};
-
-export const cambiarTemaUsuarioAccion = (estadoLogin: Object, asignarEstadoLogin: Function) => {
-  const temaUsuario = !estadoLogin?.temaUsuario || estadoLogin?.temaUsuario === 'temaOscuro' ? 'temaClaro' : 'temaOscuro';
+  const temaUsuario = estadoTemaUsuario === 'temaOscuro' ? 'temaClaro' : 'temaOscuro';
   guardarDatosLocalmente('@temaUsuario', temaUsuario);
-  fijarTemaUsuarioAccion(estadoLogin, asignarEstadoLogin, temaUsuario);
+  asignarEstadoTemaUsuario(temaUsuario);
 };

@@ -12,7 +12,7 @@ type Props = {
 
 export default (props: Props) => {
   const {
-    height = 65, width = 65, rellenar = false, ManejadorClick = () => {}
+    height = 60, width = 60, rellenar = false, ManejadorClick = () => {}
   } = props;
 
   const estilo = {

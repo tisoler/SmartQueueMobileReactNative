@@ -12,8 +12,12 @@ import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 
 const EvaluacionTurno = () => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
-  const { estadoLogin, evaluarTurnoEnEstado } = useContext(ContextoEstados);
-  const { turnosParaEvaluar } = estadoLogin;
+  const {
+    estadoLogin,
+    estadoTurnosParaEvaluar,
+    evaluarTurnoEnEstado
+  } = useContext(ContextoEstados);
+  const turnosParaEvaluar = estadoTurnosParaEvaluar;
   const turnoEvaluado = turnosParaEvaluar[0];
   const [cantidadEstrellas, setCantidadEstrellas] = useState(0);
 
@@ -54,19 +58,21 @@ const EvaluacionTurno = () => {
   });
 
   const evaluar = (cantEstrellas) => {
-    setCantidadEstrellas(cantEstrellas);
-    evaluarTurno(estadoLogin.token, turnoEvaluado.Center.id, cantEstrellas)
-      .then(respuesta => respuesta.json())
-      .then(respuesta => {
-        if (respuesta.success) {
-          setTimeout(() => {
-            evaluarTurnoEnEstado(turnoEvaluado);
-          }, 1500);
-          if (turnosParaEvaluar.length > 1) {
-            setCantidadEstrellas(0);
+    if (cantidadEstrellas === 0) {
+      setCantidadEstrellas(cantEstrellas);
+      evaluarTurno(estadoLogin.token, turnoEvaluado.Center.id, cantEstrellas)
+        .then(respuesta => respuesta.json())
+        .then(respuesta => {
+          if (respuesta.success) {
+            setTimeout(() => {
+              if (turnosParaEvaluar.length > 1) {
+                setCantidadEstrellas(0);
+              }
+              evaluarTurnoEnEstado(turnoEvaluado);
+            }, 3500);
           }
-        }
-      });
+        });
+    }
   };
 
   if (!turnoEvaluado) {

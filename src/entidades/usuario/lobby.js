@@ -13,14 +13,18 @@ import { recuperarMensajeError } from '../../lib/ayudante';
 
 const Lobby = ({ navigation }) => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
-  const { estadoLogin, fijarTurnosActivosEnEstado } = useContext(ContextoEstados);
-  const { turnosActivos } = estadoLogin;
+  const {
+    estadoLogin,
+    estadoTurnosActivos,
+    fijarTurnosEnEstado,
+    fijarTurnoActualEnEstado
+  } = useContext(ContextoEstados);
   useEffect(() => {
     obtenerTicketsParaUsuario(estadoLogin.token)
       .then(res => res.json())
       .then(respuesta => {
         if (respuesta.success) {
-          fijarTurnosActivosEnEstado(respuesta.response);
+          fijarTurnosEnEstado(respuesta.response);
         } else {
           Alert.alert('Error durante la carga de turnos activos.');
         }
@@ -33,6 +37,7 @@ const Lobby = ({ navigation }) => {
   };
 
   const seleccionarTurnoActivo = (turno) => {
+    fijarTurnoActualEnEstado(turno,null);
     navigation.navigate('Turno', { turno });
   };
 
@@ -41,7 +46,8 @@ const Lobby = ({ navigation }) => {
       flex: 1,
       backgroundColor: estilosGlobales.colorFondoGlobal,
       flexDirection: 'column',
-      alignItems: 'center'
+      alignItems: 'center',
+      justifyContent: 'center'
     },
     contenedorTurnos: {
       backgroundColor: estilosGlobales.colorFondoContenedorDatos,
@@ -88,7 +94,7 @@ const Lobby = ({ navigation }) => {
     },
   });
 
-  if (!turnosActivos) {
+  if (!estadoTurnosActivos) {
     return (
       <View style={estilos.contenedor}>
         <ActivityIndicator size="large" color="#FFF" />
@@ -100,13 +106,13 @@ const Lobby = ({ navigation }) => {
     <View style={estilos.contenedor}>
       <View style={estilos.subContenedorTitulo}>
         <Text style={estilosGlobales.tituloSeccion}>
-          { turnosActivos.length > 0 ? 'Turnos pedidos:' : 'Usted no tiene turnos pedidos' }
+          { estadoTurnosActivos.length > 0 ? 'Turnos pedidos:' : 'Usted no tiene turnos pedidos' }
         </Text>
       </View>
-      { turnosActivos.length > 0 && (
+      { estadoTurnosActivos.length > 0 && (
         <View style={estilos.contenedorTurnos}>
           <ScrollView>
-            { turnosActivos.map(turno => (
+            { estadoTurnosActivos.map(turno => (
               <Teja
                 key={turno.id}
                 appIcon={turno.Center.app_icon}

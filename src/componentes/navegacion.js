@@ -5,7 +5,8 @@ import {
   Dimensions,
   TouchableOpacity,
   View,
-  Alert
+  Alert,
+  ActivityIndicator
 } from 'react-native';
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
@@ -24,7 +25,7 @@ import { ContextoEstados } from '../lib/contextoEstados';
 import { recuperarDatosLocalmente, recuperarTokenFB, recuperarMensajeError } from '../lib/ayudante';
 import IconosGenerales from '../lib/iconos';
 import { NombresIconosGenerales } from '../lib/constantes';
-import { login } from '../lib/servicios';
+import { login, estimarDemora } from '../lib/servicios';
 import PantallaCargando from './pantallaCargando';
 
 const Stack = createStackNavigator();
@@ -32,39 +33,50 @@ const Stack = createStackNavigator();
 const BotonMenuHamburguesa = (props) => {
   const { estilos, navigation } = props;
   return (
-    <View style={estilos.botonHamburguesa}>
-      <TouchableOpacity onPress={() => navigation.openDrawer()}>
+    <View style={estilos.contenedorBotonHamburguesa}>
+      <TouchableOpacity style={estilos.botonEnHeader} onPress={() => navigation.openDrawer()}>
         {IconosGenerales[NombresIconosGenerales.menu]}
       </TouchableOpacity>
     </View>
   );
 };
 
-/*
 const BotonRefrescarTurnos = (props) => {
-  const { estilos, estadoLogin, fijarTurnosActivosEnEstado } = props;
+  const { estadoTurnoActual, estadoLogin, fijarTurnoActualEnEstado } = useContext(ContextoEstados);
+  const { turno: turnoActual } = estadoTurnoActual;
+  const { estilos } = props;
+  const [consultando, cambiarConsultando] = useState(false);
+  const [haConsultado, cambiarHaConsultado] = useState(false);
   const refrescarTurnos = () => {
-    obtenerTicketsParaUsuario(estadoLogin.token)
-      .then(res => res.json())
-      .then(respuesta => {
-        if (respuesta.success) {
-          fijarTurnosActivosEnEstado(respuesta.response);
-        } else {
-          Alert.alert('Error durante la carga de turnos activos.');
-        }
-      })
-      .catch((error) => Alert.alert(recuperarMensajeError(error.message,
-      'Error durante la carga de turnos activos.')));
+    if (!haConsultado) {
+      cambiarHaConsultado(true);
+      setTimeout(() => {
+        cambiarHaConsultado(false);
+      }, 30000);
+      cambiarConsultando(true);
+      estimarDemora(estadoLogin.token, turnoActual?.Category?.id, turnoActual?.Center?.id)
+        .then(res => res.json())
+        .then(respuesta => {
+          fijarTurnoActualEnEstado(turnoActual, respuesta?.response?.wait);
+        })
+        .catch((error) => Alert.alert(recuperarMensajeError(error.message, 'Error al consultar la demora prevista.')))
+        .finally(() => cambiarConsultando(false));
+    } else {
+      Alert.alert('Debe esperar 30 segundos entre consultas.');
+    }
   };
   return (
-    <View style={estilos.botonHamburguesa}>
-      <TouchableOpacity onPress={refrescarTurnos}>
-        {IconosGenerales[NombresIconosGenerales.menu]}
-      </TouchableOpacity>
+    <View style={estilos.contenedorBotonRefrescar}>
+      { !consultando ? (
+        <TouchableOpacity style={estilos.botonEnHeader} onPress={refrescarTurnos}>
+          {IconosGenerales[NombresIconosGenerales.refrescar]}
+        </TouchableOpacity>
+      ) : (
+        <ActivityIndicator size="small" color="#FFF" />
+      )}
     </View>
   );
 };
-*/
 
 const NavegadorEvaluacion = () => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
@@ -137,12 +149,26 @@ const NavegadorFijoAutenticado = ({ navigation }) => {
     encabezadoNavegacion: {
       backgroundColor: estilosGlobales.colorBarraNavegacion
     },
-    botonHamburguesa: {
+    contenedorBotonHamburguesa: {
       flexGrow: 1,
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
       marginLeft: 6,
+      width: 50
+    },
+    botonEnHeader: {
+      width: 50,
+      height: '100%',
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
+    contenedorBotonRefrescar: {
+      flexGrow: 1,
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 6,
       width: 50
     }
   });
@@ -157,13 +183,6 @@ const NavegadorFijoAutenticado = ({ navigation }) => {
           headerStyle: estilos.encabezadoNavegacion,
           headerTintColor: estilosGlobales.colorLetraEncabezado,
           headerLeft: () => <BotonMenuHamburguesa navigation={navigation} estilos={estilos} />,
-          /* headerRight: () => (
-            <BotonRefrescarTurnos
-              estilos={estilos}
-              estadoLogin={estadoLogin}
-              fijarTurnosActivosEnEstado={fijarTurnosActivosEnEstado}
-            />
-          ) */
         }}
       />
       <Stack.Screen
@@ -195,7 +214,10 @@ const NavegadorFijoAutenticado = ({ navigation }) => {
             open: TransitionSpecs.TransitionIOSSpec,
             close: TransitionSpecs.TransitionIOSSpec,
           },
-          headerLeft: () => <HeaderBackButton tintColor={estilosGlobales.colorLetraEncabezado} onPress={() => navigation.navigate('Lobby')} />
+          headerLeft: () => <HeaderBackButton tintColor={estilosGlobales.colorLetraEncabezado} onPress={() => navigation.navigate('Lobby')} />,
+          headerRight: () => (
+            <BotonRefrescarTurnos estilos={estilos} />
+          )
         }}
       />
     </Stack.Navigator>
@@ -210,7 +232,6 @@ const NavegadorAutenticado = () => (
       edgeWidth={Math.round(Dimensions.get('window').width)}
       minSwipeDistance={5}
       drawerContent={(props) => <MenuLateral navigation={props.navigation} />}
-      disableGestures
     >
       <Drawer.Screen name="NavegadorFijo" component={NavegadorFijoAutenticado} />
     </Drawer.Navigator>
@@ -237,6 +258,7 @@ const recuperarCredencialesAlmacenadas = async (fijarUsuarioLogueadoEnEstado) =>
 export default () => {
   const {
     estadoLogin,
+    estadoTurnosParaEvaluar,
     fijarUsuarioLogueadoEnEstado,
   } = useContext(ContextoEstados);
 
@@ -254,7 +276,7 @@ export default () => {
     return <PantallaCargando />;
   }
 
-  if (estadoLogin?.turnosParaEvaluar?.length > 0) {
+  if (estadoTurnosParaEvaluar?.length > 0) {
     return NavegadorEvaluacion();
   }
   if (estadoLogin?.email && estadoLogin?.token) {

@@ -55,7 +55,7 @@ const BotonRedondeado = (props: Props) => {
       colorBorde={colorBorde}
       estilo={estilo}
       maxOpacity={0.42}
-      deshabilitado={deshabilitado}
+      deshabilitado={deshabilitado || cargando}
     >
       {cargando
         ? <ActivityIndicator style={estilos.actividad} size="large" color="white" />

@@ -12,7 +12,13 @@ import { recuperarMensajeError } from '../../lib/ayudante';
 
 const ListaCentrosAtencion = ({ navigation }) => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
-  const { estadoLogin, estadoCentros, fijarCentrosEnEstado } = useContext(ContextoEstados);
+  const {
+    estadoLogin,
+    estadoCentros,
+    estadoTurnosActivos,
+    fijarCentrosEnEstado,
+    fijarTurnoActualEnEstado
+  } = useContext(ContextoEstados);
   const estilos = StyleSheet.create({
     contenedor: {
       flex: 1,
@@ -38,19 +44,20 @@ const ListaCentrosAtencion = ({ navigation }) => {
     }
   }, []);
 
-  const obtenerTurnoParaCentro = (idCentro) => estadoLogin.turnosActivos
+  const obtenerTurnoParaCentro = (idCentro) => estadoTurnosActivos
     .find(turno => turno.Center.id === idCentro);
 
   const seleccionarCentro = (centro) => {
     const turnoExistente = obtenerTurnoParaCentro(centro.id);
     if (turnoExistente) {
+      fijarTurnoActualEnEstado({ turno: turnoExistente, demora: null });
       navigation.navigate('Turno', { turno: turnoExistente });
     } else {
       navigation.navigate('CentroAtencion', { centro });
     }
   };
 
-  if (estadoCentros == null) {
+  if (!estadoCentros) {
     return (
       <View style={estilos.contenedor}>
         <ActivityIndicator size="large" color="#FFF" />

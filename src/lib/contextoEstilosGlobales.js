@@ -12,9 +12,9 @@ type Props = {
 
 export const ContextoEstilosGlobalesProveedor = (props: Props) => {
   const { children } = props;
-  const { estadoLogin } = useContext(ContextoEstados);
-  const estilosGlobales = estadoLogin?.temaUsuario
-    ? temas[estadoLogin.temaUsuario]
+  const { estadoTemaUsuario } = useContext(ContextoEstados);
+  const estilosGlobales = estadoTemaUsuario
+    ? temas[estadoTemaUsuario]
     : temas.temaOscuro;
 
   return (

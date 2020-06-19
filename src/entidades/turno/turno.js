@@ -13,15 +13,19 @@ import { recuperarMensajeError } from '../../lib/ayudante';
 
 const Turno = ({ route, navigation }) => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
-  const { turno, demoraTurnoCreado } = route.params;
+  const { turno } = route.params;
   const {
     estadoLogin,
+    estadoTurnoActual,
     cancelarTurnoEnEstado,
-    confirmarAsistenciaTurnoEnEstado
+    confirmarAsistenciaTurnoEnEstado,
+    fijarTurnoActualEnEstado
   } = useContext(ContextoEstados);
-  const [demora, setDemora] = useState(null);
-  const [confirmoPresencia, setConfirmoPresencia] = useState(false);
-  const [cargando, setCargando] = useState(true);
+  const { demora: demoraActual } = estadoTurnoActual;
+  const [confirmoPresencia, cambiarConfirmoPresencia] = useState(false);
+  const [cargando, cambiarCargando] = useState(true);
+  const [confirmandoTurno, cambiarConfirmandoTurno] = useState(false);
+
   const estilos = StyleSheet.create({
     contenedor: {
       flex: 1,
@@ -57,25 +61,24 @@ const Turno = ({ route, navigation }) => {
   useEffect(() => {
     // Si viene de crear el turno usa la misma demora que le informaó en la pantalla anterior.
     // Si está consultando un turno llama al estimador de demora.
-    if (demoraTurnoCreado == null) {
-      estimarDemora(estadoLogin.token, turno.Category.id, turno.Center.id)
+    if (!demoraActual) {
+      estimarDemora(estadoLogin?.token, turno?.Category?.id, turno?.Center?.id)
         .then(res => res.json())
         .then(respuesta => {
-          setDemora(respuesta.response.wait);
-          setCargando(false);
+          fijarTurnoActualEnEstado(turno, respuesta?.response?.wait);
+          cambiarCargando(false);
           if (turno.status === 'ready') {
-            setConfirmoPresencia(true);
+            cambiarConfirmoPresencia(true);
           }
         })
         .catch((error) => Alert.alert(recuperarMensajeError(error.message, 'Error en la solicitud de turno.')));
     } else {
-      setDemora(demoraTurnoCreado);
-      setCargando(false);
+      cambiarCargando(false);
     }
   }, []);
 
   const cancelarTurno = () => {
-    setCargando(true);
+    cambiarCargando(true);
     cancelarTicket(estadoLogin.token, turno.Center.id)
       .then(res => res.json())
       .then(respuesta => {
@@ -90,24 +93,34 @@ const Turno = ({ route, navigation }) => {
   };
 
   const confirmarPresencia = () => {
+    cambiarConfirmandoTurno(true);
     confirmarAsistencia(estadoLogin.token, turno.Center.id)
       .then(res => res.json())
       .then(() => {
         confirmarAsistenciaTurnoEnEstado(turno);
-        setConfirmoPresencia(true);
+        cambiarConfirmoPresencia(true);
       })
       .catch((error) => {
         Alert.alert(recuperarMensajeError(error.message, 'Error al confirmar presencia.'));
-        setConfirmoPresencia(false);
-      });
+        cambiarConfirmoPresencia(false);
+      })
+      .finally(() => cambiarConfirmandoTurno(false));
   };
 
   const obtenerAccionesTurno = () => (
     <View style={estilos.subContenedor}>
-      <BotonRedondeado manejadorClick={() => confirmarPresencia()} estilo={{ marginTop: 10 }}>
+      <BotonRedondeado
+        manejadorClick={() => confirmarPresencia()}
+        cargando={confirmandoTurno}
+        estilo={{ marginTop: 10 }}
+      >
         YA ESTOY AQUÍ
       </BotonRedondeado>
-      <BotonRedondeado manejadorClick={() => cancelarTurno()} estilo={{ marginTop: 22 }}>
+      <BotonRedondeado
+        manejadorClick={() => cancelarTurno()}
+        cargando={confirmandoTurno}
+        estilo={{ marginTop: 22 }}
+      >
         CANCELAR TURNO
       </BotonRedondeado>
     </View>
@@ -130,10 +143,10 @@ const Turno = ({ route, navigation }) => {
         {turno.Category.name}
       </Text>
       <Text style={estilos.textoTurno}>
-        {`Turnos antes: ${demora?.tickets || '?'}`}
+        {`Turnos antes: ${demoraActual?.tickets || '?'}`}
       </Text>
       <Text style={[estilos.textoTurno, estilos.margenUltimoTexto]}>
-        {`Tiempo estimado: ${demora?.hours || '?'} hs. ${demora?.minutes || '?'} minutos`}
+        {`Tiempo estimado: ${demoraActual?.hours || '?'} hs. ${demoraActual?.minutes || '?'} minutos`}
       </Text>
       { !confirmoPresencia ? (
         obtenerAccionesTurno()
