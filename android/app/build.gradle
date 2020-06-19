@@ -133,8 +133,8 @@ android {
         applicationId "com.smartqueuemobileapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 4
-        versionName "1.1.2"
+        versionCode 5
+        versionName "1.2.1"
         missingDimensionStrategy 'react-native-camera', 'general'
         multiDexEnabled true
     }
@@ -176,10 +176,7 @@ android {
             // Enables resource shrinking, which is performed by the
             // Android Gradle plugin.
             // shrinkResources true
-            shrinkResources enableProguardInReleaseBuilds
-            zipAlignEnabled enableProguardInReleaseBuilds
             minifyEnabled enableProguardInReleaseBuilds
-            useProguard enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
