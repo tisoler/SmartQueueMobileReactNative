@@ -174,7 +174,6 @@ android {
             // your project's release build type.
             // Enables resource shrinking, which is performed by the
             // Android Gradle plugin.
-            shrinkResources enableProguardInReleaseBuilds
             zipAlignEnabled enableProguardInReleaseBuilds
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
