@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator, TransitionSpecs, HeaderBackButton } from '@react-navigation/stack';
+import { createStackNavigator, TransitionSpecs } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import Login from '../entidades/usuario/login';
 import ListaCentrosAtencion from '../entidades/centroAtencion/listaCentrosAtencion';
@@ -214,7 +214,6 @@ const NavegadorFijoAutenticado = ({ navigation }) => {
             open: TransitionSpecs.TransitionIOSSpec,
             close: TransitionSpecs.TransitionIOSSpec,
           },
-          headerLeft: () => <HeaderBackButton tintColor={estilosGlobales.colorLetraEncabezado} onPress={() => navigation.navigate('Lobby')} />,
           headerRight: () => (
             <BotonRefrescarTurnos estilos={estilos} />
           )

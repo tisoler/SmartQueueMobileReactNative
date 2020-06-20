@@ -8,7 +8,7 @@ import TextoIngreso from '../../componentes/comunes/textoIngreso';
 import { login } from '../../lib/servicios';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import { ContextoEstados } from '../../lib/contextoEstados';
-import { ImagenLogo, NombresIconosGenerales } from '../../lib/constantes';
+import { ImagenLogo, NombresIconosGenerales, mensajes } from '../../lib/constantes';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 import { recuperarTokenFB, recuperarDatosLocalmente, recuperarMensajeError } from '../../lib/ayudante';
 
@@ -54,10 +54,15 @@ const Login = ({ navigation }) => {
       .then(res => res.json())
       .then(respuesta => {
         cambioCargando(false);
-        if (respuesta.success) {
+        if (respuesta?.success) {
           fijarUsuarioLogueadoEnEstado(emailUsuario, respuesta.token, contrasenaUsuario, fbtoken, temaUsuario || '');
         } else {
-          cambioLogin(true);
+          // eslint-disable-next-line no-lonely-if
+          if (respuesta?.message?.trim().toLowerCase().includes('connect econnrefused')) {
+            Alert.alert(mensajes.sinServicio);
+          } else {
+            cambioLogin(true);
+          }
         }
       })
       .catch(error => {

@@ -1,6 +1,7 @@
 // @flow
 import { firebase } from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-community/async-storage';
+import { mensajes } from './constantes';
 
 export const guardarDatosLocalmente = async (clave: string, valor: string) => {
   try {
@@ -53,7 +54,10 @@ export const recuperarTokenFB = async () => {
 
 export const recuperarMensajeError = (mensajeError: string, mensajeGenerico?: string) => {
   if (mensajeError?.trim().toLocaleLowerCase() === 'network request failed') {
-    return 'Parece que su dispositivo no tiene conexión a internet.';
+    return mensajes.sinConexion;
+  }
+  if (mensajeError?.trim().toLowerCase().includes('connect econnrefused')) {
+    return mensajes.sinServicio;
   }
   return mensajeGenerico || mensajeError;
 };

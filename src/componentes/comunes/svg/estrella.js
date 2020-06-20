@@ -12,7 +12,7 @@ type Props = {
 
 export default (props: Props) => {
   const {
-    height = 60, width = 60, rellenar = false, ManejadorClick = () => {}
+    height = 55, width = 55, rellenar = false, ManejadorClick = () => {}
   } = props;
 
   const estilo = {
@@ -22,8 +22,8 @@ export default (props: Props) => {
     strokeWidth: 0.5,
     fill: 'yellow',
     fillOpacity: rellenar ? 1 : 0,
-    marginRight: 2,
-    marginLeft: 2
+    marginRight: 4,
+    marginLeft: 4
   };
 
   return (

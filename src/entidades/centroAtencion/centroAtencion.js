@@ -137,6 +137,8 @@ const CentrosAtencion = ({ route, navigation }) => {
     </View>
   );
 
+  // Cuando el usuario confirma el turno (pantalla turno) y vuelve con el "volver" del SO
+  // no tiene que cargar esta pantalla, debe ir a la lobby.
   if (estadoTurnosActivos.some(t => t.Center.id === centro.id)) {
     navigation.navigate('Lobby');
   }

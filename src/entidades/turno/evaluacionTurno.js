@@ -69,7 +69,7 @@ const EvaluacionTurno = () => {
                 setCantidadEstrellas(0);
               }
               evaluarTurnoEnEstado(turnoEvaluado);
-            }, 3500);
+            }, 2000);
           }
         });
     }

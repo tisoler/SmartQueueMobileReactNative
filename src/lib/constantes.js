@@ -28,3 +28,8 @@ export const NombresIconosGenerales = {
   refrescar: 'refrescar',
   ojo: 'ojo'
 };
+
+export const mensajes = {
+  sinConexion: 'Parece que su dispositivo no tiene conexión a internet.',
+  sinServicio: 'Disculpe, el servicio no está habilitado. Intente luego.'
+};

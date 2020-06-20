@@ -26,10 +26,19 @@ const Turno = ({ route, navigation }) => {
   const [cargando, cambiarCargando] = useState(true);
   const [confirmandoTurno, cambiarConfirmandoTurno] = useState(false);
 
+  let colorFondo = estilosGlobales.colorFondoContenedorDatos;
+  // eslint-disable-next-line camelcase
+  if (demoraActual?.tickets <= 10 && demoraActual?.tickets_ready <= 3) {
+    colorFondo = '#04512E';
+  // eslint-disable-next-line camelcase
+  } else if (demoraActual?.tickets <= 10 && demoraActual?.tickets_ready <= 5) {
+    colorFondo = '#8D8002';
+  }
+
   const estilos = StyleSheet.create({
     contenedor: {
       flex: 1,
-      backgroundColor: estilosGlobales.colorFondoContenedorDatos,
+      backgroundColor: colorFondo,
       flexDirection: 'column',
       alignItems: 'center',
       width: '100%'
@@ -59,9 +68,7 @@ const Turno = ({ route, navigation }) => {
   });
 
   useEffect(() => {
-    // Si viene de crear el turno usa la misma demora que le informaó en la pantalla anterior.
-    // Si está consultando un turno llama al estimador de demora.
-    if (!demoraActual) {
+    const consultarDemora = () => {
       estimarDemora(estadoLogin?.token, turno?.Category?.id, turno?.Center?.id)
         .then(res => res.json())
         .then(respuesta => {
@@ -72,9 +79,22 @@ const Turno = ({ route, navigation }) => {
           }
         })
         .catch((error) => Alert.alert(recuperarMensajeError(error.message, 'Error en la solicitud de turno.')));
+    };
+    // Si viene de crear el turno usa la misma demora que le informaó en la pantalla anterior.
+    // Si está consultando un turno llama al estimador de demora.
+    if (!demoraActual) {
+      consultarDemora();
     } else {
       cambiarCargando(false);
     }
+    // Configura un intervalo de consulta para refrescar la demora cada 2 minutos.
+    const idIntervalo = setInterval(() => {
+      consultarDemora();
+    }, 60000);
+    // Cuando el usuario abandona la pantalla limpia el intervalo.
+    return () => {
+      clearInterval(idIntervalo);
+    };
   }, []);
 
   const cancelarTurno = () => {
@@ -116,13 +136,11 @@ const Turno = ({ route, navigation }) => {
       >
         YA ESTOY AQUÍ
       </BotonRedondeado>
-      <BotonRedondeado
-        manejadorClick={() => cancelarTurno()}
-        cargando={confirmandoTurno}
-        estilo={{ marginTop: 22 }}
-      >
-        CANCELAR TURNO
-      </BotonRedondeado>
+      { !confirmandoTurno && (
+        <BotonRedondeado manejadorClick={() => cancelarTurno()} estilo={{ marginTop: 22 }}>
+          CANCELAR TURNO
+        </BotonRedondeado>
+      )}
     </View>
   );
 
