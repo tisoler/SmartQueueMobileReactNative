@@ -1,5 +1,5 @@
 [ignore]
-.*/github/.*
+
 [include]
 
 [libs]
@@ -13,3 +13,4 @@ esproposal.optional_chaining=enable
 
 [untyped]
 .*/node_modules/.*
+.*/github/.*
