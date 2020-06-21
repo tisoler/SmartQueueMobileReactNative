@@ -1,11 +1,12 @@
 // @flow
-import React, { useEffect } from 'react';
-import { firebase } from '@react-native-firebase/messaging';
-import { Alert } from 'react-native';
+import React from 'react';
+/* import { firebase } from '@react-native-firebase/messaging';
+import { Alert } from 'react-native'; */
 import Navegador from './src/componentes/navegacion';
 import { ProveedorContextoEstados } from './src/lib/contextoEstados';
 import { ContextoEstilosGlobalesProveedor } from './src/lib/contextoEstilosGlobales';
 
+/*
 const createNotificationListeners = () => {
   const messaging = firebase.messaging();
   messaging.setBackgroundMessageHandler = (payload => {
@@ -24,9 +25,9 @@ const createNotificationListeners = () => {
     // ...
   });
 };
+*/
 
 export default function App() {
-  useEffect(() => createNotificationListeners());
   return (
     <ProveedorContextoEstados>
       <ContextoEstilosGlobalesProveedor>
