@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 // @flow
 import * as React from 'react';
 import { useContext, useState } from 'react';
@@ -11,11 +12,11 @@ import { estimarDemora, generarTicket } from '../../lib/servicios';
 import BotonPopup from '../../componentes/comunes/botonPopup';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
-import { recuperarMensajeError } from '../../lib/ayudante';
+import { procesarMensajeError, esTokenValido } from '../../lib/ayudante';
 
 const CentrosAtencion = ({ route, navigation }) => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
-  const { centro } = route.params;
+  const { centro } = route?.params;
   const [turnoPedido, setTurnoPedido] = useState(false);
   const [cargando, setCargando] = useState(false);
   const [categoriaSeleccionada, setCategoria] = useState({});
@@ -23,8 +24,10 @@ const CentrosAtencion = ({ route, navigation }) => {
   const {
     estadoLogin,
     estadoTurnosActivos,
+    estadoTemaUsuario,
     agregarTurnoActivoEnEstado,
-    fijarTurnoActualEnEstado
+    fijarTurnoActualEnEstado,
+    fijarUsuarioLogueadoEnEstado
   } = useContext(ContextoEstados);
   const estilos = StyleSheet.create({
     container: {
@@ -36,7 +39,8 @@ const CentrosAtencion = ({ route, navigation }) => {
     contenedorConfirmacion: {
       width: '90%',
       backgroundColor: '#fff',
-      alignItems: 'center'
+      alignItems: 'center',
+      marginTop: 7
     },
     contenedorMensaje: {
       alignItems: 'center',
@@ -53,8 +57,8 @@ const CentrosAtencion = ({ route, navigation }) => {
     },
     mensaje: {
       fontSize: 18,
-      padding: 10,
-      textAlign: 'justify',
+      padding: 3,
+      textAlign: 'center',
       color: estilosGlobales.colorTextoConfirmacionTurno
     },
     contenedorBotonesConfirmacion: {
@@ -67,7 +71,6 @@ const CentrosAtencion = ({ route, navigation }) => {
   const pedirTurno = (categoria) => {
     setTurnoPedido(true);
     setCargando(true);
-    setCategoria({}); // resetea demora estimada y la vuelve a consultar
     estimarDemora(estadoLogin.token, categoria.id, centro.id)
       .then(res => res.json())
       .then(respuesta => {
@@ -75,7 +78,17 @@ const CentrosAtencion = ({ route, navigation }) => {
         setCategoria(categoria);
         setCargando(false);
       })
-      .catch((error) => Alert.alert(recuperarMensajeError(error.message, 'Error en la solicitud de turno.')));
+      .catch((error) => {
+        if (esTokenValido(
+          error?.message,
+          fijarUsuarioLogueadoEnEstado,
+          estadoLogin.email,
+          estadoLogin.fbtoken,
+          estadoTemaUsuario
+        )) {
+          Alert.alert(procesarMensajeError(error.message, 'Error en la solicitud de turno.'));
+        }
+      });
   };
 
   const confirmarTurno = () => {
@@ -83,12 +96,26 @@ const CentrosAtencion = ({ route, navigation }) => {
     generarTicket(estadoLogin.token, categoriaSeleccionada.id, centro.id)
       .then(res => res.json())
       .then(respuesta => {
-        agregarTurnoActivoEnEstado(respuesta.response.ticket);
-        fijarTurnoActualEnEstado(demora);
-        navigation.navigate('Turno', { turno: respuesta.response.ticket });
-        setCargando(false);
+        if (respuesta?.success) {
+          agregarTurnoActivoEnEstado(respuesta?.response?.ticket);
+          fijarTurnoActualEnEstado(respuesta?.response?.ticket, respuesta?.response?.wait);
+          navigation.navigate('Turno', { turno: respuesta?.response?.ticket });
+          setCargando(false);
+        } else {
+          Alert.alert('Error en la solicitud de turno.');
+        }
       })
-      .catch((error) => Alert.alert(recuperarMensajeError(error.message, 'Error en la solicitud de turno.')));
+      .catch((error) => {
+        if (esTokenValido(
+          error?.message,
+          fijarUsuarioLogueadoEnEstado,
+          estadoLogin.email,
+          estadoLogin.fbtoken,
+          estadoTemaUsuario
+        )) {
+          Alert.alert(procesarMensajeError(error.message, 'Error en la solicitud de turno.'));
+        }
+      });
   };
 
   const obtenerBotonesCategorias = () => (
@@ -103,14 +130,21 @@ const CentrosAtencion = ({ route, navigation }) => {
     ))
   );
 
+  const turnosAnteriores = demora?.tickets != null ? demora?.tickets : -1;
+  // eslint-disable-next-line no-nested-ternary
+  const mensajeTurnosAnteriores = turnosAnteriores === 1
+    ? 'Hay 1 turno antes del suyo.'
+    : turnosAnteriores > 1
+      ? `Hay ${turnosAnteriores} turnos antes del suyo.`
+      : 'No hay ningún turno antes del suyo.';
+
   const obtenerPopupConfirmacion = () => (
     <View style={estilos.contenedorConfirmacion}>
       <View style={estilos.contenedorMensaje}>
-        <Text style={estilos.titulo}>
-          { categoriaSeleccionada.description }
-        </Text>
+        <Text style={estilos.titulo}>{ categoriaSeleccionada.description }</Text>
+        <Text style={estilos.mensaje}>{mensajeTurnosAnteriores}</Text>
         <Text style={estilos.mensaje}>
-          {`Hay ${demora?.tickets || '?'} trámites antes del suyo. Tiempo estimado: ${demora?.hours || '?'} horas ${demora?.minutes || '?'} minutos.`}
+          {`La demora estimada es de ${demora?.hours > 0 ? `${demora?.hours} hs.` : ''} ${demora?.minutes ? parseInt(demora.minutes, 10) : '?'} minutos.`}
         </Text>
         <Text style={estilos.mensaje}>
           ¿Desea tomar el turno?
@@ -156,6 +190,7 @@ const CentrosAtencion = ({ route, navigation }) => {
   return (
     <View style={estilos.container}>
       <Image style={estilosGlobales.imagenLogoCentro} source={IconosCentros[centro.app_icon]} />
+      <Text style={estilosGlobales.subtituloGrande}>{centro?.name}</Text>
       { obtenerRender() }
     </View>
   );

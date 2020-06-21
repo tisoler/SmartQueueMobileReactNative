@@ -52,7 +52,7 @@ export const recuperarTokenFB = async () => {
   return solicitarPermisoFB();
 };
 
-export const recuperarMensajeError = (mensajeError: string, mensajeGenerico?: string) => {
+export const procesarMensajeError = (mensajeError: string, mensajeGenerico?: string) => {
   if (mensajeError?.trim().toLocaleLowerCase() === 'network request failed') {
     return mensajes.sinConexion;
   }
@@ -60,4 +60,18 @@ export const recuperarMensajeError = (mensajeError: string, mensajeGenerico?: st
     return mensajes.sinServicio;
   }
   return mensajeGenerico || mensajeError;
+};
+
+export const esTokenValido = (
+  mensaje: string,
+  fijarUsuarioLogueadoEnEstado: Function,
+  email: string,
+  fbtoken: string,
+  estadoTemaUsuario: string
+) => {
+  if (mensaje.trim().toLowerCase().includes('unexpected token')) {
+    fijarUsuarioLogueadoEnEstado(email, '', fbtoken, estadoTemaUsuario);
+    return false;
+  }
+  return true;
 };

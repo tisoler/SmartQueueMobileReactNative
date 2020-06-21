@@ -55,14 +55,12 @@ export const ProveedorContextoEstados = (props: Props) => {
   const fijarUsuarioLogueadoEnEstado = (
     email: string,
     token: string,
-    contrasena: string,
     fbtoken: string,
     temaUsuario = 'temaOscuro'
   ) => {
     fijarUsuarioLogueadoAccion(
       email,
       token,
-      contrasena,
       fbtoken,
       temaUsuario,
       asignarEstadoLogin,

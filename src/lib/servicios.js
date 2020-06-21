@@ -23,6 +23,16 @@ export const obtenerTicketsParaUsuario = (token: string) => {
     });
 };
 
+export const obtenerTicket = (token: string, idCentro: number) => {
+  const url = `${apiURI}/get-ticket/${idCentro}`;
+  return fetch(url,
+    {
+      headers: {
+        'x-access-token': token
+      }
+    });
+};
+
 export const obtenerCentrosAtencion = (token: string) => {
   const url = `${apiURI}centers/`;
   return fetch(url,

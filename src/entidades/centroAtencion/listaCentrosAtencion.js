@@ -8,7 +8,7 @@ import { ContextoEstados } from '../../lib/contextoEstados';
 import { obtenerCentrosAtencion } from '../../lib/servicios';
 import Teja from '../../componentes/comunes/teja';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
-import { recuperarMensajeError } from '../../lib/ayudante';
+import { procesarMensajeError, esTokenValido } from '../../lib/ayudante';
 
 const ListaCentrosAtencion = ({ navigation }) => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
@@ -16,8 +16,10 @@ const ListaCentrosAtencion = ({ navigation }) => {
     estadoLogin,
     estadoCentros,
     estadoTurnosActivos,
+    estadoTemaUsuario,
     fijarCentrosEnEstado,
-    fijarTurnoActualEnEstado
+    fijarTurnoActualEnEstado,
+    fijarUsuarioLogueadoEnEstado
   } = useContext(ContextoEstados);
   const estilos = StyleSheet.create({
     contenedor: {
@@ -40,7 +42,17 @@ const ListaCentrosAtencion = ({ navigation }) => {
         .then(respuesta => {
           fijarCentrosEnEstado(respuesta.response);
         })
-        .catch((error) => Alert.alert(recuperarMensajeError(error.message, 'Error durante la carga de centros.')));
+        .catch((error) => {
+          if (esTokenValido(
+            error?.message,
+            fijarUsuarioLogueadoEnEstado,
+            estadoLogin.email,
+            estadoLogin.fbtoken,
+            estadoTemaUsuario
+          )) {
+            Alert.alert(procesarMensajeError(error.message, 'Error durante la carga de centros.'));
+          }
+        });
     }
   }, []);
 
@@ -50,7 +62,7 @@ const ListaCentrosAtencion = ({ navigation }) => {
   const seleccionarCentro = (centro) => {
     const turnoExistente = obtenerTurnoParaCentro(centro.id);
     if (turnoExistente) {
-      fijarTurnoActualEnEstado({ turno: turnoExistente, demora: null });
+      fijarTurnoActualEnEstado(turnoExistente, null);
       navigation.navigate('Turno', { turno: turnoExistente });
     } else {
       navigation.navigate('CentroAtencion', { centro });

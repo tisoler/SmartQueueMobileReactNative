@@ -22,10 +22,15 @@ import EvaluacionTurno from '../entidades/turno/evaluacionTurno';
 import MenuLateral from './menuLateral';
 import { ContextoEstilosGlobales } from '../lib/contextoEstilosGlobales';
 import { ContextoEstados } from '../lib/contextoEstados';
-import { recuperarDatosLocalmente, recuperarTokenFB, recuperarMensajeError } from '../lib/ayudante';
+import {
+  recuperarDatosLocalmente,
+  recuperarTokenFB,
+  procesarMensajeError,
+  esTokenValido
+} from '../lib/ayudante';
 import IconosGenerales from '../lib/iconos';
 import { NombresIconosGenerales } from '../lib/constantes';
-import { login, estimarDemora } from '../lib/servicios';
+import { obtenerTicket } from '../lib/servicios';
 import PantallaCargando from './pantallaCargando';
 
 const Stack = createStackNavigator();
@@ -42,7 +47,13 @@ const BotonMenuHamburguesa = (props) => {
 };
 
 const BotonRefrescarTurnos = (props) => {
-  const { estadoTurnoActual, estadoLogin, fijarTurnoActualEnEstado } = useContext(ContextoEstados);
+  const {
+    estadoTurnoActual,
+    estadoLogin,
+    estadoTemaUsuario,
+    fijarTurnoActualEnEstado,
+    fijarUsuarioLogueadoEnEstado
+  } = useContext(ContextoEstados);
   const { turno: turnoActual } = estadoTurnoActual;
   const { estilos } = props;
   const [consultando, cambiarConsultando] = useState(false);
@@ -54,12 +65,22 @@ const BotonRefrescarTurnos = (props) => {
         cambiarHaConsultado(false);
       }, 30000);
       cambiarConsultando(true);
-      estimarDemora(estadoLogin.token, turnoActual?.Category?.id, turnoActual?.Center?.id)
+      obtenerTicket(estadoLogin.token, turnoActual?.Center?.id)
         .then(res => res.json())
         .then(respuesta => {
-          fijarTurnoActualEnEstado(turnoActual, respuesta?.response?.wait);
+          fijarTurnoActualEnEstado(respuesta?.response?.ticket, respuesta?.response?.wait);
         })
-        .catch((error) => Alert.alert(recuperarMensajeError(error.message, 'Error al consultar la demora prevista.')))
+        .catch((error) => {
+          if (esTokenValido(
+            error?.message,
+            fijarUsuarioLogueadoEnEstado,
+            estadoLogin.email,
+            estadoLogin.fbtoken,
+            estadoTemaUsuario
+          )) {
+            Alert.alert(procesarMensajeError(error.message, 'Error al refrescar la información.'));
+          }
+        })
         .finally(() => cambiarConsultando(false));
     } else {
       Alert.alert('Debe esperar 30 segundos entre consultas.');
@@ -78,8 +99,7 @@ const BotonRefrescarTurnos = (props) => {
   );
 };
 
-const NavegadorEvaluacion = () => {
-  const { estilosGlobales } = useContext(ContextoEstilosGlobales);
+const NavegadorEvaluacion = (estilosGlobales: Object) => {
   const estilos = StyleSheet.create({
     encabezadoNavegacion: {
       backgroundColor: estilosGlobales.colorBarraNavegacion
@@ -108,8 +128,7 @@ const NavegadorEvaluacion = () => {
   );
 };
 
-const NavegadorFijoNoAutenticado = () => {
-  const { estilosGlobales } = useContext(ContextoEstilosGlobales);
+const NavegadorFijoNoAutenticado = (estilosGlobales: Object) => {
   const estilos = StyleSheet.create({
     encabezadoNavegacion: {
       backgroundColor: estilosGlobales.colorBarraNavegacion
@@ -143,8 +162,8 @@ const NavegadorFijoNoAutenticado = () => {
   );
 };
 
-const NavegadorFijoAutenticado = ({ navigation }) => {
-  const { estilosGlobales } = useContext(ContextoEstilosGlobales);
+const NavegadorFijoAutenticado = ({ navigation, route }) => {
+  const { estilosGlobales } = route.params;
   const estilos = StyleSheet.create({
     encabezadoNavegacion: {
       backgroundColor: estilosGlobales.colorBarraNavegacion
@@ -225,41 +244,42 @@ const NavegadorFijoAutenticado = ({ navigation }) => {
 
 const Drawer = createDrawerNavigator();
 
-const NavegadorAutenticado = () => (
+const NavegadorAutenticado = (estilosGlobales: Object) => (
   <NavigationContainer>
     <Drawer.Navigator
       edgeWidth={Math.round(Dimensions.get('window').width)}
       minSwipeDistance={5}
       drawerContent={(props) => <MenuLateral navigation={props.navigation} />}
     >
-      <Drawer.Screen name="NavegadorFijo" component={NavegadorFijoAutenticado} />
+      <Drawer.Screen name="NavegadorFijo" component={NavegadorFijoAutenticado} initialParams={{ estilosGlobales }} />
     </Drawer.Navigator>
   </NavigationContainer>
 );
 
-const recuperarCredencialesAlmacenadas = async (fijarUsuarioLogueadoEnEstado) => {
+const recuperarCredencialesAlmacenadas = async (fijarUsuarioLogueadoEnEstado: Function) => {
   try {
-    const [email, contrasena, temaUsuario] = [await recuperarDatosLocalmente('@email'), await recuperarDatosLocalmente('@contraseña'), await recuperarDatosLocalmente('@temaUsuario')];
-    if (email && contrasena) {
-      const fbtoken = await recuperarTokenFB();
-      const payload = { email, password: contrasena, fbtoken };
-      const res = await login(payload);
-      const respuesta = await res.json();
-      if (respuesta.success) {
-        fijarUsuarioLogueadoEnEstado(email, respuesta.token, contrasena, fbtoken, temaUsuario);
-      }
+    const email = await recuperarDatosLocalmente('@email');
+    const token = await recuperarDatosLocalmente('@token');
+    const temaUsuario = await recuperarDatosLocalmente('@temaUsuario');
+    let fbtoken = '';
+    if (email) {
+      fbtoken = await recuperarTokenFB();
+      fijarUsuarioLogueadoEnEstado(email, token, fbtoken, temaUsuario);
     }
+    return token || '';
   } catch (error) {
-    Alert.alert(recuperarMensajeError(error.message, 'Error durante el recupero de sus datos.'));
+    Alert.alert(procesarMensajeError(error.message, 'Error durante el recupero de sus datos.'));
   }
+  return '';
 };
 
 export default () => {
   const {
     estadoLogin,
     estadoTurnosParaEvaluar,
-    fijarUsuarioLogueadoEnEstado,
+    fijarUsuarioLogueadoEnEstado
   } = useContext(ContextoEstados);
+  const { estilosGlobales } = useContext(ContextoEstilosGlobales);
 
   const [listo, cambiarListo] = useState(false);
   // Recuperar credenciales almacenadas localmente
@@ -276,10 +296,10 @@ export default () => {
   }
 
   if (estadoTurnosParaEvaluar?.length > 0) {
-    return NavegadorEvaluacion();
+    return NavegadorEvaluacion(estilosGlobales);
   }
   if (estadoLogin?.email && estadoLogin?.token) {
-    return NavegadorAutenticado();
+    return NavegadorAutenticado(estilosGlobales);
   }
-  return NavegadorFijoNoAutenticado();
+  return NavegadorFijoNoAutenticado(estilosGlobales);
 };

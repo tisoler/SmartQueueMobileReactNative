@@ -9,7 +9,7 @@ import withErrorBoundary from '../../enhancers/withErrorBoundary';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import Teja from '../../componentes/comunes/teja';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
-import { recuperarMensajeError } from '../../lib/ayudante';
+import { procesarMensajeError, esTokenValido } from '../../lib/ayudante';
 
 const Lobby = ({ navigation }) => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
@@ -17,7 +17,9 @@ const Lobby = ({ navigation }) => {
     estadoLogin,
     estadoTurnosActivos,
     fijarTurnosEnEstado,
-    fijarTurnoActualEnEstado
+    fijarTurnoActualEnEstado,
+    fijarUsuarioLogueadoEnEstado,
+    estadoTemaUsuario
   } = useContext(ContextoEstados);
   useEffect(() => {
     obtenerTicketsParaUsuario(estadoLogin.token)
@@ -29,7 +31,17 @@ const Lobby = ({ navigation }) => {
           Alert.alert('Error durante la carga de turnos activos.');
         }
       })
-      .catch((error) => Alert.alert(recuperarMensajeError(error.message, 'Error durante la carga de turnos activos.')));
+      .catch((error) => {
+        if (esTokenValido(
+          error?.message,
+          fijarUsuarioLogueadoEnEstado,
+          estadoLogin.email,
+          estadoLogin.fbtoken,
+          estadoTemaUsuario
+        )) {
+          Alert.alert(procesarMensajeError(error.message, 'Error durante la carga de turnos activos.'));
+        }
+      });
   }, []);
 
   const pedirTurno = () => {
@@ -37,7 +49,7 @@ const Lobby = ({ navigation }) => {
   };
 
   const seleccionarTurnoActivo = (turno) => {
-    fijarTurnoActualEnEstado(turno,null);
+    fijarTurnoActualEnEstado(turno, null);
     navigation.navigate('Turno', { turno });
   };
 

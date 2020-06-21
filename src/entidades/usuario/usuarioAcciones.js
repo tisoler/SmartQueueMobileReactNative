@@ -25,7 +25,6 @@ export const fijarTurnosAccion = (
 export const fijarUsuarioLogueadoAccion = (
   email: string,
   token: string,
-  contrasena: string,
   fbtoken: string,
   temaUsuario: string,
   asignarEstadoLogin: Function,
@@ -43,7 +42,7 @@ export const fijarUsuarioLogueadoAccion = (
   }
 
   guardarDatosLocalmente('@email', email);
-  guardarDatosLocalmente('@contraseña', contrasena);
+  guardarDatosLocalmente('@token', token);
   guardarDatosLocalmente('@fbtoken', fbtoken);
 
   asignarEstadoLogin({

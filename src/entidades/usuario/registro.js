@@ -18,7 +18,7 @@ import {
   login,
 } from '../../lib/servicios';
 import { NombresIconosGenerales } from '../../lib/constantes';
-import { recuperarTokenFB, recuperarMensajeError } from '../../lib/ayudante';
+import { recuperarTokenFB, procesarMensajeError } from '../../lib/ayudante';
 
 const Registro = ({ navigation }) => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
@@ -313,7 +313,7 @@ const Registro = ({ navigation }) => {
       const respuesta = await res.json();
       return respuesta;
     } catch (error) {
-      Alert.alert(recuperarMensajeError(error.message, 'Error durante el login.'));
+      Alert.alert(procesarMensajeError(error.message, 'Error durante el login.'));
     }
     return { success: false };
   };
@@ -333,7 +333,7 @@ const Registro = ({ navigation }) => {
       const respuesta = await res.json();
       return respuesta;
     } catch (error) {
-      Alert.alert(recuperarMensajeError(error.message, 'Error durante el login.'));
+      Alert.alert(procesarMensajeError(error.message, 'Error mientras se creaba su usuario.'));
     }
     return { success: false };
   };
@@ -408,7 +408,7 @@ const Registro = ({ navigation }) => {
       guardar();
     },
     // Almacena credenciales, esto cambia el navegador (Autenticado) y pasa a la Lobby.
-    [3]: () => fijarUsuarioLogueadoEnEstado(emailUsuario, tokenUsuario, contrasenaUsuario, fbtoken)
+    [3]: () => fijarUsuarioLogueadoEnEstado(emailUsuario, tokenUsuario, fbtoken)
     /* eslint-enable no-useless-computed-key */
   };
 

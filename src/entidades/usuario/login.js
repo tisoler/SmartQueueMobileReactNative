@@ -10,16 +10,16 @@ import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import { ContextoEstados } from '../../lib/contextoEstados';
 import { ImagenLogo, NombresIconosGenerales, mensajes } from '../../lib/constantes';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
-import { recuperarTokenFB, recuperarDatosLocalmente, recuperarMensajeError } from '../../lib/ayudante';
+import { recuperarTokenFB, recuperarDatosLocalmente, procesarMensajeError } from '../../lib/ayudante';
 
 
 const Login = ({ navigation }) => {
+  const { estadoLogin, fijarUsuarioLogueadoEnEstado } = useContext(ContextoEstados);
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
-  const [emailUsuario, cambioEmail] = useState('');
+  const [emailUsuario, cambioEmail] = useState(estadoLogin?.email || '');
   const [contrasenaUsuario, cambioContrasena] = useState('');
   const [cargando, cambioCargando] = useState(false);
   const [loginIncorrecto, cambioLogin] = useState(false);
-  const { fijarUsuarioLogueadoEnEstado } = useContext(ContextoEstados);
 
   const estilos = StyleSheet.create({
     contenedor: {
@@ -55,7 +55,7 @@ const Login = ({ navigation }) => {
       .then(respuesta => {
         cambioCargando(false);
         if (respuesta?.success) {
-          fijarUsuarioLogueadoEnEstado(emailUsuario, respuesta.token, contrasenaUsuario, fbtoken, temaUsuario || '');
+          fijarUsuarioLogueadoEnEstado(emailUsuario, respuesta.token, fbtoken, temaUsuario || '');
         } else {
           // eslint-disable-next-line no-lonely-if
           if (respuesta?.message?.trim().toLowerCase().includes('connect econnrefused')) {
@@ -66,7 +66,7 @@ const Login = ({ navigation }) => {
         }
       })
       .catch(error => {
-        Alert.alert(recuperarMensajeError(error.message, 'Error durante el login.'));
+        Alert.alert(procesarMensajeError(error.message, 'Error durante el login.'));
         cambioCargando(false);
       });
   };
