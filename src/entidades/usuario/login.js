@@ -1,17 +1,17 @@
 // @flow
 import React, { useState, useContext } from 'react';
 import {
-  StyleSheet, View, Text, Image, Alert, ScrollView
+  StyleSheet, View, Text, Alert, ScrollView
 } from 'react-native';
 import withErrorBoundary from '../../enhancers/withErrorBoundary';
 import TextoIngreso from '../../componentes/comunes/textoIngreso';
 import { login } from '../../lib/servicios';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import { ContextoEstados } from '../../lib/contextoEstados';
-import { ImagenLogo, NombresIconosGenerales, mensajes } from '../../lib/constantes';
+import { NombresIconosGenerales, mensajes } from '../../lib/constantes';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 import { recuperarTokenFB, recuperarDatosLocalmente, procesarMensajeError } from '../../lib/ayudante';
-
+import IconosGenerales from '../../lib/iconos';
 
 const Login = ({ navigation }) => {
   const { estadoLogin, fijarUsuarioLogueadoEnEstado } = useContext(ContextoEstados);
@@ -33,14 +33,11 @@ const Login = ({ navigation }) => {
       alignItems: 'center',
       width: '100%'
     },
-    logo: {
-      marginTop: 25,
-      marginBottom: 30
-    },
     botonera: {
       flexGrow: 4,
       alignItems: 'center',
       width: '100%',
+      marginTop: 8
     }
   });
 
@@ -81,7 +78,7 @@ const Login = ({ navigation }) => {
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
       <View style={estilos.contenedor}>
         <View style={estilos.subContenedor}>
-          <Image source={ImagenLogo} style={estilos.logo} />
+          { IconosGenerales[NombresIconosGenerales.logoLogin] }
           <TextoIngreso
             placeholderText="e-mail"
             manejadorCambioTexto={cambioEmail}

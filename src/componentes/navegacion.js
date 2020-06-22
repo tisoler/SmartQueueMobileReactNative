@@ -26,7 +26,8 @@ import {
   recuperarDatosLocalmente,
   recuperarTokenFB,
   procesarMensajeError,
-  esTokenValido
+  esTokenValido,
+  crearClienteFirebase
 } from '../lib/ayudante';
 import IconosGenerales from '../lib/iconos';
 import { NombresIconosGenerales } from '../lib/constantes';
@@ -50,6 +51,7 @@ const BotonRefrescarTurnos = (props) => {
   const {
     estadoTurnoActual,
     estadoLogin,
+    estadoFbToken,
     estadoTemaUsuario,
     fijarTurnoActualEnEstado,
     fijarUsuarioLogueadoEnEstado
@@ -75,7 +77,7 @@ const BotonRefrescarTurnos = (props) => {
             error?.message,
             fijarUsuarioLogueadoEnEstado,
             estadoLogin.email,
-            estadoLogin.fbtoken,
+            estadoFbToken,
             estadoTemaUsuario
           )) {
             Alert.alert(procesarMensajeError(error.message, 'Error al refrescar la información.'));
@@ -142,7 +144,7 @@ const NavegadorFijoNoAutenticado = (estilosGlobales: Object) => {
           name="Login"
           component={Login}
           options={{
-            title: 'Smart queue',
+            title: 'Queue',
             headerStyle: estilos.encabezadoNavegacion,
             headerTintColor: estilosGlobales.colorLetraEncabezado
           }}
@@ -152,7 +154,7 @@ const NavegadorFijoNoAutenticado = (estilosGlobales: Object) => {
           name="Registro"
           component={Registro}
           options={{
-            title: 'Smart queue - Registro',
+            title: 'Queue - Registro',
             headerStyle: estilos.encabezadoNavegacion,
             headerTintColor: estilosGlobales.colorLetraEncabezado
           }}
@@ -198,7 +200,7 @@ const NavegadorFijoAutenticado = ({ navigation, route }) => {
         name="Lobby"
         component={Lobby}
         options={{
-          title: 'Smart queue',
+          title: 'Queue',
           headerStyle: estilos.encabezadoNavegacion,
           headerTintColor: estilosGlobales.colorLetraEncabezado,
           headerLeft: () => <BotonMenuHamburguesa navigation={navigation} estilos={estilos} />,
@@ -277,13 +279,15 @@ export default () => {
   const {
     estadoLogin,
     estadoTurnosParaEvaluar,
-    fijarUsuarioLogueadoEnEstado
+    fijarUsuarioLogueadoEnEstado,
+    cambiarTokenFirebaseAccion
   } = useContext(ContextoEstados);
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
-
   const [listo, cambiarListo] = useState(false);
+
   // Recuperar credenciales almacenadas localmente
   useEffect(() => {
+    crearClienteFirebase(cambiarTokenFirebaseAccion);
     const recuperarCredenciales = async () => {
       await recuperarCredencialesAlmacenadas(fijarUsuarioLogueadoEnEstado);
       cambiarListo(true);

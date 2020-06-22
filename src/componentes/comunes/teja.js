@@ -2,9 +2,18 @@
 import * as React from 'react';
 import { useState } from 'react';
 import {
-  StyleSheet, Image, View, TouchableWithoutFeedback, Animated, Easing, Platform
+  StyleSheet,
+  Image,
+  View,
+  TouchableWithoutFeedback,
+  Animated,
+  Easing,
+  Platform,
+  Dimensions
 } from 'react-native';
 import { IconosCentros } from '../../lib/constantes';
+
+const pantallaChica = Math.round(Dimensions.get('window')?.height) < 600;
 
 type Props = {
   manejadorClick: Function,
@@ -22,7 +31,7 @@ const Teja = (props: Props) => {
   const maxOpacity = 0.2;
   const [scaleValue] = useState(new Animated.Value(0.01));
   const [opacityValue] = useState(new Animated.Value(maxOpacity));
-  const height = 100;
+  const height = pantallaChica ? 90 : 100;
   const width = '100%';
 
   const onPressed = () => {
@@ -60,7 +69,7 @@ const Teja = (props: Props) => {
   const estilo = StyleSheet.create({
     imagen: {
       height,
-      width: 100
+      width: pantallaChica ? 90 : 100
     },
     teja: {
       flex: 1,

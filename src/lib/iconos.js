@@ -15,6 +15,7 @@ import Turnos from '../componentes/comunes/svg/turnos';
 import Paleta from '../componentes/comunes/svg/paleta';
 import Refrescar from '../componentes/comunes/svg/refrescar';
 import Ojo from '../componentes/comunes/svg/ojo';
+import LogoLogin from '../componentes/comunes/svg/logoLogin';
 
 const IconosGenerales = {
   [NombresIconosGenerales.correo]: <Correo width={29} height={29} />,
@@ -36,7 +37,8 @@ const IconosGenerales = {
       height={32}
       abierto={abierto}
     />
-  )
+  ),
+  [NombresIconosGenerales.logoLogin]: <LogoLogin width={140} height={140} />
 };
 
 export default IconosGenerales;

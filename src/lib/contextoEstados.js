@@ -8,7 +8,8 @@ import {
   cancelarTurnoAccion,
   confirmarAsistenciaTurnoAccion,
   evaluarTurnoAccion,
-  cambiarTemaUsuarioAccion
+  cambiarTemaUsuarioAccion,
+  cambiarTokenFirebaseAccion
 } from '../entidades/usuario/usuarioAcciones';
 import fijarCentrosAccion from '../entidades/centroAtencion/centroAtencionAcciones';
 import fijarTurnoActualAccion from '../entidades/turno/turnoAcciones';
@@ -22,7 +23,6 @@ type Props = {
 const estadoInicialLogin = {
   email: '',
   token: '',
-  fbtoken: '',
   nombre: '',
   iniciales: ''
 };
@@ -39,6 +39,7 @@ export const ProveedorContextoEstados = (props: Props) => {
     asignarEstadoTurnosParaEvaluar
   ] = useState();
   const [estadoTemaUsuario, asignarEstadoTemaUsuario] = useState(temaUsuarioInicial);
+  const [estadoFbToken, asignarEstadoFbToken] = useState();
 
   // Interface contexto - acciones
   // Información usuario logueado
@@ -65,6 +66,7 @@ export const ProveedorContextoEstados = (props: Props) => {
       temaUsuario,
       asignarEstadoLogin,
       asignarEstadoTemaUsuario,
+      asignarEstadoFbToken
     );
   };
   const cancelarTurnoEnEstado = (turno: Object) => {
@@ -78,6 +80,9 @@ export const ProveedorContextoEstados = (props: Props) => {
   };
   const cambiarTemaUsuarioEnEstado = () => {
     cambiarTemaUsuarioAccion(estadoTemaUsuario, asignarEstadoTemaUsuario);
+  };
+  const cambiarTokenFirebaseEnEstado = (tokenFb: string) => {
+    cambiarTokenFirebaseAccion(asignarEstadoFbToken, tokenFb);
   };
   // Centros
   const fijarCentrosEnEstado = (turno: Object) => {
@@ -97,6 +102,7 @@ export const ProveedorContextoEstados = (props: Props) => {
       estadoTurnosParaEvaluar,
       estadoTemaUsuario,
       estadoTurnoActual,
+      estadoFbToken,
       agregarTurnoActivoEnEstado,
       fijarTurnosEnEstado,
       fijarUsuarioLogueadoEnEstado,
@@ -105,7 +111,8 @@ export const ProveedorContextoEstados = (props: Props) => {
       evaluarTurnoEnEstado,
       fijarCentrosEnEstado,
       cambiarTemaUsuarioEnEstado,
-      fijarTurnoActualEnEstado
+      fijarTurnoActualEnEstado,
+      cambiarTokenFirebaseEnEstado
     }}
     >
       {children}

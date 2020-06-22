@@ -17,6 +17,7 @@ const MenuLateral = (props: Object) => {
   const {
     estadoLogin,
     estadoTemaUsuario,
+    estadoFbToken,
     fijarUsuarioLogueadoEnEstado,
     cambiarTemaUsuarioEnEstado
   } = useContext(ContextoEstados);
@@ -104,7 +105,7 @@ const MenuLateral = (props: Object) => {
             style={estilos.opcionMenu}
             onPress={
               () => {
-                fijarUsuarioLogueadoEnEstado('', '', estadoLogin.fbtoken, estadoTemaUsuario);
+                fijarUsuarioLogueadoEnEstado('', '', estadoFbToken, estadoTemaUsuario);
                 navigation.closeDrawer();
               }
             }

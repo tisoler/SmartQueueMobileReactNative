@@ -1,5 +1,5 @@
 // @flow
-import { firebase } from '@react-native-firebase/messaging';
+import messaging, { firebase } from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-community/async-storage';
 import { mensajes } from './constantes';
 
@@ -21,35 +21,6 @@ export const recuperarDatosLocalmente = async (clave: string) => {
     // Error
   }
   return null;
-};
-
-const obtenerTokenFB = async () => {
-  let fcmToken = await AsyncStorage.getItem('fcmToken');
-  if (!fcmToken) {
-    fcmToken = await firebase.messaging().getToken();
-    if (fcmToken) {
-      return fcmToken;
-    }
-  }
-  return null;
-};
-
-const solicitarPermisoFB = async () => firebase.messaging()
-  .requestPermission()
-  .then(() => obtenerTokenFB())
-  .catch(() => {
-    // Error;
-  });
-
-export const recuperarTokenFB = async () => {
-  const tokeFBLocal = await recuperarDatosLocalmente('@fbtoken');
-  if (tokeFBLocal) return tokeFBLocal;
-
-  const habilitado = await firebase.messaging().hasPermission();
-  if (habilitado) {
-    return obtenerTokenFB();
-  }
-  return solicitarPermisoFB();
 };
 
 export const procesarMensajeError = (mensajeError: string, mensajeGenerico?: string) => {
@@ -75,3 +46,81 @@ export const esTokenValido = (
   }
   return true;
 };
+
+// ----- Sección de Firebase ------
+
+const obtenerTokenFb = async () => {
+  let fcmToken = await AsyncStorage.getItem('fcmToken');
+  if (!fcmToken) {
+    fcmToken = await messaging().getToken();
+    if (fcmToken) {
+      return fcmToken;
+    }
+  }
+  return null;
+};
+
+const solicitarPermisoFb = async () => messaging()
+  .requestPermission()
+  .then(async () => {
+    const fbToken = await obtenerTokenFb();
+    return fbToken;
+  })
+  .catch(() => {
+    // Error;
+  });
+
+const pedirTokenFb = async () => {
+  const habilitado = await messaging().hasPermission();
+  if (habilitado) {
+    return obtenerTokenFb();
+  }
+  return solicitarPermisoFb();
+};
+
+// Listener para segundo plano
+export const segundoPlano = async (remoteMessage: Object) => {
+  console.log('Message handled in the background!', remoteMessage);
+};
+
+export const crearClienteFirebase = (cambiarTokenFirebaseAccion: Function) => {
+  // Listener para cuando el token de Firebase se ha refrescado
+  messaging().onTokenRefresh(async () => {
+    const nuevoTokenFb = await pedirTokenFb();
+    cambiarTokenFirebaseAccion(nuevoTokenFb);
+  });
+
+  // Listener para primer plano
+  messaging().onMessage((payload) => {
+    console.log('primer plano. ', payload);
+  });
+
+  messaging().setBackgroundMessageHandler(segundoPlano);
+
+  messaging().onNotificationOpenedApp(async (remoteMessage) => {
+    console.log('FCM Message Data:', remoteMessage.data);
+
+    // Update a users messages list using AsyncStorage
+    const currentMessages = await AsyncStorage.getItem('messages');
+    const messageArray = JSON.parse(currentMessages);
+    console.log('FCM Message Data:', messageArray);
+  });
+
+  /* messaging().setBackgroundMessageHandler = async (payload) => {
+    console.log('segundo plano', payload);
+    //Customize notification here
+     const notificationTitle = 'Background Message Title';
+    const notificationOptions = {
+      body: 'Background Message body.',
+      icon: '/firebase-logo.png'
+    };
+  }; */
+};
+
+export const recuperarTokenFB = async () => {
+  const tokeFBLocal = await recuperarDatosLocalmente('@tokenFb');
+  if (tokeFBLocal) return tokeFBLocal;
+  return pedirTokenFb();
+};
+
+// ----- Fin sección de Firebase ------

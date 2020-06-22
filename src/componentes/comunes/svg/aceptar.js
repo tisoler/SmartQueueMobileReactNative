@@ -4,7 +4,6 @@ import { useContext } from 'react';
 import { Svg, Path } from 'react-native-svg';
 import { ContextoEstilosGlobales } from '../../../lib/contextoEstilosGlobales';
 
-
 type Props = {
   width?: number,
   height?: number

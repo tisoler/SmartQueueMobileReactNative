@@ -24,6 +24,7 @@ const CentrosAtencion = ({ route, navigation }) => {
   const {
     estadoLogin,
     estadoTurnosActivos,
+    estadoFbToken,
     estadoTemaUsuario,
     agregarTurnoActivoEnEstado,
     fijarTurnoActualEnEstado,
@@ -83,7 +84,7 @@ const CentrosAtencion = ({ route, navigation }) => {
           error?.message,
           fijarUsuarioLogueadoEnEstado,
           estadoLogin.email,
-          estadoLogin.fbtoken,
+          estadoFbToken,
           estadoTemaUsuario
         )) {
           Alert.alert(procesarMensajeError(error.message, 'Error en la solicitud de turno.'));
@@ -110,7 +111,7 @@ const CentrosAtencion = ({ route, navigation }) => {
           error?.message,
           fijarUsuarioLogueadoEnEstado,
           estadoLogin.email,
-          estadoLogin.fbtoken,
+          estadoFbToken,
           estadoTemaUsuario
         )) {
           Alert.alert(procesarMensajeError(error.message, 'Error en la solicitud de turno.'));

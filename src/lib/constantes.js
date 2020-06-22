@@ -7,10 +7,8 @@ export const IconosCentros = {
   'bn_icon.png': require('../../recursos/imagenes/centros/bn_icon.png'),
   'ca_icon.png': require('../../recursos/imagenes/centros/ca_icon.png'),
   'cmpaz_icon.png': require('../../recursos/imagenes/centros/cmpaz_icon.png'),
-  'test_icon.png': require('../../recursos/imagenes/centros/test_icon.png')
+  'test_icon.png': require('../../recursos/imagenes/centros/generico.png')
 };
-
-export const ImagenLogo = require('../../recursos/imagenes/login.png');
 
 export const NombresIconosGenerales = {
   correo: 'correo',
@@ -26,7 +24,8 @@ export const NombresIconosGenerales = {
   turnos: 'turnos',
   paleta: 'paleta',
   refrescar: 'refrescar',
-  ojo: 'ojo'
+  ojo: 'ojo',
+  logoLogin: 'logoLogin'
 };
 
 export const mensajes = {

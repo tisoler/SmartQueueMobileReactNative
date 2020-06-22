@@ -16,6 +16,7 @@ const ListaCentrosAtencion = ({ navigation }) => {
     estadoLogin,
     estadoCentros,
     estadoTurnosActivos,
+    estadoFbToken,
     estadoTemaUsuario,
     fijarCentrosEnEstado,
     fijarTurnoActualEnEstado,
@@ -47,7 +48,7 @@ const ListaCentrosAtencion = ({ navigation }) => {
             error?.message,
             fijarUsuarioLogueadoEnEstado,
             estadoLogin.email,
-            estadoLogin.fbtoken,
+            estadoFbToken,
             estadoTemaUsuario
           )) {
             Alert.alert(procesarMensajeError(error.message, 'Error durante la carga de centros.'));

@@ -17,6 +17,7 @@ const Turno = ({ navigation, route }) => {
   const {
     estadoLogin,
     estadoTurnoActual,
+    estadoFbToken,
     estadoTemaUsuario,
     cancelarTurnoEnEstado,
     confirmarAsistenciaTurnoEnEstado,
@@ -100,7 +101,7 @@ const Turno = ({ navigation, route }) => {
             error?.message,
             fijarUsuarioLogueadoEnEstado,
             estadoLogin.email,
-            estadoLogin.fbtoken,
+            estadoFbToken,
             estadoTemaUsuario
           )) {
             Alert.alert(procesarMensajeError(error.message, 'Error en la consulta de turno.'));
@@ -137,7 +138,7 @@ const Turno = ({ navigation, route }) => {
           error?.message,
           fijarUsuarioLogueadoEnEstado,
           estadoLogin.email,
-          estadoLogin.fbtoken,
+          estadoFbToken,
           estadoTemaUsuario
         )) {
           Alert.alert(procesarMensajeError(error.message, 'Error al cancelar el turno.'));
@@ -158,7 +159,7 @@ const Turno = ({ navigation, route }) => {
           error?.message,
           fijarUsuarioLogueadoEnEstado,
           estadoLogin.email,
-          estadoLogin.fbtoken,
+          estadoFbToken,
           estadoTemaUsuario
         )) {
           Alert.alert(procesarMensajeError(error.message, 'Error al confirmar presencia.'));

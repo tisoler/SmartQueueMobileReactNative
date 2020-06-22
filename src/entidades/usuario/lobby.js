@@ -16,6 +16,7 @@ const Lobby = ({ navigation }) => {
   const {
     estadoLogin,
     estadoTurnosActivos,
+    estadoFbToken,
     fijarTurnosEnEstado,
     fijarTurnoActualEnEstado,
     fijarUsuarioLogueadoEnEstado,
@@ -36,7 +37,7 @@ const Lobby = ({ navigation }) => {
           error?.message,
           fijarUsuarioLogueadoEnEstado,
           estadoLogin.email,
-          estadoLogin.fbtoken,
+          estadoFbToken,
           estadoTemaUsuario
         )) {
           Alert.alert(procesarMensajeError(error.message, 'Error durante la carga de turnos activos.'));

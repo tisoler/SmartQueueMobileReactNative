@@ -1,3 +1,6 @@
+import { Dimensions } from 'react-native';
+
+const pantallaChica = Math.round(Dimensions.get('window')?.height) < 600;
 
 const temaOscuro = {
   colorBarraNavegacion: '#0A5164',
@@ -11,26 +14,26 @@ const temaOscuro = {
   colorVersion: '#CCCCCC',
   mensajeError: {
     color: '#852E1D',
-    fontSize: 17
+    fontSize: pantallaChica ? 15 : 17
   },
   tituloSeccion: {
-    fontSize: 20.5,
+    fontSize: pantallaChica ? 18.5 : 20.5,
     color: '#FFF',
     lineHeight: 50
   },
   textoAviso: {
-    fontSize: 21,
+    fontSize: pantallaChica ? 19 : 21,
     color: '#fff',
     margin: 20,
     textAlign: 'center'
   },
   tituloGrande: {
-    fontSize: 26,
+    fontSize: pantallaChica ? 24 : 26,
     color: '#fff',
     fontWeight: 'bold'
   },
   subtituloGrande: {
-    fontSize: 22,
+    fontSize: pantallaChica ? 20 : 22,
     color: '#fff',
     fontWeight: 'bold',
     textAlign: 'center'
@@ -42,11 +45,11 @@ const temaOscuro = {
   colorBordeBotonSecundario: '#005f79',
   colorEfectoClickBotonSecundario: '#fff',
   imagenLogoCentro: {
-    height: 150,
-    width: 150
+    height: pantallaChica ? 130 : 150,
+    width: pantallaChica ? 130 : 150
   },
   colorAvatarLetra: '#16817a',
-  tamanoLetraEtiqueta: 19,
+  tamanoLetraEtiqueta: pantallaChica ? 17 : 19,
   colorIconos: '#fff'
 };
 
@@ -62,26 +65,26 @@ const temaClaro = {
   colorVersion: '#393e46',
   mensajeError: {
     color: '#852E1D',
-    fontSize: 17
+    fontSize: pantallaChica ? 15 : 17
   },
   tituloSeccion: {
-    fontSize: 20.5,
+    fontSize: pantallaChica ? 18.5 : 20.5,
     color: '#393e46',
     lineHeight: 50
   },
   textoAviso: {
-    fontSize: 21,
+    fontSize: pantallaChica ? 19 : 21,
     color: '#393e46',
     margin: 20,
     textAlign: 'center'
   },
   tituloGrande: {
-    fontSize: 26,
+    fontSize: pantallaChica ? 24 : 26,
     color: '#393e46',
     fontWeight: 'bold'
   },
   subtituloGrande: {
-    fontSize: 22,
+    fontSize: pantallaChica ? 20 : 22,
     color: '#393e46',
     fontWeight: 'bold',
     textAlign: 'center'
@@ -93,11 +96,11 @@ const temaClaro = {
   colorBordeBotonSecundario: '#005f79',
   colorEfectoClickBotonSecundario: '#fff',
   imagenLogoCentro: {
-    height: 150,
-    width: 150
+    height: pantallaChica ? 130 : 150,
+    width: pantallaChica ? 130 : 150
   },
   colorAvatarLetra: '#3da4ab',
-  tamanoLetraEtiqueta: 19,
+  tamanoLetraEtiqueta: pantallaChica ? 17 : 19,
   colorIconos: '#000'
 };
 

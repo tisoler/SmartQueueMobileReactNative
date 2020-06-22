@@ -25,10 +25,11 @@ export const fijarTurnosAccion = (
 export const fijarUsuarioLogueadoAccion = (
   email: string,
   token: string,
-  fbtoken: string,
+  tokenFb: string,
   temaUsuario: string,
   asignarEstadoLogin: Function,
-  asignarEstadoTemaUsuario: Function
+  asignarEstadoTemaUsuario: Function,
+  asignarEstadoFbToken: Function
 ) => {
   let inicialNombre = '';
   let inicialApellido = '';
@@ -43,16 +44,16 @@ export const fijarUsuarioLogueadoAccion = (
 
   guardarDatosLocalmente('@email', email);
   guardarDatosLocalmente('@token', token);
-  guardarDatosLocalmente('@fbtoken', fbtoken);
+  guardarDatosLocalmente('@tokenFb', tokenFb);
 
   asignarEstadoLogin({
     email,
     token,
-    fbtoken,
     nombre,
     iniciales: (`${inicialNombre}${inicialApellido}`).toUpperCase()
   });
   asignarEstadoTemaUsuario(temaUsuario);
+  asignarEstadoFbToken(tokenFb);
 };
 
 export const cancelarTurnoAccion = (
@@ -91,4 +92,9 @@ export const cambiarTemaUsuarioAccion = (
   const temaUsuario = estadoTemaUsuario === 'temaOscuro' ? 'temaClaro' : 'temaOscuro';
   guardarDatosLocalmente('@temaUsuario', temaUsuario);
   asignarEstadoTemaUsuario(temaUsuario);
+};
+
+export const cambiarTokenFirebaseAccion = (asignarEstadoFbToken: Function, tokenFb: string) => {
+  guardarDatosLocalmente('@tokenFb', tokenFb);
+  asignarEstadoFbToken(tokenFb);
 };
