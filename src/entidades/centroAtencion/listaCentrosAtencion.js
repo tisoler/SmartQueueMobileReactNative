@@ -19,8 +19,8 @@ const ListaCentrosAtencion = ({ navigation }) => {
     estadoFbToken,
     estadoTemaUsuario,
     fijarCentrosEnEstado,
-    fijarTurnoActualEnEstado,
-    fijarUsuarioLogueadoEnEstado
+    fijarUsuarioLogueadoEnEstado,
+    fijarTurnoActualEnEstado
   } = useContext(ContextoEstados);
   const estilos = StyleSheet.create({
     contenedor: {

@@ -40,6 +40,7 @@ export const ProveedorContextoEstados = (props: Props) => {
   ] = useState();
   const [estadoTemaUsuario, asignarEstadoTemaUsuario] = useState(temaUsuarioInicial);
   const [estadoFbToken, asignarEstadoFbToken] = useState();
+  const [estadoIrEvaluacion, asignarEstadoIrEvaluacion] = useState();
 
   // Interface contexto - acciones
   // Información usuario logueado
@@ -103,6 +104,7 @@ export const ProveedorContextoEstados = (props: Props) => {
       estadoTemaUsuario,
       estadoTurnoActual,
       estadoFbToken,
+      estadoIrEvaluacion,
       agregarTurnoActivoEnEstado,
       fijarTurnosEnEstado,
       fijarUsuarioLogueadoEnEstado,
@@ -112,7 +114,9 @@ export const ProveedorContextoEstados = (props: Props) => {
       fijarCentrosEnEstado,
       cambiarTemaUsuarioEnEstado,
       fijarTurnoActualEnEstado,
-      cambiarTokenFirebaseEnEstado
+      cambiarTokenFirebaseEnEstado,
+      // Es el único que no está en acciones, envía el setState directamente
+      asignarEstadoIrEvaluacion
     }}
     >
       {children}

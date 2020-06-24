@@ -15,7 +15,8 @@ const EvaluacionTurno = () => {
   const {
     estadoLogin,
     estadoTurnosParaEvaluar,
-    evaluarTurnoEnEstado
+    evaluarTurnoEnEstado,
+    asignarEstadoIrEvaluacion
   } = useContext(ContextoEstados);
   const turnosParaEvaluar = estadoTurnosParaEvaluar;
   const turnoEvaluado = turnosParaEvaluar[0];
@@ -82,6 +83,10 @@ const EvaluacionTurno = () => {
       </View>
     );
   }
+
+  // Cuando llama desde notificación usa este state
+  // Una vez que se carga el estado de turnos para evaluar lo pasa a false
+  asignarEstadoIrEvaluacion(false);
 
   return (
     <View style={estilos.contenedor}>

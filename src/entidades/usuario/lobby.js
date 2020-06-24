@@ -1,7 +1,7 @@
 // @flow
 import React, { useEffect, useContext } from 'react';
 import {
-  View, StyleSheet, Alert, ActivityIndicator, Text, ScrollView, Dimensions
+  View, StyleSheet, Alert, ActivityIndicator, Text, ScrollView, Dimensions, AppRegistry
 } from 'react-native';
 import { obtenerTicketsParaUsuario } from '../../lib/servicios';
 import { ContextoEstados } from '../../lib/contextoEstados';
@@ -9,7 +9,12 @@ import withErrorBoundary from '../../enhancers/withErrorBoundary';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import Teja from '../../componentes/comunes/teja';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
-import { procesarMensajeError, esTokenValido } from '../../lib/ayudante';
+import {
+  procesarMensajeError,
+  esTokenValido,
+  crearClienteFirebase,
+  segundoPlano
+} from '../../lib/ayudante';
 
 const Lobby = ({ navigation }) => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
@@ -17,12 +22,32 @@ const Lobby = ({ navigation }) => {
     estadoLogin,
     estadoTurnosActivos,
     estadoFbToken,
+    estadoTemaUsuario,
     fijarTurnosEnEstado,
-    fijarTurnoActualEnEstado,
+    cambiarTokenFirebaseEnEstado,
     fijarUsuarioLogueadoEnEstado,
-    estadoTemaUsuario
+    fijarTurnoActualEnEstado,
+    asignarEstadoIrEvaluacion
   } = useContext(ContextoEstados);
   useEffect(() => {
+    // Levanta el cliente Firebase y los listeners
+    crearClienteFirebase(
+      estadoLogin,
+      cambiarTokenFirebaseEnEstado,
+      navigation,
+      fijarTurnoActualEnEstado,
+      fijarTurnosEnEstado,
+      asignarEstadoIrEvaluacion
+    );
+    AppRegistry.registerHeadlessTask('ReactNativeFirebaseMessagingHeadlessTask', () => segundoPlano(
+      navigation,
+      fijarTurnoActualEnEstado,
+      estadoLogin,
+      fijarTurnosEnEstado,
+      asignarEstadoIrEvaluacion
+    ));
+    // --- Fin Firebase ----
+
     obtenerTicketsParaUsuario(estadoLogin.token)
       .then(res => res.json())
       .then(respuesta => {

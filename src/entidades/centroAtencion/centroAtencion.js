@@ -27,8 +27,8 @@ const CentrosAtencion = ({ route, navigation }) => {
     estadoFbToken,
     estadoTemaUsuario,
     agregarTurnoActivoEnEstado,
-    fijarTurnoActualEnEstado,
-    fijarUsuarioLogueadoEnEstado
+    fijarUsuarioLogueadoEnEstado,
+    fijarTurnoActualEnEstado
   } = useContext(ContextoEstados);
   const estilos = StyleSheet.create({
     container: {
@@ -99,7 +99,7 @@ const CentrosAtencion = ({ route, navigation }) => {
       .then(respuesta => {
         if (respuesta?.success) {
           agregarTurnoActivoEnEstado(respuesta?.response?.ticket);
-          fijarTurnoActualEnEstado(respuesta?.response?.ticket, respuesta?.response?.wait);
+          fijarTurnoActualEnEstado(respuesta?.response?.ticket, demora);
           navigation.navigate('Turno', { turno: respuesta?.response?.ticket });
           setCargando(false);
         } else {

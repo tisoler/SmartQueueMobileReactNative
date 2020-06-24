@@ -13,6 +13,17 @@ export const login = (payload: Object) => {
   });
 };
 
+export const actualizarTokenFb = (token: string, fbtoken: string) => {
+  const url = `${apiURI}update-fbtoken/`;
+  return fetch(url, {
+    method: 'POST',
+    body: JSON.stringify({ fbtoken }),
+    headers: {
+      'x-access-token': token
+    }
+  });
+};
+
 export const obtenerTicketsParaUsuario = (token: string) => {
   const url = `${apiURI}get-all-my-tickets/`;
   return fetch(url,

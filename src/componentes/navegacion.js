@@ -26,8 +26,7 @@ import {
   recuperarDatosLocalmente,
   recuperarTokenFB,
   procesarMensajeError,
-  esTokenValido,
-  crearClienteFirebase
+  esTokenValido
 } from '../lib/ayudante';
 import IconosGenerales from '../lib/iconos';
 import { NombresIconosGenerales } from '../lib/constantes';
@@ -56,21 +55,21 @@ const BotonRefrescarTurnos = (props) => {
     fijarTurnoActualEnEstado,
     fijarUsuarioLogueadoEnEstado
   } = useContext(ContextoEstados);
-  const { turno: turnoActual } = estadoTurnoActual;
+  const { turno } = estadoTurnoActual;
   const { estilos } = props;
   const [consultando, cambiarConsultando] = useState(false);
   const [haConsultado, cambiarHaConsultado] = useState(false);
   const refrescarTurnos = () => {
-    if (!haConsultado) {
+    if (turno && !haConsultado) {
       cambiarHaConsultado(true);
       setTimeout(() => {
         cambiarHaConsultado(false);
       }, 30000);
       cambiarConsultando(true);
-      obtenerTicket(estadoLogin.token, turnoActual?.Center?.id)
+      obtenerTicket(estadoLogin.token, turno?.Center?.id)
         .then(res => res.json())
         .then(respuesta => {
-          fijarTurnoActualEnEstado(respuesta?.response?.ticket, respuesta?.response?.wait);
+          fijarTurnoActualEnEstado(respuesta?.response?.ticket, respuesta?.response?.wait, true);
         })
         .catch((error) => {
           if (esTokenValido(
@@ -279,15 +278,14 @@ export default () => {
   const {
     estadoLogin,
     estadoTurnosParaEvaluar,
-    fijarUsuarioLogueadoEnEstado,
-    cambiarTokenFirebaseAccion
+    estadoIrEvaluacion,
+    fijarUsuarioLogueadoEnEstado
   } = useContext(ContextoEstados);
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
   const [listo, cambiarListo] = useState(false);
 
   // Recuperar credenciales almacenadas localmente
   useEffect(() => {
-    crearClienteFirebase(cambiarTokenFirebaseAccion);
     const recuperarCredenciales = async () => {
       await recuperarCredencialesAlmacenadas(fijarUsuarioLogueadoEnEstado);
       cambiarListo(true);
@@ -299,10 +297,10 @@ export default () => {
     return <PantallaCargando />;
   }
 
-  if (estadoTurnosParaEvaluar?.length > 0) {
+  if (estadoTurnosParaEvaluar?.length > 0 || estadoIrEvaluacion) {
     return NavegadorEvaluacion(estilosGlobales);
   }
-  if (estadoLogin?.email && estadoLogin?.token) {
+  if ((estadoLogin?.email && estadoLogin?.token)) {
     return NavegadorAutenticado(estilosGlobales);
   }
   return NavegadorFijoNoAutenticado(estilosGlobales);

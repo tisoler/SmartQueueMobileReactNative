@@ -1,7 +1,10 @@
+/* eslint-disable camelcase */
 // @flow
-import messaging, { firebase } from '@react-native-firebase/messaging';
+import { Alert } from 'react-native';
+import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-community/async-storage';
 import { mensajes } from './constantes';
+import { actualizarTokenFb, obtenerTicketsParaUsuario } from './servicios';
 
 export const guardarDatosLocalmente = async (clave: string, valor: string) => {
   try {
@@ -47,6 +50,19 @@ export const esTokenValido = (
   return true;
 };
 
+// eslint-disable-next-line no-unused-vars
+const AsyncAlerta = (titulo: string, mensaje: string) => new Promise((resolve, reject) => {
+  Alert.alert(
+    titulo,
+    mensaje,
+    [
+      { text: 'Sí', onPress: () => resolve(true) },
+      { text: 'Más tarde', onPress: () => resolve(false) }
+    ],
+    { cancelable: false }
+  );
+});
+
 // ----- Sección de Firebase ------
 
 const obtenerTokenFb = async () => {
@@ -78,24 +94,124 @@ const pedirTokenFb = async () => {
   return solicitarPermisoFb();
 };
 
-// Listener para segundo plano
-export const segundoPlano = async (remoteMessage: Object) => {
-  console.log('Message handled in the background!', remoteMessage);
+const notificarAvanceTurno = (
+  payload: Object,
+  navigation: Object,
+  fijarTurnoActualEnEstado: Function
+) => {
+  if (payload?.data?.center_id && payload?.data?.app_icon) {
+    AsyncAlerta(
+      payload.notification?.title || 'Avence de turno',
+      payload.notification?.body ? `${payload.notification?.body} ¿Desea ver el turno?` : `Su turno ${payload.data.code || ''} ha avanzado. ¿Desea ver el turno?`,
+    )
+      .then(respuesta => {
+        if (respuesta) {
+          const turno = {
+            Center: { id: payload.data.center_id, app_icon: payload.data.app_icon }
+          };
+          fijarTurnoActualEnEstado(turno, null);
+          navigation.navigate('Turno', { turno });
+        }
+      });
+  }
 };
 
-export const crearClienteFirebase = (cambiarTokenFirebaseAccion: Function) => {
+const notificarEvaluarTurno = (
+  payload: Object,
+  estadoLogin: Object,
+  fijarTurnosEnEstado: Function,
+  asignarEstadoIrEvaluacion: Function
+) => {
+  AsyncAlerta(
+    payload.notification?.title || `Evaluación de atención de ${payload?.data?.center}`,
+    payload.notification?.body ? `${payload.notification?.body} ¿Desea evaluarlo ahora?` : 'Tiene un turno para evaluar. ¿Desea evaluarlo ahora?',
+  )
+    .then(async respuesta => {
+      if (respuesta) {
+        asignarEstadoIrEvaluacion(true);
+        const res = await obtenerTicketsParaUsuario(estadoLogin?.token);
+        const resTickets = await res.json();
+        if (resTickets.success) {
+          fijarTurnosEnEstado(resTickets?.response);
+        } else {
+          Alert.alert('Error durante la carga de turnos activos.');
+        }
+      }
+    });
+};
+
+// Listener para segundo plano
+export const segundoPlano = (
+  navigation: Object,
+  fijarTurnoActualEnEstado: Function,
+  estadoLogin: Object,
+  fijarTurnosEnEstado: Function,
+  asignarEstadoIrEvaluacion: Function
+) => async (payload: Object) => {
+  if (payload?.data?.tipo_notificacion) {
+    switch (payload.data.tipo_notificacion) {
+      case '1': // N turnos para el suyo
+        notificarAvanceTurno(payload, navigation, fijarTurnoActualEnEstado);
+        break;
+      case '2': // Evaluacion
+        notificarEvaluarTurno(
+          payload,
+          estadoLogin,
+          fijarTurnosEnEstado,
+          asignarEstadoIrEvaluacion
+        );
+        break;
+      default:
+        break;
+    }
+  }
+};
+
+export const crearClienteFirebase = (
+  estadoLogin: Object,
+  cambiarTokenFirebaseEnEstado: Function,
+  navigation: Object,
+  fijarTurnoActualEnEstado: Function,
+  fijarTurnosEnEstado: Function,
+  asignarEstadoIrEvaluacion: Function
+) => {
   // Listener para cuando el token de Firebase se ha refrescado
   messaging().onTokenRefresh(async () => {
     const nuevoTokenFb = await pedirTokenFb();
-    cambiarTokenFirebaseAccion(nuevoTokenFb);
+    cambiarTokenFirebaseEnEstado(nuevoTokenFb);
+    if (nuevoTokenFb) {
+      actualizarTokenFb(estadoLogin.token, nuevoTokenFb);
+    }
   });
 
   // Listener para primer plano
   messaging().onMessage((payload) => {
-    console.log('primer plano. ', payload);
+    if (payload?.data?.tipo_notificacion) {
+      switch (payload.data.tipo_notificacion) {
+        case '1': // N turnos para el suyo
+          notificarAvanceTurno(payload, navigation, fijarTurnoActualEnEstado);
+          break;
+        case '2': // Evaluacion
+          notificarEvaluarTurno(
+            payload,
+            estadoLogin,
+            fijarTurnosEnEstado,
+            asignarEstadoIrEvaluacion
+          );
+          break;
+        default:
+          break;
+      }
+    }
   });
 
-  messaging().setBackgroundMessageHandler(segundoPlano);
+  messaging().setBackgroundMessageHandler(segundoPlano(
+    navigation,
+    fijarTurnoActualEnEstado,
+    estadoLogin,
+    fijarTurnosEnEstado,
+    asignarEstadoIrEvaluacion
+  ));
 
   messaging().onNotificationOpenedApp(async (remoteMessage) => {
     console.log('FCM Message Data:', remoteMessage.data);
