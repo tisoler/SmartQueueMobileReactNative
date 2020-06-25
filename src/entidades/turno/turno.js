@@ -89,7 +89,7 @@ const Turno = ({ navigation, route }) => {
             fijarTurnoActualEnEstado(respuesta?.response?.ticket, respuesta?.response?.wait);
             cambiarCargando(false);
             asignarTurno(respuesta?.response?.ticket);
-            if (turno.status === 'ready') {
+            if (respuesta?.response?.ticket?.status === 'ready') {
               cambiarConfirmoPresencia(true);
             }
           } else {

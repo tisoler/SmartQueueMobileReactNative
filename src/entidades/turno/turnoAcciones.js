@@ -2,9 +2,10 @@
 const fijarTurnoActualAccion = (
   asignarEstadoTurnoActual: Function,
   turno: Object,
-  demora: Object
+  demora: Object,
+  irHaciaTurno: boolean
 ) => {
-  asignarEstadoTurnoActual({ turno, demora });
+  asignarEstadoTurnoActual({ turno, demora, irHaciaTurno });
 };
 
 export default fijarTurnoActualAccion;

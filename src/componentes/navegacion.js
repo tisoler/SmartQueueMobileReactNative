@@ -164,7 +164,7 @@ const NavegadorFijoNoAutenticado = (estilosGlobales: Object) => {
 };
 
 const NavegadorFijoAutenticado = ({ navigation, route }) => {
-  const { estilosGlobales } = route.params;
+  const { estilosGlobales, estadoTurnoActual } = route.params;
   const estilos = StyleSheet.create({
     encabezadoNavegacion: {
       backgroundColor: estilosGlobales.colorBarraNavegacion
@@ -194,7 +194,9 @@ const NavegadorFijoAutenticado = ({ navigation, route }) => {
   });
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      initialRouteName={estadoTurnoActual?.irHaciaTurno ? 'Turnos' : 'Lobby'}
+    >
       <Stack.Screen
         name="Lobby"
         component={Lobby}
@@ -245,14 +247,14 @@ const NavegadorFijoAutenticado = ({ navigation, route }) => {
 
 const Drawer = createDrawerNavigator();
 
-const NavegadorAutenticado = (estilosGlobales: Object) => (
+const NavegadorAutenticado = (estilosGlobales: Object, estadoTurnoActual: Object) => (
   <NavigationContainer>
     <Drawer.Navigator
       edgeWidth={Math.round(Dimensions.get('window').width)}
       minSwipeDistance={5}
       drawerContent={(props) => <MenuLateral navigation={props.navigation} />}
     >
-      <Drawer.Screen name="NavegadorFijo" component={NavegadorFijoAutenticado} initialParams={{ estilosGlobales }} />
+      <Drawer.Screen name="NavegadorFijo" component={NavegadorFijoAutenticado} initialParams={{ estilosGlobales, estadoTurnoActual }} />
     </Drawer.Navigator>
   </NavigationContainer>
 );
@@ -279,6 +281,7 @@ export default () => {
     estadoLogin,
     estadoTurnosParaEvaluar,
     estadoIrEvaluacion,
+    estadoTurnoActual,
     fijarUsuarioLogueadoEnEstado
   } = useContext(ContextoEstados);
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
@@ -301,7 +304,7 @@ export default () => {
     return NavegadorEvaluacion(estilosGlobales);
   }
   if ((estadoLogin?.email && estadoLogin?.token)) {
-    return NavegadorAutenticado(estilosGlobales);
+    return NavegadorAutenticado(estilosGlobales, estadoTurnoActual);
   }
   return NavegadorFijoNoAutenticado(estilosGlobales);
 };

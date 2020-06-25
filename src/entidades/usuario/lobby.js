@@ -1,7 +1,7 @@
 // @flow
 import React, { useEffect, useContext } from 'react';
 import {
-  View, StyleSheet, Alert, ActivityIndicator, Text, ScrollView, Dimensions, AppRegistry
+  View, StyleSheet, Alert, ActivityIndicator, Text, ScrollView, Dimensions
 } from 'react-native';
 import { obtenerTicketsParaUsuario } from '../../lib/servicios';
 import { ContextoEstados } from '../../lib/contextoEstados';
@@ -12,8 +12,7 @@ import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 import {
   procesarMensajeError,
   esTokenValido,
-  crearClienteFirebase,
-  segundoPlano
+  crearClienteFirebase
 } from '../../lib/ayudante';
 
 const Lobby = ({ navigation }) => {
@@ -39,13 +38,6 @@ const Lobby = ({ navigation }) => {
       fijarTurnosEnEstado,
       asignarEstadoIrEvaluacion
     );
-    AppRegistry.registerHeadlessTask('ReactNativeFirebaseMessagingHeadlessTask', () => segundoPlano(
-      navigation,
-      fijarTurnoActualEnEstado,
-      estadoLogin,
-      fijarTurnosEnEstado,
-      asignarEstadoIrEvaluacion
-    ));
     // --- Fin Firebase ----
 
     obtenerTicketsParaUsuario(estadoLogin.token)

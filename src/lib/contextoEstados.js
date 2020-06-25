@@ -90,8 +90,8 @@ export const ProveedorContextoEstados = (props: Props) => {
     fijarCentrosAccion(estadoCentros, asignarEstadoCentros, turno);
   };
   // Turno
-  const fijarTurnoActualEnEstado = (turno: Object, demora: Object) => {
-    fijarTurnoActualAccion(asignarEstadoTurnoActual, turno, demora);
+  const fijarTurnoActualEnEstado = (turno: Object, demora: Object, irHaciaTurno = false) => {
+    fijarTurnoActualAccion(asignarEstadoTurnoActual, turno, demora, irHaciaTurno);
   };
   // Fin interface contexto - acciones
 
