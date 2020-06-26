@@ -1,7 +1,7 @@
 // @flow
 import React, { useContext, useEffect } from 'react';
 import {
-  View, StyleSheet, ActivityIndicator, Alert, ScrollView, Text
+  View, StyleSheet, ActivityIndicator, Alert, ScrollView, TextInput
 } from 'react-native';
 import withErrorBoundary from '../../enhancers/withErrorBoundary';
 import { ContextoEstados } from '../../lib/contextoEstados';
@@ -32,7 +32,8 @@ const ListaCentrosAtencion = ({ navigation }) => {
     texto: {
       color: '#FFF',
       fontSize: 19,
-      paddingLeft: 10
+      paddingLeft: 10,
+      width: estilosGlobales.anchoEtiquetaTeja
     }
   });
 
@@ -87,7 +88,7 @@ const ListaCentrosAtencion = ({ navigation }) => {
             appIcon={centro.app_icon}
             manejadorClick={() => seleccionarCentro(centro)}
           >
-            <Text style={estilos.texto}>{centro.name}</Text>
+            <TextInput multiline editable={false} style={estilos.texto}>{centro.name}</TextInput>
           </Teja>
         ))}
       </ScrollView>

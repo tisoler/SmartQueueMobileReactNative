@@ -7,7 +7,10 @@ export const IconosCentros = {
   'bn_icon.png': require('../../recursos/imagenes/centros/bn_icon.png'),
   'ca_icon.png': require('../../recursos/imagenes/centros/ca_icon.png'),
   'cmpaz_icon.png': require('../../recursos/imagenes/centros/cmpaz_icon.png'),
-  'test_icon.png': require('../../recursos/imagenes/centros/generico.png')
+  'municdc.png': require('../../recursos/imagenes/centros/municdc.png'),
+  'municdn.png': require('../../recursos/imagenes/centros/municdn.png'),
+  'municds.png': require('../../recursos/imagenes/centros/municds.png'),
+  'test_icon.png': require('../../recursos/imagenes/centros/test_icon.png')
 };
 
 export const NombresIconosGenerales = {

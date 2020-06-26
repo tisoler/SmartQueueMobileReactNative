@@ -108,7 +108,7 @@ const irHaciaTurnoNotificado = (
   fijarTurnoActualEnEstado: Function
 ) => {
   const turno = {
-    Center: { id: payload.data.center_id, app_icon: payload.data.app_icon }
+    Center: { id: payload.data.center_id }
   };
   fijarTurnoActualEnEstado(turno, null);
   navigation.navigate('Turno', { turno });
@@ -119,7 +119,7 @@ const notificarAvanceTurno = (
   navigation: Object,
   fijarTurnoActualEnEstado: Function
 ) => {
-  if (payload?.data?.center_id && payload?.data?.app_icon) {
+  if (payload?.data?.center_id) {
     AsyncAlerta(
       payload.notification?.title || 'Avence de turno',
       payload.notification?.body ? `${payload.notification?.body} ¿Desea ver el turno?` : `Su turno ${payload.data.code || ''} ha avanzado. ¿Desea ver el turno?`,
@@ -240,7 +240,7 @@ export const crearClienteFirebase = async (
   const turnoGuardadoLocal = await recuperarDatosLocalmente('@turnoNotificado');
   if (turnoGuardadoLocal) {
     const turnoNotificado = JSON.parse(turnoGuardadoLocal);
-    if (turnoNotificado?.Center?.id && turnoNotificado?.Center?.app_icon) {
+    if (turnoNotificado?.Center?.id) {
       await AsyncStorage.removeItem('@turnoNotificado');
       fijarTurnoActualEnEstado(turnoNotificado, null);
       navigation.navigate('Turno', { turno: turnoNotificado });

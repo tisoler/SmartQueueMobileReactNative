@@ -48,6 +48,10 @@ const temaOscuro = {
     height: pantallaChica ? 130 : 150,
     width: pantallaChica ? 130 : 150
   },
+  tamañoLogoCentroTeja: pantallaChica ? 90 : 100,
+  anchoEtiquetaTeja: pantallaChica
+    ? Math.round(Dimensions.get('window')?.width) - 100
+    : Math.round(Dimensions.get('window')?.width) - 110,
   colorAvatarLetra: '#16817a',
   tamanoLetraEtiqueta: pantallaChica ? 17 : 19,
   colorIconos: '#fff'
@@ -99,6 +103,10 @@ const temaClaro = {
     height: pantallaChica ? 130 : 150,
     width: pantallaChica ? 130 : 150
   },
+  tamañoLogoCentroTeja: pantallaChica ? 90 : 100,
+  anchoEtiquetaTeja: pantallaChica
+    ? Math.round(Dimensions.get('window')?.width) - 100
+    : Math.round(Dimensions.get('window')?.width) - 110,
   colorAvatarLetra: '#3da4ab',
   tamanoLetraEtiqueta: pantallaChica ? 17 : 19,
   colorIconos: '#000'

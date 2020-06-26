@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import {
   StyleSheet,
   Image,
@@ -8,12 +8,10 @@ import {
   TouchableWithoutFeedback,
   Animated,
   Easing,
-  Platform,
-  Dimensions
+  Platform
 } from 'react-native';
 import { IconosCentros } from '../../lib/constantes';
-
-const pantallaChica = Math.round(Dimensions.get('window')?.height) < 600;
+import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 
 type Props = {
   manejadorClick: Function,
@@ -27,11 +25,12 @@ const Teja = (props: Props) => {
     appIcon,
     children
   } = props;
+  const { estilosGlobales } = useContext(ContextoEstilosGlobales);
 
   const maxOpacity = 0.2;
   const [scaleValue] = useState(new Animated.Value(0.01));
   const [opacityValue] = useState(new Animated.Value(maxOpacity));
-  const height = pantallaChica ? 90 : 100;
+  const height = estilosGlobales.tamañoLogoCentroTeja;
   const width = '100%';
 
   const onPressed = () => {
@@ -69,7 +68,7 @@ const Teja = (props: Props) => {
   const estilo = StyleSheet.create({
     imagen: {
       height,
-      width: pantallaChica ? 90 : 100
+      width: estilosGlobales.tamañoLogoCentroTeja
     },
     teja: {
       flex: 1,
@@ -88,7 +87,7 @@ const Teja = (props: Props) => {
         {renderRippleView()}
         <Image
           style={estilo.imagen}
-          source={IconosCentros[appIcon]}
+          source={IconosCentros[appIcon] || IconosCentros['test_icon.png']}
         />
         {children}
       </View>
