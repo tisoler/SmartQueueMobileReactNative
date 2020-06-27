@@ -11,7 +11,7 @@ type Props = {
   children: string
 };
 
-const BotonPopup = (props: Props) => {
+export default (props: Props) => {
   const {
     height,
     width,
@@ -44,5 +44,3 @@ const BotonPopup = (props: Props) => {
     </BotonRipple>
   );
 };
-
-export default BotonPopup;

@@ -1,12 +1,100 @@
 // @flow
-import React from 'react';
-import { View, Text, Dimensions } from 'react-native';
+import React, { useContext } from 'react';
+import {
+  View, Dimensions, Text, StyleSheet
+} from 'react-native';
+import { useHeaderHeight } from '@react-navigation/stack';
+import BotonPopup from '../componentes/comunes/botonPopup';
+import { ContextoEstilosGlobales } from '../lib/contextoEstilosGlobales';
+import { ContextoDialogoEmergente } from '../lib/contextoDialogoEmergente';
 
-export default () => (
-  <View
-    style={{height: Dimensions.get('window').height + 110, top: -100, zIndex: 999, backgroundColor: 'rgba(0,0,0,0.5)', position: 'absolute', left: 0, right: 0, alignItems: 'center', justifyContent: 'center'}}>
-    <View style={{height: '30%', opacity: 1, zIndex: 1002, width: '30%', backgroundColor: '#fff'}}>
-      <Text>Hola</Text>
-    </View>
-  </View>
-);
+export default () => {
+  const { estadoDialogoEmergente } = useContext(ContextoDialogoEmergente);
+  const { estilosGlobales } = useContext(ContextoEstilosGlobales);
+  const estilos = StyleSheet.create({
+    contenedor: {
+      position: 'absolute',
+      zIndex: 3,
+      top: -useHeaderHeight(),
+      left: 0,
+      right: 0,
+      height: Dimensions.get('window').height + useHeaderHeight(),
+      backgroundColor: 'rgba(0,0,0,0.55)',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    dialogo: {
+      flexDirection: 'column',
+      zIndex: 6,
+      alignItems: 'center',
+      justifyContent: 'flex-end',
+      width: '80%',
+      height: '45%',
+      backgroundColor: estilosGlobales.colorFondoPantallaLogin
+    },
+    contenedorMensaje: {
+      flex: 1,
+      width: '100%',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'flex-start'
+    },
+    contenedorTitulo: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '100%',
+      backgroundColor: estilosGlobales.colorFondoEncabezadoTitulos,
+      height: 60
+    },
+    contenedorCuerpo: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '100%'
+    },
+    botonera: {
+      flexDirection: 'row'
+    }
+  });
+
+  if (estadoDialogoEmergente && estadoDialogoEmergente.botones?.length >= 2) {
+    return (
+      <View style={estilos.contenedor}>
+        <View style={estilos.dialogo}>
+          <View style={estilos.contenedorMensaje}>
+            <View style={estilos.contenedorTitulo}>
+              <Text style={estilosGlobales.tituloSeccion}>
+                {estadoDialogoEmergente.titulo || 'Notificación de turno'}
+              </Text>
+            </View>
+            <View style={estilos.contenedorCuerpo}>
+              <Text style={estilosGlobales.textoAviso}>
+                {estadoDialogoEmergente.mensaje || '¿Qué desea hacer?'}
+              </Text>
+            </View>
+          </View>
+          <View style={estilos.botonera}>
+            <BotonPopup
+              height={80}
+              width="50%"
+              manejadorClick={estadoDialogoEmergente.botones[0].onPress}
+              colorFondo={estilosGlobales.colorFondoBotonPrincipal}
+            >
+              { estadoDialogoEmergente.botones[0].texto }
+            </BotonPopup>
+            <BotonPopup
+              height={80}
+              width="50%"
+              manejadorClick={estadoDialogoEmergente.botones[1].onPress}
+              colorFondo={estilosGlobales.colorFondoBotonSecundario}
+            >
+              { estadoDialogoEmergente.botones[1].texto }
+            </BotonPopup>
+          </View>
+        </View>
+      </View>
+    );
+  }
+
+  return null;
+};

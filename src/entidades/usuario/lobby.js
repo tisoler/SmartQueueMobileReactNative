@@ -6,9 +6,11 @@ import {
 import { obtenerTicketsParaUsuario } from '../../lib/servicios';
 import { ContextoEstados } from '../../lib/contextoEstados';
 import withErrorBoundary from '../../hoc/withErrorBoundary';
+import withDialogoEmergente from '../../hoc/withDialogoEmergente';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import Teja from '../../componentes/comunes/teja';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
+import { ContextoDialogoEmergente } from '../../lib/contextoDialogoEmergente';
 import {
   procesarMensajeError,
   esTokenValido,
@@ -28,6 +30,7 @@ const Lobby = ({ navigation }) => {
     fijarTurnoActualEnEstado,
     asignarEstadoIrEvaluacion
   } = useContext(ContextoEstados);
+  const { abrirDialogoEmergente } = useContext(ContextoDialogoEmergente);
   useEffect(() => {
     // Levanta el cliente Firebase y los listeners
     crearClienteFirebase(
@@ -36,7 +39,8 @@ const Lobby = ({ navigation }) => {
       navigation,
       fijarTurnoActualEnEstado,
       fijarTurnosEnEstado,
-      asignarEstadoIrEvaluacion
+      asignarEstadoIrEvaluacion,
+      abrirDialogoEmergente
     );
     // --- Fin Firebase ----
 
@@ -180,4 +184,4 @@ const Lobby = ({ navigation }) => {
   );
 };
 
-export default withErrorBoundary('Error iniciando sesión.', Lobby);
+export default withErrorBoundary('Error iniciando sesión.', withDialogoEmergente(Lobby));

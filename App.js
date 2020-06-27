@@ -3,7 +3,8 @@ import React from 'react';
 import messaging from '@react-native-firebase/messaging';
 import Navegador from './src/componentes/navegacion';
 import { ProveedorContextoEstados } from './src/lib/contextoEstados';
-import { ContextoEstilosGlobalesProveedor } from './src/lib/contextoEstilosGlobales';
+import { ProveedorContextoEstilosGlobales } from './src/lib/contextoEstilosGlobales';
+import { ProveedorContextoDialogoEmergente } from './src/lib/contextoDialogoEmergente';
 import { guardarDatosLocalmente } from './src/lib/ayudante';
 
 // LISTENER - Segundo plano con aplicación cerrada
@@ -29,8 +30,10 @@ messaging().setBackgroundMessageHandler(async payload => {
 
 export default () => (
   <ProveedorContextoEstados>
-    <ContextoEstilosGlobalesProveedor>
-      <Navegador />
-    </ContextoEstilosGlobalesProveedor>
+    <ProveedorContextoEstilosGlobales>
+      <ProveedorContextoDialogoEmergente>
+        <Navegador />
+      </ProveedorContextoDialogoEmergente>
+    </ProveedorContextoEstilosGlobales>
   </ProveedorContextoEstados>
 );

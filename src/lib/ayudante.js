@@ -50,19 +50,6 @@ export const esTokenValido = (
   return true;
 };
 
-// eslint-disable-next-line no-unused-vars
-const AsyncAlerta = (titulo: string, mensaje: string) => new Promise((resolve, reject) => {
-  Alert.alert(
-    titulo,
-    mensaje,
-    [
-      { text: 'Sí', onPress: () => resolve(true) },
-      { text: 'Más tarde', onPress: () => resolve(false) }
-    ],
-    { cancelable: false }
-  );
-});
-
 // ----- Sección de Firebase ------
 
 const obtenerTokenFb = async () => {
@@ -94,7 +81,6 @@ const pedirTokenFb = async () => {
   return solicitarPermisoFb();
 };
 
-
 export const recuperarTokenFB = async () => {
   const tokeFBLocal = await recuperarDatosLocalmente('@tokenFb');
   if (tokeFBLocal) return tokeFBLocal;
@@ -117,12 +103,15 @@ const irHaciaTurnoNotificado = (
 const notificarAvanceTurno = (
   payload: Object,
   navigation: Object,
-  fijarTurnoActualEnEstado: Function
+  fijarTurnoActualEnEstado: Function,
+  abrirDialogoEmergente: Function
 ) => {
   if (payload?.data?.center_id) {
-    AsyncAlerta(
+    abrirDialogoEmergente(
       payload.notification?.title || 'Avence de turno',
-      payload.notification?.body ? `${payload.notification?.body} ¿Desea ver el turno?` : `Su turno ${payload.data.code || ''} ha avanzado. ¿Desea ver el turno?`,
+      payload.notification?.body ? `${payload.notification?.body} ¿Desea ir al turno?` : `Su turno ${payload.data.code || ''} ha avanzado. ¿Desea ver el turno?`,
+      'Sí',
+      'Más tarde'
     )
       .then(respuesta => {
         if (respuesta) {
@@ -155,11 +144,14 @@ const notificarEvaluarTurno = (
   payload: Object,
   estadoLogin: Object,
   fijarTurnosEnEstado: Function,
-  asignarEstadoIrEvaluacion: Function
+  asignarEstadoIrEvaluacion: Function,
+  abrirDialogoEmergente: Function
 ) => {
-  AsyncAlerta(
-    payload.notification?.title || `Evaluación de atención de ${payload?.data?.center}`,
-    payload.notification?.body ? `${payload.notification?.body} ¿Desea evaluarlo ahora?` : 'Tiene un turno para evaluar. ¿Desea evaluarlo ahora?',
+  abrirDialogoEmergente(
+      payload.notification?.title || `Evaluación de atención de ${payload?.data?.center}`,
+      payload.notification?.body ? `${payload.notification?.body} ¿Desea evaluarlo ahora?` : 'Tiene un turno para evaluar. ¿Desea evaluarlo ahora?',
+      'Sí',
+      'Más tarde'
   )
     .then(async respuesta => {
       if (respuesta) {
@@ -178,7 +170,8 @@ export const crearClienteFirebase = async (
   navigation: Object,
   fijarTurnoActualEnEstado: Function,
   fijarTurnosEnEstado: Function,
-  asignarEstadoIrEvaluacion: Function
+  asignarEstadoIrEvaluacion: Function,
+  abrirDialogoEmergente: Function
 ) => {
   // Listener para cuando el token de Firebase se ha refrescado
   messaging().onTokenRefresh(async () => {
@@ -194,14 +187,20 @@ export const crearClienteFirebase = async (
     if (payload?.data?.tipo_notificacion) {
       switch (payload.data.tipo_notificacion) {
         case '1': // N turnos para el suyo
-          notificarAvanceTurno(payload, navigation, fijarTurnoActualEnEstado);
+          notificarAvanceTurno(
+            payload,
+            navigation,
+            fijarTurnoActualEnEstado,
+            abrirDialogoEmergente
+          );
           break;
         case '2': // Evaluacion
           notificarEvaluarTurno(
             payload,
             estadoLogin,
             fijarTurnosEnEstado,
-            asignarEstadoIrEvaluacion
+            asignarEstadoIrEvaluacion,
+            abrirDialogoEmergente
           );
           break;
         default:

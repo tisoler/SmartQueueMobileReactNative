@@ -5,6 +5,7 @@ import {
   View, StyleSheet, Text, Image, ActivityIndicator, Alert
 } from 'react-native';
 import withErrorBoundary from '../../hoc/withErrorBoundary';
+import withDialogoEmergente from '../../hoc/withDialogoEmergente';
 import { IconosCentros } from '../../lib/constantes';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import { ContextoEstados } from '../../lib/contextoEstados';
@@ -256,4 +257,4 @@ const Turno = ({ navigation, route }) => {
   );
 };
 
-export default withErrorBoundary('Error en turno.', Turno);
+export default withErrorBoundary('Error en turno.', withDialogoEmergente(Turno));

@@ -18,6 +18,7 @@ import { ContextoEstados } from '../lib/contextoEstados';
 import { recuperarDatosLocalmente, recuperarTokenFB, procesarMensajeError } from '../lib/ayudante';
 import PantallaCargando from './pantallaCargando';
 import { BotonMenuHamburguesa, BotonRefrescarTurnos, BotonBusqueda } from './botonesHeader';
+import { ContextoDialogoEmergente } from '../lib/contextoDialogoEmergente';
 
 const Stack = createStackNavigator();
 
@@ -151,17 +152,21 @@ const NavegadorFijoAutenticado = ({ navigation, route }) => {
 
 const Drawer = createDrawerNavigator();
 
-const NavegadorAutenticado = (estilosGlobales: Object, estadoTurnoActual: Object) => (
-  <NavigationContainer>
-    <Drawer.Navigator
-      edgeWidth={Math.round(Dimensions.get('window').width)}
-      minSwipeDistance={5}
-      drawerContent={(props) => <MenuLateral navigation={props.navigation} />}
-    >
-      <Drawer.Screen name="NavegadorFijo" component={NavegadorFijoAutenticado} initialParams={{ estilosGlobales, estadoTurnoActual }} />
-    </Drawer.Navigator>
-  </NavigationContainer>
-);
+const NavegadorAutenticado = (estilosGlobales: Object, estadoTurnoActual: Object) => {
+  const { estadoDialogoEmergente } = useContext(ContextoDialogoEmergente);
+  return (
+    <NavigationContainer>
+      <Drawer.Navigator
+        // Deshabilitado cuando hay diálogo emergente.
+        edgeWidth={!estadoDialogoEmergente ? Math.round(Dimensions.get('window').width) : 0}
+        minSwipeDistance={5}
+        drawerContent={(props) => <MenuLateral navigation={props.navigation} />}
+      >
+        <Drawer.Screen name="NavegadorFijo" component={NavegadorFijoAutenticado} initialParams={{ estilosGlobales, estadoTurnoActual }} />
+      </Drawer.Navigator>
+    </NavigationContainer>
+  );
+};
 
 const recuperarCredencialesAlmacenadas = async (fijarUsuarioLogueadoEnEstado: Function) => {
   try {

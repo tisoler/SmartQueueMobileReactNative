@@ -10,7 +10,7 @@ type Props = {
   children: React.Element<any>
 };
 
-export const ContextoEstilosGlobalesProveedor = (props: Props) => {
+export const ProveedorContextoEstilosGlobales = (props: Props) => {
   const { children } = props;
   const { estadoTemaUsuario } = useContext(ContextoEstados);
   const estilosGlobales = estadoTemaUsuario

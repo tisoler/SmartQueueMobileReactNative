@@ -6,6 +6,7 @@ import {
   View, StyleSheet, Text, Image, ActivityIndicator, Alert
 } from 'react-native';
 import withErrorBoundary from '../../hoc/withErrorBoundary';
+import withDialogoEmergente from '../../hoc/withDialogoEmergente';
 import { ContextoEstados } from '../../lib/contextoEstados';
 import { IconosCentros } from '../../lib/constantes';
 import { estimarDemora, generarTicket } from '../../lib/servicios';
@@ -197,4 +198,4 @@ const CentrosAtencion = ({ route, navigation }) => {
   );
 };
 
-export default withErrorBoundary('Error en centro de atención.', CentrosAtencion);
+export default withErrorBoundary('Error en centro de atención.', withDialogoEmergente(CentrosAtencion));
