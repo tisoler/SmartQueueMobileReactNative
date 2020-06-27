@@ -11,7 +11,7 @@ import {
   cambiarTemaUsuarioAccion,
   cambiarTokenFirebaseAccion
 } from '../entidades/usuario/usuarioAcciones';
-import fijarCentrosAccion from '../entidades/centroAtencion/centroAtencionAcciones';
+import { fijarCentrosAccion, filtrarCentrosAccion } from '../entidades/centroAtencion/centroAtencionAcciones';
 import fijarTurnoActualAccion from '../entidades/turno/turnoAcciones';
 
 export const ContextoEstados: Object = createContext();
@@ -86,8 +86,11 @@ export const ProveedorContextoEstados = (props: Props) => {
     cambiarTokenFirebaseAccion(asignarEstadoFbToken, tokenFb);
   };
   // Centros
-  const fijarCentrosEnEstado = (turno: Object) => {
-    fijarCentrosAccion(estadoCentros, asignarEstadoCentros, turno);
+  const fijarCentrosEnEstado = (centros: Array<Object>) => {
+    fijarCentrosAccion(asignarEstadoCentros, centros);
+  };
+  const filtrarCentrosEnEstado = (textoBusqueda: string) => {
+    filtrarCentrosAccion(estadoCentros, asignarEstadoCentros, textoBusqueda);
   };
   // Turno
   const fijarTurnoActualEnEstado = (turno: Object, demora: Object, irHaciaTurno = false) => {
@@ -112,6 +115,7 @@ export const ProveedorContextoEstados = (props: Props) => {
       confirmarAsistenciaTurnoEnEstado,
       evaluarTurnoEnEstado,
       fijarCentrosEnEstado,
+      filtrarCentrosEnEstado,
       cambiarTemaUsuarioEnEstado,
       fijarTurnoActualEnEstado,
       cambiarTokenFirebaseEnEstado,

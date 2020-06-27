@@ -3,7 +3,7 @@ import React, { useState, useContext } from 'react';
 import {
   StyleSheet, View, Text, Alert, ScrollView
 } from 'react-native';
-import withErrorBoundary from '../../enhancers/withErrorBoundary';
+import withErrorBoundary from '../../hoc/withErrorBoundary';
 import TextoIngreso from '../../componentes/comunes/textoIngreso';
 import { login } from '../../lib/servicios';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
@@ -75,7 +75,10 @@ const Login = ({ navigation }) => {
   };
 
   return (
-    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+    <ScrollView
+      contentContainerStyle={{ flexGrow: 1 }}
+      showsVerticalScrollIndicator={false}
+    >
       <View style={estilos.contenedor}>
         <View style={estilos.subContenedor}>
           { IconosGenerales[NombresIconosGenerales.logoLogin] }

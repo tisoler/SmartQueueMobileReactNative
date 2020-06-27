@@ -3,7 +3,7 @@ import React, { useState, useContext } from 'react';
 import {
   StyleSheet, View, Text, ScrollView, Image, Alert
 } from 'react-native';
-import withErrorBoundary from '../../enhancers/withErrorBoundary';
+import withErrorBoundary from '../../hoc/withErrorBoundary';
 import TextoIngreso from '../../componentes/comunes/textoIngreso';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import Etiqueta from '../../componentes/comunes/etiqueta';
@@ -468,7 +468,11 @@ const Registro = ({ navigation }) => {
   );
 
   return (
-    <ScrollView style={estilos.contenedorGlobal} contentContainerStyle={{ flexGrow: 1 }}>
+    <ScrollView
+      style={estilos.contenedorGlobal}
+      contentContainerStyle={{ flexGrow: 1 }}
+      showsVerticalScrollIndicator={false}
+    >
       { pantallas[numeroPantalla] }
       <Botonera />
     </ScrollView>

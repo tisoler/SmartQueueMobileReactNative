@@ -4,7 +4,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import {
   View, StyleSheet, Text, Image, ActivityIndicator, Alert
 } from 'react-native';
-import withErrorBoundary from '../../enhancers/withErrorBoundary';
+import withErrorBoundary from '../../hoc/withErrorBoundary';
 import { IconosCentros } from '../../lib/constantes';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import { ContextoEstados } from '../../lib/contextoEstados';

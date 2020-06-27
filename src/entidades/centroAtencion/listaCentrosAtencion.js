@@ -3,7 +3,8 @@ import React, { useContext, useEffect } from 'react';
 import {
   View, StyleSheet, ActivityIndicator, Alert, ScrollView, TextInput
 } from 'react-native';
-import withErrorBoundary from '../../enhancers/withErrorBoundary';
+import withErrorBoundary from '../../hoc/withErrorBoundary';
+import withDialogoEmergente from '../../hoc/withDialogoEmergente';
 import { ContextoEstados } from '../../lib/contextoEstados';
 import { obtenerCentrosAtencion } from '../../lib/servicios';
 import Teja from '../../componentes/comunes/teja';
@@ -81,7 +82,7 @@ const ListaCentrosAtencion = ({ navigation }) => {
 
   return (
     <View style={estilos.contenedor}>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         { estadoCentros.centros.map(centro => (
           <Teja
             key={centro.id}
@@ -96,4 +97,4 @@ const ListaCentrosAtencion = ({ navigation }) => {
   );
 };
 
-export default withErrorBoundary('Error durante la carga del listadp de centros.', ListaCentrosAtencion);
+export default withErrorBoundary('Error durante la carga del listadp de centros.', withDialogoEmergente(ListaCentrosAtencion));

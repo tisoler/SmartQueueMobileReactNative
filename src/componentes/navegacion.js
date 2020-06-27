@@ -1,13 +1,6 @@
 // @flow
 import React, { useContext, useEffect, useState } from 'react';
-import {
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-  View,
-  Alert,
-  ActivityIndicator
-} from 'react-native';
+import { StyleSheet, Dimensions, Alert } from 'react-native';
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, TransitionSpecs } from '@react-navigation/stack';
@@ -22,83 +15,11 @@ import EvaluacionTurno from '../entidades/turno/evaluacionTurno';
 import MenuLateral from './menuLateral';
 import { ContextoEstilosGlobales } from '../lib/contextoEstilosGlobales';
 import { ContextoEstados } from '../lib/contextoEstados';
-import {
-  recuperarDatosLocalmente,
-  recuperarTokenFB,
-  procesarMensajeError,
-  esTokenValido
-} from '../lib/ayudante';
-import IconosGenerales from '../lib/iconos';
-import { NombresIconosGenerales } from '../lib/constantes';
-import { obtenerTicket } from '../lib/servicios';
+import { recuperarDatosLocalmente, recuperarTokenFB, procesarMensajeError } from '../lib/ayudante';
 import PantallaCargando from './pantallaCargando';
+import { BotonMenuHamburguesa, BotonRefrescarTurnos, BotonBusqueda } from './botonesHeader';
 
 const Stack = createStackNavigator();
-
-const BotonMenuHamburguesa = (props) => {
-  const { estilos, navigation } = props;
-  return (
-    <View style={estilos.contenedorBotonHamburguesa}>
-      <TouchableOpacity style={estilos.botonEnHeader} onPress={() => navigation.openDrawer()}>
-        {IconosGenerales[NombresIconosGenerales.menu]}
-      </TouchableOpacity>
-    </View>
-  );
-};
-
-const BotonRefrescarTurnos = (props) => {
-  const {
-    estadoTurnoActual,
-    estadoLogin,
-    estadoFbToken,
-    estadoTemaUsuario,
-    fijarTurnoActualEnEstado,
-    fijarUsuarioLogueadoEnEstado
-  } = useContext(ContextoEstados);
-  const { turno } = estadoTurnoActual;
-  const { estilos } = props;
-  const [consultando, cambiarConsultando] = useState(false);
-  const [haConsultado, cambiarHaConsultado] = useState(false);
-  const refrescarTurnos = () => {
-    if (turno && !haConsultado) {
-      cambiarHaConsultado(true);
-      setTimeout(() => {
-        cambiarHaConsultado(false);
-      }, 30000);
-      cambiarConsultando(true);
-      obtenerTicket(estadoLogin.token, turno?.Center?.id)
-        .then(res => res.json())
-        .then(respuesta => {
-          fijarTurnoActualEnEstado(respuesta?.response?.ticket, respuesta?.response?.wait, true);
-        })
-        .catch((error) => {
-          if (esTokenValido(
-            error?.message,
-            fijarUsuarioLogueadoEnEstado,
-            estadoLogin.email,
-            estadoFbToken,
-            estadoTemaUsuario
-          )) {
-            Alert.alert(procesarMensajeError(error.message, 'Error al refrescar la información.'));
-          }
-        })
-        .finally(() => cambiarConsultando(false));
-    } else {
-      Alert.alert('Debe esperar 30 segundos entre consultas.');
-    }
-  };
-  return (
-    <View style={estilos.contenedorBotonRefrescar}>
-      { !consultando ? (
-        <TouchableOpacity style={estilos.botonEnHeader} onPress={refrescarTurnos}>
-          {IconosGenerales[NombresIconosGenerales.refrescar]}
-        </TouchableOpacity>
-      ) : (
-        <ActivityIndicator size="small" color="#FFF" />
-      )}
-    </View>
-  );
-};
 
 const NavegadorEvaluacion = (estilosGlobales: Object) => {
   const estilos = StyleSheet.create({
@@ -165,31 +86,10 @@ const NavegadorFijoNoAutenticado = (estilosGlobales: Object) => {
 
 const NavegadorFijoAutenticado = ({ navigation, route }) => {
   const { estilosGlobales, estadoTurnoActual } = route.params;
+  const [buscarCentro, cambiarBuscarCentro] = useState(false);
   const estilos = StyleSheet.create({
     encabezadoNavegacion: {
       backgroundColor: estilosGlobales.colorBarraNavegacion
-    },
-    contenedorBotonHamburguesa: {
-      flexGrow: 1,
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginLeft: 6,
-      width: 50
-    },
-    botonEnHeader: {
-      width: 50,
-      height: '100%',
-      alignItems: 'center',
-      justifyContent: 'center'
-    },
-    contenedorBotonRefrescar: {
-      flexGrow: 1,
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginRight: 6,
-      width: 50
     }
   });
 
@@ -204,16 +104,22 @@ const NavegadorFijoAutenticado = ({ navigation, route }) => {
           title: 'Queue',
           headerStyle: estilos.encabezadoNavegacion,
           headerTintColor: estilosGlobales.colorLetraEncabezado,
-          headerLeft: () => <BotonMenuHamburguesa navigation={navigation} estilos={estilos} />,
+          headerLeft: () => <BotonMenuHamburguesa navigation={navigation} />,
         }}
       />
       <Stack.Screen
         name="ListaCentrosAtencion"
         component={ListaCentrosAtencion}
         options={{
-          title: 'Centros de atención',
+          title: !buscarCentro ? 'Centros de atención' : '',
           headerStyle: estilos.encabezadoNavegacion,
-          headerTintColor: estilosGlobales.colorLetraEncabezado
+          headerTintColor: estilosGlobales.colorLetraEncabezado,
+          headerRight: () => (
+            <BotonBusqueda
+              buscar={buscarCentro}
+              cambiarBuscar={cambiarBuscarCentro}
+            />
+          )
         }}
       />
       <Stack.Screen
@@ -236,9 +142,7 @@ const NavegadorFijoAutenticado = ({ navigation, route }) => {
             open: TransitionSpecs.TransitionIOSSpec,
             close: TransitionSpecs.TransitionIOSSpec,
           },
-          headerRight: () => (
-            <BotonRefrescarTurnos estilos={estilos} />
-          )
+          headerRight: () => <BotonRefrescarTurnos />
         }}
       />
     </Stack.Navigator>

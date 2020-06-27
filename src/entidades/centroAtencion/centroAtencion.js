@@ -5,7 +5,7 @@ import { useContext, useState } from 'react';
 import {
   View, StyleSheet, Text, Image, ActivityIndicator, Alert
 } from 'react-native';
-import withErrorBoundary from '../../enhancers/withErrorBoundary';
+import withErrorBoundary from '../../hoc/withErrorBoundary';
 import { ContextoEstados } from '../../lib/contextoEstados';
 import { IconosCentros } from '../../lib/constantes';
 import { estimarDemora, generarTicket } from '../../lib/servicios';

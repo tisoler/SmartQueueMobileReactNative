@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { obtenerTicketsParaUsuario } from '../../lib/servicios';
 import { ContextoEstados } from '../../lib/contextoEstados';
-import withErrorBoundary from '../../enhancers/withErrorBoundary';
+import withErrorBoundary from '../../hoc/withErrorBoundary';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import Teja from '../../componentes/comunes/teja';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
@@ -40,7 +40,7 @@ const Lobby = ({ navigation }) => {
     );
     // --- Fin Firebase ----
 
-    obtenerTicketsParaUsuario(estadoLogin.token)
+    const consultarTicketsDeUsuario = () => obtenerTicketsParaUsuario(estadoLogin.token)
       .then(res => res.json())
       .then(respuesta => {
         if (respuesta.success) {
@@ -60,6 +60,17 @@ const Lobby = ({ navigation }) => {
           Alert.alert(procesarMensajeError(error.message, 'Error durante la carga de turnos activos.'));
         }
       });
+
+    consultarTicketsDeUsuario();
+
+    // Configura un intervalo de consulta para refrescar los turnos cada 1 minuto.
+    const idIntervalo = setInterval(() => {
+      consultarTicketsDeUsuario();
+    }, 60000);
+    // Cuando el usuario abandona la pantalla limpia el intervalo.
+    return () => {
+      clearInterval(idIntervalo);
+    };
   }, []);
 
   const pedirTurno = () => {
@@ -141,7 +152,7 @@ const Lobby = ({ navigation }) => {
       </View>
       { estadoTurnosActivos.length > 0 && (
         <View style={estilos.contenedorTurnos}>
-          <ScrollView>
+          <ScrollView showsVerticalScrollIndicator={false}>
             { estadoTurnosActivos.map(turno => (
               <Teja
                 key={turno.id}

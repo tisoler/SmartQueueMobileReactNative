@@ -3,7 +3,7 @@ import React, { useContext, useState } from 'react';
 import {
   View, Text, ActivityIndicator, StyleSheet, Image
 } from 'react-native';
-import withErrorBoundary from '../../enhancers/withErrorBoundary';
+import withErrorBoundary from '../../hoc/withErrorBoundary';
 import { ContextoEstados } from '../../lib/contextoEstados';
 import Estrella from '../../componentes/comunes/svg/estrella';
 import { IconosCentros } from '../../lib/constantes';

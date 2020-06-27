@@ -90,7 +90,7 @@ export default (props: Props) => {
           style={estilos.cajaTexto}
           placeholder={placeholderText}
           underlineColorAndroid="transparent"
-          onChangeText={text => manejadorCambioTexto(!tipoDeTeclado !== 'numeric' ? text : text?.replace(/[^0-9]/g, ''))}
+          onChangeText={texto => manejadorCambioTexto(!tipoDeTeclado !== 'numeric' ? texto : texto?.replace(/[^0-9]/g, ''))}
           value={value}
           editable={!soloLectura}
           secureTextEntry={esconderTexto}

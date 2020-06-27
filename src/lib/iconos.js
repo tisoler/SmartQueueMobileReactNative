@@ -16,6 +16,8 @@ import Paleta from '../componentes/comunes/svg/paleta';
 import Refrescar from '../componentes/comunes/svg/refrescar';
 import Ojo from '../componentes/comunes/svg/ojo';
 import LogoLogin from '../componentes/comunes/svg/logoLogin';
+import Lupa from '../componentes/comunes/svg/lupa';
+import Cruz from '../componentes/comunes/svg/cruz';
 
 const IconosGenerales = {
   [NombresIconosGenerales.correo]: <Correo width={29} height={29} />,
@@ -38,7 +40,9 @@ const IconosGenerales = {
       abierto={abierto}
     />
   ),
-  [NombresIconosGenerales.logoLogin]: <LogoLogin width={140} height={140} />
+  [NombresIconosGenerales.logoLogin]: <LogoLogin width={140} height={140} />,
+  [NombresIconosGenerales.lupa]: <Lupa width={29} height={29} />,
+  [NombresIconosGenerales.cruz]: <Cruz width={35} height={35} />
 };
 
 export default IconosGenerales;

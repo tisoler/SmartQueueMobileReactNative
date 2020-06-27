@@ -24,11 +24,13 @@ export const NombresIconosGenerales = {
   cerrarSesion: 'cerrarSesion',
   aceptar: 'aceptar',
   cancelar: 'cancelar',
+  cruz: 'cruz',
   turnos: 'turnos',
   paleta: 'paleta',
   refrescar: 'refrescar',
   ojo: 'ojo',
-  logoLogin: 'logoLogin'
+  logoLogin: 'logoLogin',
+  lupa: 'lupa'
 };
 
 export const mensajes = {
