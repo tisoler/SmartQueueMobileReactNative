@@ -17,6 +17,7 @@ export const ProveedorContextoDialogoEmergente = (props: Props) => {
     mensaje: string,
     textoBotonAfirmativo: string,
     textoBotonNegativo: string
+  // eslint-disable-next-line no-unused-vars
   ) => new Promise((resolve, reject) => {
     asignarEstadoDialogoEmergente({
       titulo,

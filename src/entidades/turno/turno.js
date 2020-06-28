@@ -20,14 +20,13 @@ const Turno = ({ navigation, route }) => {
     estadoTurnoActual,
     estadoFbToken,
     estadoTemaUsuario,
-    cancelarTurnoEnEstado,
+    removerTurnoEnEstado,
     confirmarAsistenciaTurnoEnEstado,
     fijarTurnoActualEnEstado,
     fijarUsuarioLogueadoEnEstado
   } = useContext(ContextoEstados);
   const turnoEnviado = route?.params?.turno;
   const { demora: demoraActual } = estadoTurnoActual;
-  const [confirmoPresencia, cambiarConfirmoPresencia] = useState(false);
   const [cargando, cambiarCargando] = useState(true);
   const [confirmandoTurno, cambiarConfirmandoTurno] = useState(false);
   const [turno, asignarTurno] = useState(turnoEnviado);
@@ -87,14 +86,21 @@ const Turno = ({ navigation, route }) => {
         .then(res => res.json())
         .then(respuesta => {
           if (respuesta?.success) {
+            // Si está cancelado, perdido o nunca se presentó, vuelve a la Lobby.
+            if (!['waiting', 'ready'].includes(respuesta?.response?.ticket?.status)) {
+              removerTurnoEnEstado(respuesta?.response?.ticket);
+              if (['missed', 'blackhole'].includes(respuesta?.response?.ticket?.status)) {
+                Alert.alert('Ha perdido el turno. Solicite otro.');
+              }
+              navigation.navigate('Lobby');
+            }
+
             fijarTurnoActualEnEstado(respuesta?.response?.ticket, respuesta?.response?.wait);
             cambiarCargando(false);
             asignarTurno(respuesta?.response?.ticket);
-            if (respuesta?.response?.ticket?.status === 'ready') {
-              cambiarConfirmoPresencia(true);
-            }
           } else {
             Alert.alert('Error en la consulta de turno.');
+            navigation.navigate('Lobby');
           }
         })
         .catch((error) => {
@@ -128,7 +134,7 @@ const Turno = ({ navigation, route }) => {
       .then(res => res.json())
       .then(respuesta => {
         if (respuesta.success) {
-          cancelarTurnoEnEstado(turno);
+          removerTurnoEnEstado(turno);
           navigation.navigate('Lobby');
         } else {
           Alert.alert('Error al cancelar el turno.');
@@ -151,9 +157,14 @@ const Turno = ({ navigation, route }) => {
     cambiarConfirmandoTurno(true);
     confirmarAsistencia(estadoLogin.token, turno.Center.id)
       .then(res => res.json())
-      .then(() => {
-        confirmarAsistenciaTurnoEnEstado(turno);
-        cambiarConfirmoPresencia(true);
+      .then(respuesta => {
+        if (respuesta.success) {
+          confirmarAsistenciaTurnoEnEstado(turno);
+          // Cambia status en el turno localmente.
+          turno.status = 'ready';
+        } else {
+          Alert.alert('Error al confirmar el turno.');
+        }
       })
       .catch((error) => {
         if (esTokenValido(
@@ -164,7 +175,6 @@ const Turno = ({ navigation, route }) => {
           estadoTemaUsuario
         )) {
           Alert.alert(procesarMensajeError(error.message, 'Error al confirmar presencia.'));
-          cambiarConfirmoPresencia(false);
         }
       })
       .finally(() => cambiarConfirmandoTurno(false));
@@ -226,10 +236,10 @@ const Turno = ({ navigation, route }) => {
       <Text style={[estilos.textoTurno, estilos.margenUltimoTexto]}>
         {`La demora estimada es de ${demoraActual?.hours > 0 ? `${demoraActual?.hours} hs.` : ''} ${demoraActual?.minutes ? parseInt(demoraActual.minutes, 10) : '?'} minutos.`}
       </Text>
-      { !confirmoPresencia ? (
-        obtenerAccionesTurno()
-      ) : (
+      { turno?.status === 'ready' ? (
         obtenerSaludo()
+      ) : (
+        obtenerAccionesTurno()
       )}
     </View>
   );

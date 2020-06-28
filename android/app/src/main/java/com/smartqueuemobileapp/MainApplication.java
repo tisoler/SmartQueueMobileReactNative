@@ -10,6 +10,9 @@ import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.os.Build;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -45,6 +48,18 @@ public class MainApplication extends Application implements ReactApplication {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        NotificationChannel notificationChannel = new NotificationChannel("500", "Notificaciones de turnos", NotificationManager.IMPORTANCE_HIGH);
+        notificationChannel.setShowBadge(true);
+        notificationChannel.setDescription("Canal de notificaciones");
+        notificationChannel.enableVibration(true);
+        notificationChannel.enableLights(true);
+        notificationChannel.setVibrationPattern(new long[]{400, 200, 400});
+        // notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+        NotificationManager manager = getSystemService(NotificationManager.class);
+        manager.createNotificationChannel(notificationChannel);
+    }
   }
 
   /**

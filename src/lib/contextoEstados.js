@@ -5,7 +5,7 @@ import {
   agregarTurnoActivoAccion,
   fijarTurnosAccion,
   fijarUsuarioLogueadoAccion,
-  cancelarTurnoAccion,
+  removerTurnoAccion,
   confirmarAsistenciaTurnoAccion,
   evaluarTurnoAccion,
   cambiarTemaUsuarioAccion,
@@ -70,8 +70,8 @@ export const ProveedorContextoEstados = (props: Props) => {
       asignarEstadoFbToken
     );
   };
-  const cancelarTurnoEnEstado = (turno: Object) => {
-    cancelarTurnoAccion(estadoTurnosActivos, asignarEstadoTurnosActivos, turno);
+  const removerTurnoEnEstado = (turno: Object) => {
+    removerTurnoAccion(estadoTurnosActivos, asignarEstadoTurnosActivos, turno);
   };
   const confirmarAsistenciaTurnoEnEstado = (turno: Object) => {
     confirmarAsistenciaTurnoAccion(estadoTurnosActivos, asignarEstadoTurnosActivos, turno);
@@ -111,7 +111,7 @@ export const ProveedorContextoEstados = (props: Props) => {
       agregarTurnoActivoEnEstado,
       fijarTurnosEnEstado,
       fijarUsuarioLogueadoEnEstado,
-      cancelarTurnoEnEstado,
+      removerTurnoEnEstado,
       confirmarAsistenciaTurnoEnEstado,
       evaluarTurnoEnEstado,
       fijarCentrosEnEstado,

@@ -17,7 +17,7 @@ import { ContextoEstilosGlobales } from '../lib/contextoEstilosGlobales';
 import { ContextoEstados } from '../lib/contextoEstados';
 import { recuperarDatosLocalmente, recuperarTokenFB, procesarMensajeError } from '../lib/ayudante';
 import PantallaCargando from './pantallaCargando';
-import { BotonMenuHamburguesa, BotonRefrescarTurnos, BotonBusqueda } from './botonesHeader';
+import { BotonMenuHamburguesa, BotonRefrescarTurnos, BotonBusqueda } from './botonesNavegador';
 import { ContextoDialogoEmergente } from '../lib/contextoDialogoEmergente';
 
 const Stack = createStackNavigator();
@@ -143,7 +143,7 @@ const NavegadorFijoAutenticado = ({ navigation, route }) => {
             open: TransitionSpecs.TransitionIOSSpec,
             close: TransitionSpecs.TransitionIOSSpec,
           },
-          headerRight: () => <BotonRefrescarTurnos />
+          headerRight: () => <BotonRefrescarTurnos navigation={navigation} />
         }}
       />
     </Stack.Navigator>

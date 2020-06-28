@@ -5,7 +5,7 @@ import Navegador from './src/componentes/navegacion';
 import { ProveedorContextoEstados } from './src/lib/contextoEstados';
 import { ProveedorContextoEstilosGlobales } from './src/lib/contextoEstilosGlobales';
 import { ProveedorContextoDialogoEmergente } from './src/lib/contextoDialogoEmergente';
-import { guardarDatosLocalmente } from './src/lib/ayudante';
+import { guardarDatosLocalmente, recuperarDatosLocalmente } from './src/lib/ayudante';
 
 // LISTENER - Segundo plano con aplicación cerrada
 // Debe escuchar fuera de los componentes
@@ -21,6 +21,15 @@ messaging().setBackgroundMessageHandler(async payload => {
         // Al abrirse la app de 0 te envía a evaluación porque
         // carga los turnos y hay alguno para evaluar
         // En un futuro quizá tengamos que definir qué hacer aquí-
+
+        // Si el turno a evaluar tenía una notificaición de tipo 1 (n turnos)
+        // lo remueve del almacenamiento local, ya no se necesita.
+        // eslint-disable-next-line no-case-declarations
+        const turnoGuardadoLocal = await recuperarDatosLocalmente('@turnoNotificado');
+        // eslint-disable-next-line camelcase
+        if (turnoGuardadoLocal && turnoGuardadoLocal?.Center?.id === payload?.data?.center_id) {
+          guardarDatosLocalmente('@turnoNotificado', '');
+        }
         break;
       default:
         break;

@@ -19,7 +19,7 @@ export default () => {
       left: 0,
       right: 0,
       height: Dimensions.get('window').height + useHeaderHeight(),
-      backgroundColor: 'rgba(0,0,0,0.55)',
+      backgroundColor: 'rgba(0,0,0,0.6)',
       alignItems: 'center',
       justifyContent: 'center',
     },

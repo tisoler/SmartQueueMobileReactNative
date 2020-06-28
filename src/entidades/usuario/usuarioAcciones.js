@@ -56,7 +56,7 @@ export const fijarUsuarioLogueadoAccion = (
   asignarEstadoFbToken(tokenFb);
 };
 
-export const cancelarTurnoAccion = (
+export const removerTurnoAccion = (
   estadoTurnosActivos: Object,
   asignarEstadoTurnosActivos: Function,
   turno: Object
