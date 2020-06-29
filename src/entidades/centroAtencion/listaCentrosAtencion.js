@@ -66,7 +66,7 @@ const ListaCentrosAtencion = ({ navigation }) => {
     const turnoExistente = obtenerTurnoParaCentro(centro.id);
     if (turnoExistente) {
       fijarTurnoActualEnEstado(turnoExistente, null);
-      navigation.navigate('Turno', { turno: turnoExistente });
+      navigation.navigate('Turno');
     } else {
       navigation.navigate('CentroAtencion', { centro });
     }

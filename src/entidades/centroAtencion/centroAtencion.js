@@ -31,6 +31,7 @@ const CentrosAtencion = ({ route, navigation }) => {
     fijarUsuarioLogueadoEnEstado,
     fijarTurnoActualEnEstado
   } = useContext(ContextoEstados);
+
   const estilos = StyleSheet.create({
     container: {
       flex: 1,
@@ -101,8 +102,7 @@ const CentrosAtencion = ({ route, navigation }) => {
         if (respuesta?.success) {
           agregarTurnoActivoEnEstado(respuesta?.response?.ticket);
           fijarTurnoActualEnEstado(respuesta?.response?.ticket, demora);
-          navigation.navigate('Turno', { turno: respuesta?.response?.ticket });
-          setCargando(false);
+          navigation.navigate('Turno');
         } else {
           Alert.alert('Error en la solicitud de turno.');
         }

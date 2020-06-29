@@ -1,3 +1,4 @@
+// @flow
 
 const fijarTurnoActualAccion = (
   asignarEstadoTurnoActual: Function,

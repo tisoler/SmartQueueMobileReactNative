@@ -152,21 +152,23 @@ const NavegadorFijoAutenticado = ({ navigation, route }) => {
 
 const Drawer = createDrawerNavigator();
 
-const NavegadorAutenticado = (estilosGlobales: Object, estadoTurnoActual: Object) => {
-  const { estadoDialogoEmergente } = useContext(ContextoDialogoEmergente);
-  return (
-    <NavigationContainer>
-      <Drawer.Navigator
-        // Deshabilitado cuando hay diálogo emergente.
-        edgeWidth={!estadoDialogoEmergente ? Math.round(Dimensions.get('window').width) : 0}
-        minSwipeDistance={5}
-        drawerContent={(props) => <MenuLateral navigation={props.navigation} />}
-      >
-        <Drawer.Screen name="NavegadorFijo" component={NavegadorFijoAutenticado} initialParams={{ estilosGlobales, estadoTurnoActual }} />
-      </Drawer.Navigator>
-    </NavigationContainer>
-  );
-};
+const NavegadorAutenticado = (
+  estilosGlobales: Object,
+  estadoTurnoActual: Object,
+  estadoDialogoEmergente: Object
+) => (
+  <NavigationContainer>
+    <Drawer.Navigator
+      // Deshabilitado cuando hay diálogo emergente.
+      edgeWidth={!estadoDialogoEmergente ? Math.round(Dimensions.get('window').width) : 0}
+      minSwipeDistance={5}
+      drawerContent={(props) => <MenuLateral navigation={props.navigation} />}
+      drawerType="front"
+    >
+      <Drawer.Screen name="NavegadorFijo" component={NavegadorFijoAutenticado} initialParams={{ estilosGlobales, estadoTurnoActual }} />
+    </Drawer.Navigator>
+  </NavigationContainer>
+);
 
 const recuperarCredencialesAlmacenadas = async (fijarUsuarioLogueadoEnEstado: Function) => {
   try {
@@ -194,6 +196,7 @@ export default () => {
     fijarUsuarioLogueadoEnEstado
   } = useContext(ContextoEstados);
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
+  const { estadoDialogoEmergente } = useContext(ContextoDialogoEmergente);
   const [listo, cambiarListo] = useState(false);
 
   // Recuperar credenciales almacenadas localmente
@@ -213,7 +216,7 @@ export default () => {
     return NavegadorEvaluacion(estilosGlobales);
   }
   if ((estadoLogin?.email && estadoLogin?.token)) {
-    return NavegadorAutenticado(estilosGlobales, estadoTurnoActual);
+    return NavegadorAutenticado(estilosGlobales, estadoTurnoActual, estadoDialogoEmergente);
   }
   return NavegadorFijoNoAutenticado(estilosGlobales);
 };

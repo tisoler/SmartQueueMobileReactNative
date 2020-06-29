@@ -97,7 +97,7 @@ const irHaciaTurnoNotificado = (
     Center: { id: payload.data.center_id }
   };
   fijarTurnoActualEnEstado(turno, null);
-  navigation.navigate('Turno', { turno });
+  navigation.navigate('Turno');
 };
 
 const notificarAvanceTurno = (
@@ -242,7 +242,7 @@ export const crearClienteFirebase = async (
     if (turnoNotificado?.Center?.id) {
       await AsyncStorage.removeItem('@turnoNotificado');
       fijarTurnoActualEnEstado(turnoNotificado, null);
-      navigation.navigate('Turno', { turno: turnoNotificado });
+      navigation.navigate('Turno');
     }
   }
 // ----- Fin sección de Firebase ------

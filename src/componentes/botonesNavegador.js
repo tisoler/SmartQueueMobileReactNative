@@ -4,10 +4,9 @@ import {
   TouchableOpacity, View, Alert, ActivityIndicator, TextInput, StyleSheet
 } from 'react-native';
 import { ContextoEstados } from '../lib/contextoEstados';
-import { procesarMensajeError, esTokenValido } from '../lib/ayudante';
 import IconosGenerales from '../lib/iconos';
 import { NombresIconosGenerales } from '../lib/constantes';
-import { obtenerTicket } from '../lib/servicios';
+import recuperarTicket from '../entidades/turno/llamadasServicioComunes';
 
 const estilos = StyleSheet.create({
   contenedorBotonIzquierda: {
@@ -64,54 +63,35 @@ export const BotonMenuHamburguesa = (props: Object) => {
 export const BotonRefrescarTurnos = (props: Object) => {
   const { navigation } = props;
   const {
-    estadoTurnoActual,
     estadoLogin,
     estadoFbToken,
+    estadoTurnoActual,
     estadoTemaUsuario,
     fijarTurnoActualEnEstado,
-    fijarUsuarioLogueadoEnEstado,
-    removerTurnoEnEstado
+    fijarTurnosEnEstado,
+    fijarUsuarioLogueadoEnEstado
   } = useContext(ContextoEstados);
   const { turno } = estadoTurnoActual;
   const [consultando, cambiarConsultando] = useState(false);
   const [haConsultado, cambiarHaConsultado] = useState(false);
-  const refrescarTurnos = () => {
+  const refrescarTurnos = async () => {
     if (turno && !haConsultado) {
       cambiarHaConsultado(true);
       setTimeout(() => {
         cambiarHaConsultado(false);
       }, 30000);
       cambiarConsultando(true);
-      obtenerTicket(estadoLogin.token, turno?.Center?.id)
-        .then(res => res.json())
-        .then(respuesta => {
-          if (respuesta?.success) {
-            // Si está cancelado, perdido o nunca se presentó, vuelve a la Lobby.
-            if (!['waiting', 'ready'].includes(respuesta?.response?.ticket?.status)) {
-              removerTurnoEnEstado(respuesta?.response?.ticket);
-              if (['missed', 'blackhole'].includes(respuesta?.response?.ticket?.status)) {
-                Alert.alert('Ha perdido el turno. Solicite otro.');
-              }
-              navigation.navigate('Lobby');
-            }
-            fijarTurnoActualEnEstado(respuesta?.response?.ticket, respuesta?.response?.wait, true);
-          } else {
-            Alert.alert('Error en la consulta de turno.');
-            navigation.navigate('Lobby');
-          }
-        })
-        .catch((error) => {
-          if (esTokenValido(
-            error?.message,
-            fijarUsuarioLogueadoEnEstado,
-            estadoLogin.email,
-            estadoFbToken,
-            estadoTemaUsuario
-          )) {
-            Alert.alert(procesarMensajeError(error.message, 'Error al refrescar la información.'));
-          }
-        })
-        .finally(() => cambiarConsultando(false));
+      await recuperarTicket(
+        estadoLogin,
+        estadoFbToken,
+        estadoTurnoActual,
+        estadoTemaUsuario,
+        fijarTurnoActualEnEstado,
+        fijarTurnosEnEstado,
+        fijarUsuarioLogueadoEnEstado,
+        navigation
+      );
+      cambiarConsultando(false);
     } else {
       Alert.alert('Debe esperar 30 segundos entre consultas.');
     }

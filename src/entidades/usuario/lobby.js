@@ -31,6 +31,7 @@ const Lobby = ({ navigation }) => {
     asignarEstadoIrEvaluacion
   } = useContext(ContextoEstados);
   const { abrirDialogoEmergente } = useContext(ContextoDialogoEmergente);
+
   useEffect(() => {
     // Levanta el cliente Firebase y los listeners
     crearClienteFirebase(
@@ -50,7 +51,7 @@ const Lobby = ({ navigation }) => {
         if (respuesta.success) {
           fijarTurnosEnEstado(respuesta.response);
         } else {
-          Alert.alert('Error durante la carga de turnos activos.');
+          Alert.alert('Error al cargar sus turnos.');
         }
       })
       .catch((error) => {
@@ -83,7 +84,7 @@ const Lobby = ({ navigation }) => {
 
   const seleccionarTurnoActivo = (turno) => {
     fijarTurnoActualEnEstado(turno, null);
-    navigation.navigate('Turno', { turno });
+    navigation.navigate('Turno');
   };
 
   const estilos = StyleSheet.create({

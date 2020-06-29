@@ -1,3 +1,5 @@
+// @flow
+/*
 import React, { useState } from 'react';
 import {
   StyleSheet,
@@ -11,6 +13,8 @@ import { NombresIconosGenerales } from '../../lib/constantes';
 import IconosGenerales from '../../lib/iconos';
 
 type Props = {
+  guardarUriFoto: Function,
+  uriFoto: string,
   aceptarFoto: Function
 };
 
@@ -128,3 +132,4 @@ export default (props: Props) => {
     </View>
   );
 };
+*/

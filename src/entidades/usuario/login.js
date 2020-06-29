@@ -68,12 +68,6 @@ const Login = ({ navigation }) => {
       });
   };
 
-  const registrarse = () => {
-    cambioCargando(true);
-    navigation.navigate('Registro');
-    cambioCargando(false);
-  };
-
   return (
     <ScrollView
       contentContainerStyle={{ flexGrow: 1 }}
@@ -115,7 +109,7 @@ const Login = ({ navigation }) => {
           {!cargando
             && (
               <BotonRedondeado
-                manejadorClick={registrarse}
+                manejadorClick={() => navigation.navigate('Registro')}
                 colorBorde={estilosGlobales.colorBordeBotonSecundario}
                 colorFondo={estilosGlobales.colorFondoBotonSecundario}
                 colorEfecto={estilosGlobales.colorEfectoClickBotonSecundario}

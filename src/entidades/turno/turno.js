@@ -9,11 +9,12 @@ import withDialogoEmergente from '../../hoc/withDialogoEmergente';
 import { IconosCentros } from '../../lib/constantes';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import { ContextoEstados } from '../../lib/contextoEstados';
-import { obtenerTicket, cancelarTicket, confirmarAsistencia } from '../../lib/servicios';
+import { cancelarTicket, confirmarAsistencia } from '../../lib/servicios';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 import { procesarMensajeError, esTokenValido } from '../../lib/ayudante';
+import recuperarTicket from './llamadasServicioComunes';
 
-const Turno = ({ navigation, route }) => {
+const Turno = ({ navigation }) => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
   const {
     estadoLogin,
@@ -23,13 +24,12 @@ const Turno = ({ navigation, route }) => {
     removerTurnoEnEstado,
     confirmarAsistenciaTurnoEnEstado,
     fijarTurnoActualEnEstado,
-    fijarUsuarioLogueadoEnEstado
+    fijarUsuarioLogueadoEnEstado,
+    fijarTurnosEnEstado
   } = useContext(ContextoEstados);
-  const turnoEnviado = route?.params?.turno;
-  const { demora: demoraActual } = estadoTurnoActual;
-  const [cargando, cambiarCargando] = useState(true);
+  const { turno, demora: demoraActual } = estadoTurnoActual;
   const [confirmandoTurno, cambiarConfirmandoTurno] = useState(false);
-  const [turno, asignarTurno] = useState(turnoEnviado);
+  const [cargando, cambiarCargando] = useState(true);
 
   let colorFondo = estilosGlobales.colorFondoContenedorDatos;
   if (demoraActual?.tickets <= 10 && demoraActual?.tickets_ready <= 3) {
@@ -81,39 +81,18 @@ const Turno = ({ navigation, route }) => {
   });
 
   useEffect(() => {
-    const consultarTicket = () => {
-      obtenerTicket(estadoLogin?.token, turno?.Center?.id)
-        .then(res => res.json())
-        .then(respuesta => {
-          if (respuesta?.success) {
-            // Si está cancelado, perdido o nunca se presentó, vuelve a la Lobby.
-            if (!['waiting', 'ready'].includes(respuesta?.response?.ticket?.status)) {
-              removerTurnoEnEstado(respuesta?.response?.ticket);
-              if (['missed', 'blackhole'].includes(respuesta?.response?.ticket?.status)) {
-                Alert.alert('Ha perdido el turno. Solicite otro.');
-              }
-              navigation.navigate('Lobby');
-            }
-
-            fijarTurnoActualEnEstado(respuesta?.response?.ticket, respuesta?.response?.wait);
-            cambiarCargando(false);
-            asignarTurno(respuesta?.response?.ticket);
-          } else {
-            Alert.alert('Error en la consulta de turno.');
-            navigation.navigate('Lobby');
-          }
-        })
-        .catch((error) => {
-          if (esTokenValido(
-            error?.message,
-            fijarUsuarioLogueadoEnEstado,
-            estadoLogin.email,
-            estadoFbToken,
-            estadoTemaUsuario
-          )) {
-            Alert.alert(procesarMensajeError(error.message, 'Error en la consulta de turno.'));
-          }
-        });
+    const consultarTicket = async () => {
+      await recuperarTicket(
+        estadoLogin,
+        estadoFbToken,
+        estadoTurnoActual,
+        estadoTemaUsuario,
+        fijarTurnoActualEnEstado,
+        fijarTurnosEnEstado,
+        fijarUsuarioLogueadoEnEstado,
+        navigation
+      );
+      cambiarCargando(false);
     };
 
     consultarTicket();
@@ -126,7 +105,10 @@ const Turno = ({ navigation, route }) => {
     return () => {
       clearInterval(idIntervalo);
     };
-  }, []);
+    // Vuelve a cargar el useEffect si cambia el code
+    // (para cuando una notificación llama a la pantalla Turno desde la misma pantalla Turno,
+    // code vendrá undefined primero)
+  }, [turno?.code]);
 
   const cancelarTurno = () => {
     cambiarCargando(true);
@@ -244,7 +226,7 @@ const Turno = ({ navigation, route }) => {
     </View>
   );
 
-  if (cargando) {
+  if (cargando || !turno?.code) {
     return (
       <View style={estilos.contenedor}>
         <Image

@@ -2,6 +2,7 @@
   package="com.smartqueuemobileapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- uses-permission android:name="android.permission.CAMERA" / -->
 
     <application
       android:name=".MainApplication"
@@ -23,6 +24,9 @@
         </intent-filter>
       </activity>
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
+      <meta-data
+        android:name="com.google.firebase.messaging.default_notification_icon"
+        android:resource="@mipmap/logo" />
     </application>
 
 </manifest>
