@@ -14,20 +14,26 @@ type Props = {
   children: string,
   colorEfecto?: string,
   estilo?: Object,
-  deshabilitado?: boolean
+  deshabilitado?: boolean,
+  width?: string,
+  height?: number,
+  colorTexto?: String,
 };
 
 const BotonRedondeado = (props: Props) => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
   const {
     manejadorClick,
-    colorBorde = estilosGlobales.colorBordeBotonPrincipal,
-    colorFondo = estilosGlobales.colorFondoBotonPrincipal,
+    colorBorde,
+    colorFondo,
     cargando = false,
     children,
-    colorEfecto = estilosGlobales.colorEfectoClickBotonPrincipal,
+    colorEfecto,
     estilo = {},
-    deshabilitado = false
+    deshabilitado = false,
+    width = "85%",
+    height = 59,
+    colorTexto = estilosGlobales.colorTextoBotonPrincipal,
   } = props;
 
   const estilos = StyleSheet.create({
@@ -39,16 +45,16 @@ const BotonRedondeado = (props: Props) => {
       lineHeight: 55,
       width: '100%',
       textAlign: 'center',
-      fontSize: 18,
+      fontSize: estilosGlobales.tallaFuenteBoton,
       fontWeight: 'bold',
-      color: estilosGlobales.colorTextoGeneral
+      color: colorTexto
     }
   });
 
   return (
     <BotonRipple
-      height={59}
-      width="85%"
+      height={height}
+      width={width}
       manejadorClick={manejadorClick}
       colorEfecto={colorEfecto}
       colorFondo={colorFondo}

@@ -178,7 +178,7 @@ const Lobby = ({ navigation }) => {
       )}
       <View style={estilos.subContenedorBotones}>
         <BotonRedondeado manejadorClick={() => pedirTurno()}>
-          NUEVO TURNO
+          Nuevo turno
         </BotonRedondeado>
       </View>
     </View>

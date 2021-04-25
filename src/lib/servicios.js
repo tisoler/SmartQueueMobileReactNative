@@ -2,7 +2,7 @@
 import { apiURI } from './constantes';
 
 export const login = (payload: Object) => {
-  const url = `${apiURI}login/`;
+  const url = `${apiURI}login`;
   return fetch(url, {
     method: 'POST',
     body: JSON.stringify(payload),
@@ -14,7 +14,7 @@ export const login = (payload: Object) => {
 };
 
 export const actualizarTokenFb = (token: string, fbtoken: string) => {
-  const url = `${apiURI}update-fbtoken/`;
+  const url = `${apiURI}update-fbtoken`;
   return fetch(url, {
     method: 'POST',
     body: JSON.stringify({ fbtoken }),
@@ -109,7 +109,7 @@ export const validarExistenciaEmanil: Function = (email: string) => fetch(`${api
 export const validarExistenciaDNI: Function = (dni: string) => fetch(`${apiURI}client-dni-exists/${dni}`);
 
 export const guardarAvatar: Function = (payload: Object) => {
-  const url = `${apiURI}client-avatar/`;
+  const url = `${apiURI}client-avatar`;
   return fetch(url, {
     method: 'POST',
     body: JSON.stringify(payload),
@@ -121,7 +121,7 @@ export const guardarAvatar: Function = (payload: Object) => {
 };
 
 export const guardarUsuario = (payload: Object) => {
-  const url = `${apiURI}client/`;
+  const url = `${apiURI}client`;
   return fetch(url, {
     method: 'POST',
     body: JSON.stringify(payload),

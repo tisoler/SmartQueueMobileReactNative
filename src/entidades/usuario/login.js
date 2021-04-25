@@ -1,7 +1,7 @@
 // @flow
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
-  StyleSheet, View, Text, Alert, ScrollView
+  StyleSheet, View, Text, Alert, ScrollView, Keyboard
 } from 'react-native';
 import withErrorBoundary from '../../hoc/withErrorBoundary';
 import TextoIngreso from '../../componentes/comunes/textoIngreso';
@@ -20,26 +20,74 @@ const Login = ({ navigation }) => {
   const [contrasenaUsuario, cambioContrasena] = useState('');
   const [cargando, cambioCargando] = useState(false);
   const [loginIncorrecto, cambioLogin] = useState(false);
+  const [tecladoVisible, cambioTecladoVisible] = useState(false);
 
   const estilos = StyleSheet.create({
     contenedor: {
       flexGrow: 1,
       backgroundColor: estilosGlobales.colorFondoPantallaLogin,
       flexDirection: 'column',
-      alignItems: 'center'
+      alignItems: 'center',
+    },
+    fondoLogo: {
+      position: 'absolute',
+      top: !tecladoVisible ? 10 : -140,
+      backgroundColor: estilosGlobales.colorFondoLogoLogin,
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: 140,
+      width: 140,
+      borderRadius: 100,
+      zIndex: 2,
+    },
+    encabezado: {
+      height: !tecladoVisible ? 90 : 0,
+      backgroundColor: '#6875E1',
     },
     subContenedor: {
-      flexGrow: 1,
+      flexGrow: !tecladoVisible ? 2 : 3.5,
+      backgroundColor: 'white',
       alignItems: 'center',
-      width: '100%'
+      justifyContent: 'flex-end',
+      width: '90%',
+      paddingBottom: 20,
+      borderRadius: 5,
     },
     botonera: {
-      flexGrow: 4,
+      flexGrow: !tecladoVisible ? 1.5 : 0.5,
+      backgroundColor: '#E7E9EE',
+      justifyContent: 'flex-end',
       alignItems: 'center',
       width: '100%',
-      marginTop: 8
+      paddingBottom: 10,
+    },
+    encabezadoBotonera: {
+      flexGrow: 2,
+      height: 60,
+      backgroundColor: 'white',
+      width: '90%',
+      marginBottom: 20,
+      borderRadius: 5,
+      top: -15,
+    },
+    subBotonera: {
+      flexGrow: !tecladoVisible ? 1 : 0.5,
+      flexDirection: !tecladoVisible ? 'column' : 'row',
+      alignItems: 'center',
+      width: '90%',
+      justifyContent: 'space-between',
     }
   });
+
+  useEffect(() => {
+    Keyboard.addListener('keyboardDidShow', () => { cambioTecladoVisible(true) });
+    Keyboard.addListener('keyboardDidHide', () => { cambioTecladoVisible(false) });
+
+    return () => {
+      Keyboard.removeListener('keyboardDidShow');
+      Keyboard.removeListener('keyboardDidHide');
+    };
+  }, []);
 
   const loguear = async () => {
     cambioLogin(false);
@@ -74,51 +122,59 @@ const Login = ({ navigation }) => {
       showsVerticalScrollIndicator={false}
     >
       <View style={estilos.contenedor}>
-        <View style={estilos.subContenedor}>
+        <View style={estilos.fondoLogo}>
           { IconosGenerales[NombresIconosGenerales.logoLogin] }
+        </View>
+        <View style={estilos.encabezado}></View>
+        <View style={estilos.subContenedor}>
           <TextoIngreso
             placeholderText="e-mail"
             manejadorCambioTexto={cambioEmail}
             value={emailUsuario}
             soloLectura={cargando}
             manejadorClick={() => cambioLogin(false)}
-            icono={NombresIconosGenerales.correo}
             tipoDeTeclado="email-address"
             sinPrimeraLetraMayuscula
           />
           <TextoIngreso
-            placeholderText="Contraseña"
+            placeholderText="contraseña"
             manejadorCambioTexto={cambioContrasena}
             value={contrasenaUsuario}
             soloLectura={cargando}
             puedeEsconderTexto
             manejadorClick={() => cambioLogin(false)}
-            icono={NombresIconosGenerales.contrasena}
           />
           {loginIncorrecto
             && <Text style={estilosGlobales.mensajeError}>Usuario o contraseña incorrectos.</Text>}
         </View>
         <View style={estilos.botonera}>
-          <BotonRedondeado
-            manejadorClick={loguear}
-            cargando={cargando}
-            deshabilitado={cargando}
-          >
-            INGRESAR
-          </BotonRedondeado>
-          {!cargando
-            && (
-              <BotonRedondeado
-                manejadorClick={() => navigation.navigate('Registro')}
-                colorBorde={estilosGlobales.colorBordeBotonSecundario}
-                colorFondo={estilosGlobales.colorFondoBotonSecundario}
-                colorEfecto={estilosGlobales.colorEfectoClickBotonSecundario}
-                estilo={{ marginTop: 22 }}
-                deshabilitado={cargando}
-              >
-                REGISTRARSE
-              </BotonRedondeado>
-            )}
+          <View style={estilos.encabezadoBotonera}></View>
+          <View style={estilos.subBotonera}>
+            <BotonRedondeado
+              manejadorClick={loguear}
+              cargando={cargando}
+              deshabilitado={cargando}
+              width={tecladoVisible ? '47%' : '100%'}
+              height={tecladoVisible ? 45 : 59}
+            >
+              Ingresar
+            </BotonRedondeado>
+            {!cargando
+              && (
+                <BotonRedondeado
+                  manejadorClick={() => navigation.navigate('Registro')}
+                  colorBorde={estilosGlobales.colorEfectoClickBotonSecundario}
+                  colorFondo={estilosGlobales.colorFondoBotonSecundario}
+                  colorEfecto={estilosGlobales.colorEfectoClickBotonSecundario}
+                  deshabilitado={cargando}
+                  width={tecladoVisible ? '47%' : '100%'}
+                  height={tecladoVisible ? 45 : 59}
+                  colorTexto={estilosGlobales.colorFondoBotonPrincipal}
+                >
+                  Registrarse
+                </BotonRedondeado>
+              )}
+          </View>
         </View>
       </View>
     </ScrollView>

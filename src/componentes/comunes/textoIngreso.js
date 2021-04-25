@@ -1,10 +1,11 @@
 // @flow
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {
   StyleSheet, TextInput, View, TouchableOpacity
 } from 'react-native';
 import IconosGenerales from '../../lib/iconos';
 import { NombresIconosGenerales } from '../../lib/constantes';
+import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 
 
 type Props = {
@@ -35,56 +36,53 @@ export default (props: Props) => {
   } = props;
 
   const [esconderTexto, cambiarEsconderTexto] = useState(puedeEsconderTexto);
+  const { estilosGlobales } = useContext(ContextoEstilosGlobales);
 
   const estilos = StyleSheet.create({
     contenedor: {
       flexDirection: 'row',
-      width: '80%',
+      width: '90%',
       marginBottom: 15,
-      height: 50
+      height: 50,
+      alignItems: 'center',
     },
     contenedorTexto: {
       flex: 1,
       flexDirection: 'row',
-      alignItems: 'flex-end',
-      width: '100%',
       height: 55,
-      marginLeft: 7,
       borderRadius: 7,
-      borderBottomColor: '#fff',
-      borderBottomWidth: 1
+      borderBottomColor: '#DDD',
+      borderBottomWidth: 1,
     },
     cajaTexto: {
-      color: '#fff',
-      fontSize: 20,
+      color: estilosGlobales.colorTextoGeneral,
+      fontSize: estilosGlobales.tallaFuenteCajaTexto,
       height: 55,
       lineHeight: 30,
       width: !puedeEsconderTexto ? '100%' : '77%',
-      paddingBottom: 0
+      paddingBottom: 0,
+      borderBottomColor: '#DDD',
+      bottom: -5,
     },
     contenedorIcono: {
       alignItems: 'center',
       justifyContent: 'center',
-      width: 30,
       height: 60,
-      paddingTop: icono === NombresIconosGenerales.dni ? 15 : 0
+      paddingTop: icono === NombresIconosGenerales.dni ? 15 : 0,
+      right: 3,
+      backgroundColor: 'green',
     },
     iconoOjo: {
       alignItems: 'center',
       justifyContent: 'center',
       height: 55,
-      width: 50,
-      marginLeft: 15
+      marginLeft: 15,
+      bottom: -7,
     }
   });
 
   return (
     <View style={estilos.contenedor}>
-      { icono && (
-        <View style={estilos.contenedorIcono}>
-          { IconosGenerales[icono] }
-        </View>
-      )}
       <View style={estilos.contenedorTexto}>
         <TextInput
           style={estilos.cajaTexto}
@@ -109,6 +107,11 @@ export default (props: Props) => {
           </TouchableOpacity>
         )}
       </View>
+      { icono && (
+        <View style={estilos.contenedorIcono}>
+          { IconosGenerales[icono] }
+        </View>
+      )}
     </View>
   );
 };
