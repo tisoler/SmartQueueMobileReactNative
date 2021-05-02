@@ -1,16 +1,16 @@
 // @flow
 import React, { useContext, useEffect, useState } from 'react';
-import { StyleSheet, Dimensions, Alert } from 'react-native';
+import { StyleSheet, Alert } from 'react-native';
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, TransitionSpecs } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import Login from '../entidades/usuario/login';
-import ListaCentrosAtencion from '../entidades/centroAtencion/listaCentrosAtencion';
 import CentroAtencion from '../entidades/centroAtencion/centroAtencion';
 import Turno from '../entidades/turno/turno';
 import Registro from '../entidades/usuario/registro';
 import Lobby from '../entidades/usuario/lobby';
+import TipoTurno from '../entidades/centroAtencion/tipoTurno';
 import EvaluacionTurno from '../entidades/turno/evaluacionTurno';
 import MenuLateral from './menuLateral';
 import { ContextoEstilosGlobales } from '../lib/contextoEstilosGlobales';
@@ -103,18 +103,13 @@ const NavegadorFijoAutenticado = ({ navigation, route }) => {
         component={Lobby}
         options={{
           title: 'Queue',
-          headerStyle: estilos.encabezadoNavegacion,
+          headerStyle: {
+            ...estilos.encabezadoNavegacion,
+            elevation: 0, // Quitar la sombra de la barra de navegación
+            shadowOpacity: 0 // Quitar la sombra de la barra de navegación
+          },
           headerTintColor: estilosGlobales.colorLetraEncabezado,
           headerLeft: () => <BotonMenuHamburguesa navigation={navigation} />,
-        }}
-      />
-      <Stack.Screen
-        name="ListaCentrosAtencion"
-        component={ListaCentrosAtencion}
-        options={{
-          title: !buscarCentro ? 'Centros de atención' : '',
-          headerStyle: estilos.encabezadoNavegacion,
-          headerTintColor: estilosGlobales.colorLetraEncabezado,
           headerRight: () => (
             <BotonBusqueda
               buscar={buscarCentro}
@@ -128,6 +123,15 @@ const NavegadorFijoAutenticado = ({ navigation, route }) => {
         component={CentroAtencion}
         options={{
           title: 'Centro de atención',
+          headerStyle: estilos.encabezadoNavegacion,
+          headerTintColor: estilosGlobales.colorLetraEncabezado
+        }}
+      />
+      <Stack.Screen
+        name="TipoTurno"
+        component={TipoTurno}
+        options={{
+          title: 'Tipo de turno',
           headerStyle: estilos.encabezadoNavegacion,
           headerTintColor: estilosGlobales.colorLetraEncabezado
         }}
@@ -160,8 +164,8 @@ const NavegadorAutenticado = (
   <NavigationContainer>
     <Drawer.Navigator
       // Deshabilitado cuando hay diálogo emergente.
-      edgeWidth={!estadoDialogoEmergente ? Math.round(Dimensions.get('window').width) : 0}
-      minSwipeDistance={5}
+      edgeWidth={!estadoDialogoEmergente ? 30 : 0}
+      minSwipeDistance={10}
       drawerContent={(props) => <MenuLateral navigation={props.navigation} />}
       drawerType="front"
     >

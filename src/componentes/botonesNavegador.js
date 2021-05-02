@@ -33,7 +33,7 @@ const estilos = StyleSheet.create({
     height: '100%'
   },
   textoBusqueda: {
-    width: 200,
+    width: 150,
     borderBottomWidth: 1,
     borderBottomColor: '#fff',
     paddingBottom: 2,

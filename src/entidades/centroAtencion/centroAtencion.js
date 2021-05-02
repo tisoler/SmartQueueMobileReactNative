@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { useContext, useState } from 'react';
 import {
-  View, StyleSheet, Text, Image, ActivityIndicator, Alert
+  View, StyleSheet, Text, Image, ActivityIndicator, Alert, ScrollView
 } from 'react-native';
 import withErrorBoundary from '../../hoc/withErrorBoundary';
 import withDialogoEmergente from '../../hoc/withDialogoEmergente';
@@ -33,11 +33,22 @@ const CentrosAtencion = ({ route, navigation }) => {
   } = useContext(ContextoEstados);
 
   const estilos = StyleSheet.create({
-    container: {
+    contenedor: {
       flex: 1,
       backgroundColor: estilosGlobales.colorFondoContenedorDatos,
       flexDirection: 'column',
       alignItems: 'center'
+    },
+    subContenedor: {
+      backgroundColor: estilosGlobales.colorFondoGlobal,
+      flexDirection: 'column',
+      alignItems: 'center',
+      width: '100%',
+      borderBottomLeftRadius: 30,
+      borderBottomRightRadius: 30,
+    },
+    explicacion: {
+      paddingBottom: 25,
     },
     contenedorConfirmacion: {
       width: '90%',
@@ -52,11 +63,17 @@ const CentrosAtencion = ({ route, navigation }) => {
       paddingBottom: 15
     },
     titulo: {
-      fontSize: 22,
-      paddingBottom: 10,
-      paddingTop: 15,
+      textAlign: 'center',
+      fontSize: 19,
       fontWeight: 'bold',
-      color: estilosGlobales.colorTextoConfirmacionTurno
+      color: '#ffffff',
+      backgroundColor: '#8B6CC6',
+      borderRadius: 40,
+      height: 45,
+      lineHeight: 45,
+      width: 105,
+      marginTop: 10,
+      marginBottom: 10,
     },
     mensaje: {
       fontSize: 18,
@@ -121,11 +138,18 @@ const CentrosAtencion = ({ route, navigation }) => {
   };
 
   const obtenerBotonesCategorias = () => (
-    centro.Categories.map(categ => (
+    centro.Categories.map((categ, idx) => (
       <BotonRedondeado
         key={categ.id}
         manejadorClick={() => pedirTurno(categ)}
         estilo={{ marginTop: 22 }}
+        colorFondo={idx % 2 === 0
+          ? estilosGlobales.colorFondoBotonPrincipal
+          : '#8B6CC6'}
+        colorBorde={idx % 2 === 0
+          ? estilosGlobales.colorBordeBotonPrincipal
+          : '#8B6CC6'}
+        flechaAlFinal
       >
         { categ.description }
       </BotonRedondeado>
@@ -159,7 +183,7 @@ const CentrosAtencion = ({ route, navigation }) => {
           manejadorClick={() => setTurnoPedido(false)}
           colorFondo={estilosGlobales.colorFondoGlobal}
         >
-          NO
+          No
         </BotonPopup>
         <BotonPopup
           height={80}
@@ -167,7 +191,7 @@ const CentrosAtencion = ({ route, navigation }) => {
           manejadorClick={() => confirmarTurno()}
           colorFondo={estilosGlobales.colorFondoBotonPrincipal}
         >
-          SÍ
+          Sí
         </BotonPopup>
       </View>
     </View>
@@ -190,11 +214,25 @@ const CentrosAtencion = ({ route, navigation }) => {
   };
 
   return (
-    <View style={estilos.container}>
-      <Image style={estilosGlobales.imagenLogoCentro} source={IconosCentros[centro.app_icon]} />
-      <Text style={estilosGlobales.subtituloGrande}>{centro?.name}</Text>
-      { obtenerRender() }
-    </View>
+    <ScrollView
+      contentContainerStyle={{ flexGrow: 1 }}
+      showsVerticalScrollIndicator={false}
+    >
+      <View style={estilos.contenedor}>
+        <View style={estilos.subContenedor}>
+          <Image style={estilosGlobales.imagenLogoCentro} source={IconosCentros[centro.app_icon]} />
+          <Text style={{ ...estilosGlobales.subtituloGrande, ...{ paddingBottom: 25 } }}>
+            {centro?.name}
+          </Text>
+          {!turnoPedido && (
+            <Text style={[estilosGlobales.textoAviso, estilos.explicacion]}>
+              Seleccione una categoría por favor.
+            </Text>
+          )}
+        </View>
+        { obtenerRender() }
+      </View>
+    </ScrollView>
   );
 };
 

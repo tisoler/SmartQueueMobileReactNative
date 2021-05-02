@@ -9,7 +9,7 @@ export default () => {
   const estilos = StyleSheet.create({
     contenedor: {
       flexGrow: 1,
-      backgroundColor: estilosGlobales.colorFondoPantallaLogin,
+      backgroundColor: estilosGlobales.colorFondoGlobal,
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center'

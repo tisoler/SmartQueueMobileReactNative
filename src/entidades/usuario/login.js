@@ -25,7 +25,7 @@ const Login = ({ navigation }) => {
   const estilos = StyleSheet.create({
     contenedor: {
       flexGrow: 1,
-      backgroundColor: estilosGlobales.colorFondoPantallaLogin,
+      backgroundColor: estilosGlobales.colorFondoGlobal,
       flexDirection: 'column',
       alignItems: 'center',
     },
@@ -44,14 +44,19 @@ const Login = ({ navigation }) => {
       height: !tecladoVisible ? 90 : 0,
       backgroundColor: '#6875E1',
     },
+    sombra: {
+      elevation: 5,
+    },
     subContenedor: {
       flexGrow: !tecladoVisible ? 2 : 3.5,
-      backgroundColor: 'white',
+      backgroundColor: '#ffffff',
       alignItems: 'center',
       justifyContent: 'flex-end',
-      width: '90%',
+      width: '85%',
       paddingBottom: 20,
-      borderRadius: 5,
+      borderTopLeftRadius: 5,
+      borderTopRightRadius: 5,
+      zIndex: 1,
     },
     botonera: {
       flexGrow: !tecladoVisible ? 1.5 : 0.5,
@@ -63,12 +68,17 @@ const Login = ({ navigation }) => {
     },
     encabezadoBotonera: {
       flexGrow: 2,
-      height: 60,
+      height: 40,
       backgroundColor: 'white',
-      width: '90%',
+      width: '85%',
       marginBottom: 20,
-      borderRadius: 5,
-      top: -15,
+      borderBottomLeftRadius: 5,
+      borderBottomRightRadius: 5,
+      shadowColor: '#000',
+      shadowOffset: { width: 2, height: 2 },
+      shadowOpacity: 0.8,
+      shadowRadius: 2,
+      top: -5,
     },
     subBotonera: {
       flexGrow: !tecladoVisible ? 1 : 0.5,
@@ -80,8 +90,8 @@ const Login = ({ navigation }) => {
   });
 
   useEffect(() => {
-    Keyboard.addListener('keyboardDidShow', () => { cambioTecladoVisible(true) });
-    Keyboard.addListener('keyboardDidHide', () => { cambioTecladoVisible(false) });
+    Keyboard.addListener('keyboardDidShow', () => cambioTecladoVisible(true));
+    Keyboard.addListener('keyboardDidHide', () => cambioTecladoVisible(false));
 
     return () => {
       Keyboard.removeListener('keyboardDidShow');
@@ -122,10 +132,10 @@ const Login = ({ navigation }) => {
       showsVerticalScrollIndicator={false}
     >
       <View style={estilos.contenedor}>
-        <View style={estilos.fondoLogo}>
+        <View style={estilos.fondoLogo} elevation={5}>
           { IconosGenerales[NombresIconosGenerales.logoLogin] }
         </View>
-        <View style={estilos.encabezado}></View>
+        <View style={estilos.encabezado} />
         <View style={estilos.subContenedor}>
           <TextoIngreso
             placeholderText="e-mail"
@@ -148,7 +158,7 @@ const Login = ({ navigation }) => {
             && <Text style={estilosGlobales.mensajeError}>Usuario o contraseña incorrectos.</Text>}
         </View>
         <View style={estilos.botonera}>
-          <View style={estilos.encabezadoBotonera}></View>
+          <View style={estilos.encabezadoBotonera} elevation={6} />
           <View style={estilos.subBotonera}>
             <BotonRedondeado
               manejadorClick={loguear}

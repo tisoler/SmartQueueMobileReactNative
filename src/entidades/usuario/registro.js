@@ -318,7 +318,7 @@ const Registro = ({ navigation }) => {
     return { success: false };
   };
 
-  const enviarUsuario: Function = async (idFoto = "") => {
+  const enviarUsuario: Function = async (idFoto = '') => {
     try {
       const usuario = {
         dni: dniUsuario,

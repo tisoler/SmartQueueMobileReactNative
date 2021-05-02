@@ -24,7 +24,7 @@ export default (props: Props) => {
     textoBoton: {
       textAlign: 'center',
       lineHeight: height,
-      fontSize: 22,
+      fontSize: 20,
       color: '#fff',
       height,
       width: '100%'

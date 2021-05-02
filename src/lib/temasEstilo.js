@@ -3,17 +3,17 @@ import { Dimensions } from 'react-native';
 const pantallaChica = Math.round(Dimensions.get('window')?.height) < 600;
 
 const temaOscuro = {
-  // Navegación
-  colorBarraNavegacion: '#00566D',
-  // Login
-  colorFondoPantallaLogin: '#026F8E',
-  colorFondoLogoLogin: '#03637E',
-
-  colorFondoGlobal: '#2A4D57',
-  colorFondoEncabezadoTitulos: '#00566D',
-  colorFondoContenedorDatos: '#005f79',
-  colorTextoGeneral: '#2B2B2D',
+  // Globales
+  colorFondoGlobal: '#088CCA',
+  colorFondoEncabezadoTitulos: '#0A72A4',
+  colorFondoContenedorDatos: '#ffffff',
+  colorTextoGeneral: '#686870',
   colorLetraEncabezado: '#fff',
+  // Navegación
+  colorBarraNavegacion: '#0A72A4',
+  // Login
+  colorFondoLogoLogin: '#0A72A4',
+
   colorTextoConfirmacionTurno: '#393e46',
   colorVersion: '#CCCCCC',
   mensajeError: {
@@ -22,13 +22,17 @@ const temaOscuro = {
   },
   tituloSeccion: {
     fontSize: pantallaChica ? 16.5 : 18.5,
-    color: '#FFF',
+    color: '#686870',
+    lineHeight: 50
+  },
+  tituloSeccionClaro: {
+    fontSize: pantallaChica ? 16.5 : 18.5,
+    color: '#ffffff',
     lineHeight: 50
   },
   textoAviso: {
-    fontSize: pantallaChica ? 17 : 19,
+    fontSize: pantallaChica ? 15 : 17,
     color: '#fff',
-    margin: 20,
     textAlign: 'center'
   },
   tituloGrande: {
@@ -45,8 +49,8 @@ const temaOscuro = {
   // Caja de texto
   tallaFuenteCajaTexto: 18,
   // Botones
-  colorFondoBotonPrincipal: '#026F8E',
-  colorBordeBotonPrincipal: '#026F8E',
+  colorFondoBotonPrincipal: '#0A72A4',
+  colorBordeBotonPrincipal: '#0A72A4',
   colorTextoBotonPrincipal: '#ffffff',
   colorEfectoClickBotonPrincipal: '#005f79',
   colorFondoBotonSecundario: '#E7E9EE',
@@ -58,12 +62,9 @@ const temaOscuro = {
     height: pantallaChica ? 130 : 150,
     width: pantallaChica ? 130 : 150
   },
-  tamañoLogoCentroTeja: pantallaChica ? 90 : 100,
-  anchoEtiquetaTeja: pantallaChica
-    ? Math.round(Dimensions.get('window')?.width) - 100
-    : Math.round(Dimensions.get('window')?.width) - 110,
+  tamañoLogoCentroTeja: pantallaChica ? 60 : 70,
   // Avatar
-  colorAvatarLetra: '#16817a',
+  colorAvatarLetra: '#8B6CC6',
   tamanoLetraEtiqueta: pantallaChica ? 17 : 19,
   // Iconos general
   colorIconos: '#ffffff'
@@ -116,10 +117,8 @@ const temaClaro = {
     height: pantallaChica ? 130 : 150,
     width: pantallaChica ? 130 : 150
   },
-  tamañoLogoCentroTeja: pantallaChica ? 90 : 100,
-  anchoEtiquetaTeja: pantallaChica
-    ? Math.round(Dimensions.get('window')?.width) - 100
-    : Math.round(Dimensions.get('window')?.width) - 110,
+  tamañoLogoCentroTejaChica: pantallaChica ? 100 : 110,
+  tamañoLogoCentroTeja: pantallaChica ? 110 : 130,
   colorAvatarLetra: '#3da4ab',
   tamanoLetraEtiqueta: pantallaChica ? 17 : 19,
   colorIconos: '#000'

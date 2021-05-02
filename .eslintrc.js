@@ -29,7 +29,7 @@ module.exports = {
     "comma-dangle": 0,
     "react/prop-types": 0,
     "global-require": 0,
-    'react/require-default-props':0
+    'react/require-default-props': 0
   },
   ignorePatterns: ["web-build/"],
 };

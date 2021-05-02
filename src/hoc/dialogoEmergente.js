@@ -30,7 +30,7 @@ export default () => {
       justifyContent: 'flex-end',
       width: '80%',
       height: '45%',
-      backgroundColor: estilosGlobales.colorFondoPantallaLogin
+      backgroundColor: estilosGlobales.colorFondoGlobal
     },
     contenedorMensaje: {
       flex: 1,

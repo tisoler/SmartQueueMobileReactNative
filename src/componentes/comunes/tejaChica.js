@@ -8,7 +8,8 @@ import {
   TouchableWithoutFeedback,
   Animated,
   Easing,
-  Platform
+  Platform,
+  Alert
 } from 'react-native';
 import { IconosCentros } from '../../lib/constantes';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
@@ -30,8 +31,8 @@ const Teja = (props: Props) => {
   const maxOpacity = 0.2;
   const [scaleValue] = useState(new Animated.Value(0.01));
   const [opacityValue] = useState(new Animated.Value(maxOpacity));
-  const height = 80;
-  const width = 270;
+  const height = estilosGlobales.tamañoLogoCentroTejaChica;
+  const width = estilosGlobales.tamañoLogoCentroTejaChica;
 
   const onPressed = () => {
     Animated.timing(scaleValue, {
@@ -54,58 +55,48 @@ const Teja = (props: Props) => {
         position: 'absolute',
         top: 0,
         left: 0,
-        width,
-        height,
-        borderRadius: 0,
+        width: 90,
+        height: 90,
+        borderRadius: 90,
         transform: [{ scale: scaleValue }],
         opacity: opacityValue,
-        backgroundColor: '#013B4B',
+        backgroundColor: '#ffffff',
         zIndex: 1
       }}
     />
   );
 
   const estilo = StyleSheet.create({
-    teja: {
+    contenedor: {
       flex: 1,
-      flexDirection: 'row',
+      flexDirection: 'column',
       alignItems: 'center',
-      borderWidth: 1.1,
-      borderColor: '#686870',
-      backgroundColor: '#ffffff',
-      width,
-      height,
-      marginBottom: 10,
-      zIndex: 1,
+      width: 120,
     },
     imagen: {
-      marginLeft: 8,
-      height,
-      width: estilosGlobales.tamañoLogoCentroTeja
+      height: 75,
+      width: 75,
     },
-    lineaPuntos: {
-      position: 'absolute',
-      height: 80,
+    teja: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: '#54B6E4',
+      borderRadius: 90,
       width: 90,
-      borderColor: '#686870',
-      borderWidth: 0.7,
-      borderStyle: 'dashed',
-      borderRadius: 1,
-      top: -1,
-      left: -1,
+      height: 90,
     }
-
   });
 
   return (
     <TouchableWithoutFeedback onPress={onPressed}>
-      <View style={estilo.teja} elevation={5}>
-        {renderRippleView()}
-        <Image
-          style={estilo.imagen}
-          source={IconosCentros[appIcon] || IconosCentros['test_icon.png']}
-        />
-        <View style={estilo.lineaPuntos} />
+      <View style={estilo.contenedor}>
+        <View style={estilo.teja}>
+          {renderRippleView()}
+          <Image
+            style={estilo.imagen}
+            source={IconosCentros[appIcon] || IconosCentros['test_icon.png']}
+          />
+        </View>
         {children}
       </View>
     </TouchableWithoutFeedback>

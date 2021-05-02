@@ -1,14 +1,14 @@
 // @flow
 import React, { useEffect, useContext } from 'react';
 import {
-  View, StyleSheet, Alert, ActivityIndicator, Text, ScrollView, Dimensions
+  View, StyleSheet, Alert, ActivityIndicator, Text, ScrollView
 } from 'react-native';
-import { obtenerTicketsParaUsuario } from '../../lib/servicios';
+import { obtenerTicketsParaUsuario, obtenerCentrosAtencion } from '../../lib/servicios';
 import { ContextoEstados } from '../../lib/contextoEstados';
 import withErrorBoundary from '../../hoc/withErrorBoundary';
 import withDialogoEmergente from '../../hoc/withDialogoEmergente';
-import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import Teja from '../../componentes/comunes/teja';
+import TejaChica from '../../componentes/comunes/tejaChica';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 import { ContextoDialogoEmergente } from '../../lib/contextoDialogoEmergente';
 import {
@@ -21,16 +21,102 @@ const Lobby = ({ navigation }) => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
   const {
     estadoLogin,
+    estadoCentros,
     estadoTurnosActivos,
     estadoFbToken,
     estadoTemaUsuario,
     fijarTurnosEnEstado,
+    fijarCentrosEnEstado,
     cambiarTokenFirebaseEnEstado,
     fijarUsuarioLogueadoEnEstado,
     fijarTurnoActualEnEstado,
     asignarEstadoIrEvaluacion
   } = useContext(ContextoEstados);
   const { abrirDialogoEmergente } = useContext(ContextoDialogoEmergente);
+
+  const estilos = StyleSheet.create({
+    contenedor: {
+      flex: 1,
+      backgroundColor: estilosGlobales.colorFondoGlobal,
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
+    encabezado: {
+      height: 23,
+      width: '100%',
+      backgroundColor: estilosGlobales.colorBarraNavegacion,
+    },
+    texto: {
+      color: estilosGlobales.colorTextoGeneral,
+      fontSize: 13.5,
+      textAlign: 'center',
+      width: estilosGlobales.tamañoLogoCentroTeja + 40,
+    },
+    contenedorTituloCentros: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'absolute',
+      top: 0,
+      backgroundColor: '#ffffff',
+      width: '80%',
+      height: 45,
+      borderRadius: 10,
+      color: estilosGlobales.colorTextoGeneral,
+    },
+    contenedorCentros: {
+      backgroundColor: estilosGlobales.colorFondoContenedorDatos,
+      width: '100%',
+      paddingBottom: 10,
+      height: 225,
+      paddingTop: 55,
+    },
+    contenedorTurnos: {
+      alignItems: 'center',
+      backgroundColor: estilosGlobales.colorFondoGlobal,
+      width: '100%',
+      flex: 3,
+      paddingTop: 40,
+    },
+    centro: {
+      color: estilosGlobales.colorTextoGeneral,
+      fontSize: 16,
+      textAlign: 'center',
+      marginLeft: 15,
+    },
+    categoria: {
+      color: estilosGlobales.colorTextoGeneral,
+      fontSize: 15,
+      textAlign: 'center',
+    },
+    espera: {
+      fontSize: 17,
+      color: '#FFAE0C',
+      textAlign: 'right',
+      paddingRight: 5,
+    },
+    enLugar: {
+      fontSize: 17,
+      color: '#14DE00',
+      textAlign: 'right',
+      paddingRight: 5,
+    },
+    contenedorHijos: {
+      flex: 2,
+      flexDirection: 'column',
+    },
+    subContenedorTitulo: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'absolute',
+      top: 225,
+      width: '90%',
+      backgroundColor: '#8B6CC6',
+      height: 45,
+      borderRadius: 10,
+      zIndex: 1
+    },
+  });
 
   useEffect(() => {
     // Levanta el cliente Firebase y los listeners
@@ -68,6 +154,25 @@ const Lobby = ({ navigation }) => {
 
     consultarTicketsDeUsuario();
 
+    if (estadoCentros == null || estadoCentros.centros.length === 0) {
+      obtenerCentrosAtencion(estadoLogin.token)
+        .then(res => res.json())
+        .then(respuesta => {
+          fijarCentrosEnEstado(respuesta.response);
+        })
+        .catch((error) => {
+          if (esTokenValido(
+            error?.message,
+            fijarUsuarioLogueadoEnEstado,
+            estadoLogin.email,
+            estadoFbToken,
+            estadoTemaUsuario
+          )) {
+            Alert.alert(procesarMensajeError(error.message, 'Error durante la carga de centros.'));
+          }
+        });
+    }
+
     // Configura un intervalo de consulta para refrescar los turnos cada 1 minuto.
     const idIntervalo = setInterval(() => {
       consultarTicketsDeUsuario();
@@ -78,69 +183,39 @@ const Lobby = ({ navigation }) => {
     };
   }, []);
 
-  const pedirTurno = () => {
-    navigation.navigate('ListaCentrosAtencion');
-  };
-
   const seleccionarTurnoActivo = (turno) => {
     fijarTurnoActualEnEstado(turno, null);
     navigation.navigate('Turno');
   };
 
-  const estilos = StyleSheet.create({
-    contenedor: {
-      flex: 1,
-      backgroundColor: estilosGlobales.colorFondoGlobal,
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center'
-    },
-    contenedorTurnos: {
-      backgroundColor: estilosGlobales.colorFondoContenedorDatos,
-      width: '100%',
-      flex: 3
-    },
-    centro: {
-      color: estilosGlobales.colorTextoGeneral,
-      fontSize: 19,
-      paddingLeft: 10
-    },
-    categoria: {
-      color: estilosGlobales.colorTextoGeneral,
-      fontSize: 17,
-      paddingLeft: 10
-    },
-    espera: {
-      fontSize: 19,
-      paddingLeft: 10,
-      color: '#FFAE0C',
-      textAlign: 'right'
-    },
-    enLugar: {
-      fontSize: 20,
-      paddingLeft: 10,
-      color: '#14DE00',
-      textAlign: 'right'
-    },
-    contenedorHijos: {
-      flexDirection: 'column',
-      width: Math.round(Dimensions.get('window').width) - 110
-    },
-    subContenedorTitulo: {
-      alignItems: 'center',
-      width: '100%',
-      backgroundColor: estilosGlobales.colorFondoEncabezadoTitulos
-    },
-    subContenedorBotones: {
-      flex: 1,
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      width: '100%'
-    },
-  });
+  const obtenerTurnoParaCentro = (idCentro) => estadoTurnosActivos
+    .find(turno => turno.Center.id === idCentro);
 
-  if (!estadoTurnosActivos) {
+  const seleccionarCentro = (centro) => {
+    const turnoExistente = obtenerTurnoParaCentro(centro.id);
+    // const turnoAgendadoExistente = obtenerTurnoAgendadoParaCentro(centro.id);
+    const turnoAgendadoExistente = null;
+    // if centro.service_type: 0 = fila, 1 = agendado, 2 = ambos
+    const tipoServicio = 2;
+    switch (tipoServicio) {
+      case 0:
+        if (turnoExistente) {
+          fijarTurnoActualEnEstado(turnoExistente, null);
+          navigation.navigate('Turno');
+        } else {
+          navigation.navigate('CentroAtencion', { centro });
+        }
+        break;
+      case 1:
+        navigation.navigate('CentroAtencion', { centro });
+        break;
+      default:
+        navigation.navigate('TipoTurno', { centro, turnoExistente, turnoAgendadoExistente });
+        break;
+    }
+  };
+
+  if (!estadoTurnosActivos || !estadoCentros) {
     return (
       <View style={estilos.contenedor}>
         <ActivityIndicator size="large" color="#FFF" />
@@ -150,8 +225,25 @@ const Lobby = ({ navigation }) => {
 
   return (
     <View style={estilos.contenedor}>
-      <View style={estilos.subContenedorTitulo}>
-        <Text style={estilosGlobales.tituloSeccion}>
+      <View style={estilos.encabezado} />
+      <View style={estilos.contenedorTituloCentros} elevation={5}>
+        <Text style={estilosGlobales.tituloSeccion}>Sacar turno para:</Text>
+      </View>
+      <View style={estilos.contenedorCentros}>
+        <ScrollView horizontal showsVerticalScrollIndicator={false}>
+          { estadoCentros.centros.map(centro => (
+            <TejaChica
+              key={centro.id}
+              appIcon={centro.app_icon}
+              manejadorClick={() => seleccionarCentro(centro)}
+            >
+              <Text multiline editable={false} style={estilos.texto}>{centro.name}</Text>
+            </TejaChica>
+          ))}
+        </ScrollView>
+      </View>
+      <View style={estilos.subContenedorTitulo} elevation={5}>
+        <Text style={estilosGlobales.tituloSeccionClaro}>
           { estadoTurnosActivos.length > 0 ? 'Turnos pedidos:' : 'Usted no tiene turnos pedidos' }
         </Text>
       </View>
@@ -176,11 +268,6 @@ const Lobby = ({ navigation }) => {
           </ScrollView>
         </View>
       )}
-      <View style={estilos.subContenedorBotones}>
-        <BotonRedondeado manejadorClick={() => pedirTurno()}>
-          Nuevo turno
-        </BotonRedondeado>
-      </View>
     </View>
   );
 };
