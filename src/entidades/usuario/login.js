@@ -59,7 +59,7 @@ const Login = ({ navigation }) => {
       zIndex: 1,
     },
     botonera: {
-      flexGrow: !tecladoVisible ? 1.5 : 0.5,
+      flexGrow: 1.5,
       backgroundColor: '#E7E9EE',
       justifyContent: 'flex-end',
       alignItems: 'center',
@@ -81,8 +81,9 @@ const Login = ({ navigation }) => {
       top: -5,
     },
     subBotonera: {
-      flexGrow: !tecladoVisible ? 1 : 0.5,
-      flexDirection: !tecladoVisible ? 'column' : 'row',
+      display: !tecladoVisible ? 'flex' : 'none',
+      flexGrow: 1,
+      flexDirection: 'column',
       alignItems: 'center',
       width: '90%',
       justifyContent: 'space-between',

@@ -82,7 +82,8 @@ const Lobby = ({ navigation }) => {
       color: estilosGlobales.colorTextoGeneral,
       fontSize: 16,
       textAlign: 'center',
-      marginLeft: 15,
+      paddingLeft: 4,
+      paddingRight: 4,
     },
     categoria: {
       color: estilosGlobales.colorTextoGeneral,
@@ -223,51 +224,57 @@ const Lobby = ({ navigation }) => {
     );
   }
 
+  const ListadoCentros = () => (
+    <View style={estilos.contenedorCentros}>
+      <ScrollView horizontal showsVerticalScrollIndicator={false}>
+        { estadoCentros.centros.map(centro => (
+          <TejaChica
+            key={centro.id}
+            appIcon={centro.app_icon}
+            manejadorClick={() => seleccionarCentro(centro)}
+          >
+            <Text multiline editable={false} style={estilos.texto}>{centro.name}</Text>
+          </TejaChica>
+        ))}
+      </ScrollView>
+    </View>
+  );
+
+  const TurnosPedidos = () => (
+    <View style={estilos.contenedorTurnos}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        { estadoTurnosActivos.map(turno => (
+          <Teja
+            key={turno.id}
+            appIcon={turno.Center.app_icon}
+            manejadorClick={() => seleccionarTurnoActivo(turno)}
+          >
+            <View style={estilos.contenedorHijos}>
+              <Text style={estilos.centro}>{turno.Center.name}</Text>
+              <Text style={estilos.categoria}>{turno.Category.name}</Text>
+              <Text style={turno.status === 'waiting' ? estilos.espera : estilos.enLugar}>
+                {turno.status === 'waiting' ? 'Esperando' : 'En el lugar'}
+              </Text>
+            </View>
+          </Teja>
+        ))}
+      </ScrollView>
+    </View>
+  );
+
   return (
     <View style={estilos.contenedor}>
       <View style={estilos.encabezado} />
       <View style={estilos.contenedorTituloCentros} elevation={5}>
         <Text style={estilosGlobales.tituloSeccion}>Sacar turno para:</Text>
       </View>
-      <View style={estilos.contenedorCentros}>
-        <ScrollView horizontal showsVerticalScrollIndicator={false}>
-          { estadoCentros.centros.map(centro => (
-            <TejaChica
-              key={centro.id}
-              appIcon={centro.app_icon}
-              manejadorClick={() => seleccionarCentro(centro)}
-            >
-              <Text multiline editable={false} style={estilos.texto}>{centro.name}</Text>
-            </TejaChica>
-          ))}
-        </ScrollView>
-      </View>
+      <ListadoCentros />
       <View style={estilos.subContenedorTitulo} elevation={5}>
         <Text style={estilosGlobales.tituloSeccionClaro}>
           { estadoTurnosActivos.length > 0 ? 'Turnos pedidos:' : 'Usted no tiene turnos pedidos' }
         </Text>
       </View>
-      { estadoTurnosActivos.length > 0 && (
-        <View style={estilos.contenedorTurnos}>
-          <ScrollView showsVerticalScrollIndicator={false}>
-            { estadoTurnosActivos.map(turno => (
-              <Teja
-                key={turno.id}
-                appIcon={turno.Center.app_icon}
-                manejadorClick={() => seleccionarTurnoActivo(turno)}
-              >
-                <View style={estilos.contenedorHijos}>
-                  <Text style={estilos.centro}>{turno.Center.name}</Text>
-                  <Text style={estilos.categoria}>{turno.Category.name}</Text>
-                  <Text style={turno.status === 'waiting' ? estilos.espera : estilos.enLugar}>
-                    {turno.status === 'waiting' ? 'Esperando' : 'En el lugar'}
-                  </Text>
-                </View>
-              </Teja>
-            ))}
-          </ScrollView>
-        </View>
-      )}
+      { estadoTurnosActivos.length > 0 && <TurnosPedidos />}
     </View>
   );
 };

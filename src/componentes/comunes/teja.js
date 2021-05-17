@@ -14,24 +14,26 @@ import { IconosCentros } from '../../lib/constantes';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 
 type Props = {
-  manejadorClick: Function,
+  manejadorClick?: Function,
   appIcon: string,
   children: React.Element<any> | React.Element<any>[],
+  height?: number,
+  width?: number,
 }
 
 const Teja = (props: Props) => {
   const {
-    manejadorClick,
+    manejadorClick = () => {},
     appIcon,
-    children
+    children,
+    height = 80,
+    width = 270,
   } = props;
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
 
   const maxOpacity = 0.2;
   const [scaleValue] = useState(new Animated.Value(0.01));
   const [opacityValue] = useState(new Animated.Value(maxOpacity));
-  const height = 80;
-  const width = 270;
 
   const onPressed = () => {
     Animated.timing(scaleValue, {
@@ -67,7 +69,6 @@ const Teja = (props: Props) => {
 
   const estilo = StyleSheet.create({
     teja: {
-      flex: 1,
       flexDirection: 'row',
       alignItems: 'center',
       borderWidth: 1.1,
@@ -79,14 +80,14 @@ const Teja = (props: Props) => {
       zIndex: 1,
     },
     imagen: {
-      marginLeft: 8,
+      marginLeft: 4,
       height,
-      width: estilosGlobales.tamañoLogoCentroTeja
+      width: height,
     },
     lineaPuntos: {
       position: 'absolute',
-      height: 80,
-      width: 90,
+      height,
+      width: height + 10,
       borderColor: '#686870',
       borderWidth: 0.7,
       borderStyle: 'dashed',

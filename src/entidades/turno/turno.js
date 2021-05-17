@@ -2,17 +2,20 @@
 // @flow
 import React, { useEffect, useState, useContext } from 'react';
 import {
-  View, StyleSheet, Text, Image, ActivityIndicator, Alert
+  View, StyleSheet, Text, ActivityIndicator, Alert
 } from 'react-native';
 import withErrorBoundary from '../../hoc/withErrorBoundary';
 import withDialogoEmergente from '../../hoc/withDialogoEmergente';
-import { IconosCentros } from '../../lib/constantes';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import { ContextoEstados } from '../../lib/contextoEstados';
 import { cancelarTicket, confirmarAsistencia } from '../../lib/servicios';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 import { procesarMensajeError, esTokenValido } from '../../lib/ayudante';
 import recuperarTicket from './llamadasServicioComunes';
+import Teja from '../../componentes/comunes/teja';
+import Turnos from '../../componentes/comunes/svg/turnos';
+import Gente from '../../componentes/comunes/svg/gente';
+import Reloj from '../../componentes/comunes/svg/reloj';
 
 const Turno = ({ navigation }) => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
@@ -31,53 +34,82 @@ const Turno = ({ navigation }) => {
   const [confirmandoTurno, cambiarConfirmandoTurno] = useState(false);
   const [cargando, cambiarCargando] = useState(true);
 
-  let colorFondo = estilosGlobales.colorFondoContenedorDatos;
+  let colorFondo = estilosGlobales.colorBarraNavegacion;
   if (demoraActual?.tickets <= 10 && demoraActual?.tickets_ready <= 3) {
-    colorFondo = '#04512E';
+    colorFondo = '#2EBC0B';
   } else if (demoraActual?.tickets <= 10 && demoraActual?.tickets_ready <= 5) {
-    colorFondo = '#8D8002';
+    colorFondo = '#F6E252';
   }
 
   const estilos = StyleSheet.create({
     contenedor: {
       flex: 1,
-      backgroundColor: colorFondo,
+      backgroundColor: '#ffffff',
       flexDirection: 'column',
       alignItems: 'center',
       width: '100%'
     },
     subContenedor: {
       flexDirection: 'column',
-      alignItems: 'center',
-      width: '95%'
+      alignItems: 'flex-start',
+      width: '85%',
+      backgroundColor: '#ffffff',
+      borderTopLeftRadius: 10,
+      borderBottomLeftRadius: 10,
+      padding: 10,
+    },
+    subContenedorColor: {
+      width: 20,
+      backgroundColor: colorFondo,
+      borderTopRightRadius: 10,
+      borderBottomRightRadius: 10,
     },
     subContenedorSaludo: {
       flexDirection: 'column',
       alignItems: 'center',
-      backgroundColor: '#0A5164',
-      width: '95%',
-      paddingTop: 5,
-      paddingBottom: 10,
-      marginTop: 5
-    },
-    subContenedorTurno: {
-      flexDirection: 'column',
-      alignItems: 'center',
-      width: '85%',
-      borderWidth: 2,
-      borderColor: '#0A5164',
-      marginBottom: 4,
-      paddingBottom: 4
+      backgroundColor: '#8B6CC6',
+      width: '90%',
+      padding: 10,
+      marginTop: 20,
+      borderRadius: 10,
     },
     margenUltimoTexto: {
       marginBottom: 15
     },
     textoTurno: {
-      fontSize: 19,
-      color: '#fff',
+      fontSize: 17,
+      color: estilosGlobales.colorTextoGeneral,
       marginTop: 3,
-      textAlign: 'center'
-    }
+      marginLeft: 5,
+      width: '95%',
+    },
+    contenedorTurno: {
+      backgroundColor: estilosGlobales.colorFondoGlobal,
+      flexDirection: 'column',
+      alignItems: 'center',
+      width: '100%',
+      borderBottomLeftRadius: 30,
+      borderBottomRightRadius: 30,
+      paddingBottom: 30,
+      paddingTop: 30,
+    },
+    contenedorHijos: {
+      flex: 2,
+      flexDirection: 'column',
+    },
+    centro: {
+      color: estilosGlobales.colorTextoGeneral,
+      fontSize: 19,
+      fontWeight: 'bold',
+      textAlign: 'center',
+      paddingLeft: 4,
+      paddingRight: 4,
+    },
+    categoria: {
+      color: estilosGlobales.colorTextoGeneral,
+      fontSize: 17,
+      textAlign: 'center',
+    },
   });
 
   useEffect(() => {
@@ -179,8 +211,8 @@ const Turno = ({ navigation }) => {
     </View>
   );
 
-  const obtenerSaludo = () => (
-    <View style={estilos.subContenedorSaludo}>
+  const SaludoBienvenida = () => (
+    <View style={estilos.subContenedorSaludo} elevation={5}>
       <Text style={estilosGlobales.tituloGrande}>Bienvenida/o.</Text>
       <Text style={estilosGlobales.subtituloGrande}>
         Ya hemos recibido la notificación de su llegada.
@@ -204,35 +236,26 @@ const Turno = ({ navigation }) => {
       ? `${personasEnElLugar} personas con turno ya están en el lugar.`
       : 'Ninguna persona con turno está aún en el lugar.';
 
-  const obtenerVista = () => (
-    <View style={estilos.subContenedor}>
-      <View style={estilos.subContenedorTurno}>
-        <Text style={estilosGlobales.subtituloGrande}>{turno?.Center?.name}</Text>
-        <Text style={estilosGlobales.tituloGrande}>{turno?.code}</Text>
-        <Text style={estilosGlobales.subtituloGrande}>
-          {turno?.Category?.name}
-        </Text>
-      </View>
-      <Text style={estilos.textoTurno}>{mensajeTurnosAnteriores}</Text>
-      <Text style={estilos.textoTurno}>{mensajePersonasEnLugar}</Text>
-      <Text style={[estilos.textoTurno, estilos.margenUltimoTexto]}>
-        {`La demora estimada es de ${demoraActual?.hours > 0 ? `${demoraActual?.hours} hs.` : ''} ${demoraActual?.minutes ? parseInt(demoraActual.minutes, 10) : '?'} minutos.`}
-      </Text>
-      { turno?.status === 'ready' ? (
-        obtenerSaludo()
-      ) : (
-        obtenerAccionesTurno()
-      )}
+  const TicketTurno = () => (
+    <View style={estilos.contenedorTurno}>
+      <Teja
+        key={turno.id}
+        appIcon={turno.Center.app_icon}
+        height={120}
+        width={300}
+      >
+        <View style={estilos.contenedorHijos}>
+          <Text style={estilos.centro}>{turno.Center.name}</Text>
+          <Text style={estilos.categoria}>{turno.Category.name}</Text>
+          <Text style={estilos.categoria}>{turno?.code}</Text>
+        </View>
+      </Teja>
     </View>
   );
 
   if (cargando || !turno?.code) {
     return (
       <View style={estilos.contenedor}>
-        <Image
-          style={estilosGlobales.imagenLogoCentro}
-          source={IconosCentros[turno?.Center?.app_icon]}
-        />
         <ActivityIndicator size="large" color="#FFF" />
       </View>
     );
@@ -240,11 +263,31 @@ const Turno = ({ navigation }) => {
 
   return (
     <View style={estilos.contenedor}>
-      <Image
-        style={estilosGlobales.imagenLogoCentro}
-        source={IconosCentros[turno.Center.app_icon]}
-      />
-      { obtenerVista() }
+      <TicketTurno />
+      <View style={{ display: 'flex', flexDirection: 'row', marginTop: 20, height: 150, }}>
+        <View style={estilos.subContenedor} elevation={5}>
+          <View style={{ display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center', }}>
+            <Turnos width={20} height={20} color={estilosGlobales.colorTextoGeneral} />
+            <Text style={estilos.textoTurno}>{mensajeTurnosAnteriores}</Text>
+          </View>
+          <View style={{ display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center', }}>
+            <Gente width={20} height={20} color={estilosGlobales.colorTextoGeneral} />
+            <Text style={estilos.textoTurno}>{mensajePersonasEnLugar}</Text>
+          </View>
+          <View style={{ display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center', }}>
+            <Reloj width={20} height={20} color={estilosGlobales.colorTextoGeneral} />
+            <Text style={[estilos.textoTurno, estilos.margenUltimoTexto]}>
+              {`La demora estimada es de ${demoraActual?.hours > 0 ? `${demoraActual?.hours} hs.` : ''} ${demoraActual?.minutes ? parseInt(demoraActual.minutes, 10) : '?'} minutos.`}
+            </Text>
+          </View>
+        </View>
+        <View style={estilos.subContenedorColor} elevation={5} />
+      </View>
+      { turno?.status === 'ready' ? (
+        <SaludoBienvenida />
+      ) : (
+        obtenerAccionesTurno()
+      )}
     </View>
   );
 };

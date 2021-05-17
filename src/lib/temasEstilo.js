@@ -36,15 +36,15 @@ const temaOscuro = {
     textAlign: 'center'
   },
   tituloGrande: {
-    fontSize: pantallaChica ? 22 : 24,
+    fontSize: pantallaChica ? 20 : 22,
     color: '#fff',
     fontWeight: 'bold'
   },
   subtituloGrande: {
-    fontSize: pantallaChica ? 18 : 20,
+    fontSize: pantallaChica ? 17 : 19,
     color: '#fff',
-    fontWeight: 'bold',
-    textAlign: 'center'
+    textAlign: 'center',
+    lineHeight: 25,
   },
   // Caja de texto
   tallaFuenteCajaTexto: 18,
@@ -96,15 +96,15 @@ const temaClaro = {
     textAlign: 'center'
   },
   tituloGrande: {
-    fontSize: pantallaChica ? 24 : 26,
+    fontSize: pantallaChica ? 20 : 22,
     color: '#393e46',
     fontWeight: 'bold'
   },
   subtituloGrande: {
-    fontSize: pantallaChica ? 20 : 22,
+    fontSize: pantallaChica ? 17 : 19,
     color: '#393e46',
-    fontWeight: 'bold',
-    textAlign: 'center'
+    textAlign: 'center',
+    lineHeight: 20,
   },
   colorFondoBotonPrincipal: '#3da4ab',
   colorBordeBotonPrincipal: '#3da4ab',
