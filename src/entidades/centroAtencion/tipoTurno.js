@@ -70,7 +70,7 @@ const TipoTurno = ({ route, navigation }) => {
         )}
         {!turnoAgendadoExistente && (
           <BotonRedondeado
-            manejadorClick={() => {}}
+            manejadorClick={() => navigation.navigate('Calendario')}
             colorFondo="#8B6CC6"
             colorBorde="#8B6CC6"
             estilo={{ marginTop: 22 }}

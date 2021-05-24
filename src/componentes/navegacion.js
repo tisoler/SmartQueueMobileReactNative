@@ -11,6 +11,7 @@ import Turno from '../entidades/turno/turno';
 import Registro from '../entidades/usuario/registro';
 import Lobby from '../entidades/usuario/lobby';
 import TipoTurno from '../entidades/centroAtencion/tipoTurno';
+import Calendario from '../entidades/turnoAgendado/calendario';
 import EvaluacionTurno from '../entidades/turno/evaluacionTurno';
 import MenuLateral from './menuLateral';
 import { ContextoEstilosGlobales } from '../lib/contextoEstilosGlobales';
@@ -132,6 +133,15 @@ const NavegadorFijoAutenticado = ({ navigation, route }) => {
         component={TipoTurno}
         options={{
           title: 'Tipo de turno',
+          headerStyle: estilos.encabezadoNavegacion,
+          headerTintColor: estilosGlobales.colorLetraEncabezado
+        }}
+      />
+      <Stack.Screen
+        name="Calendario"
+        component={Calendario}
+        options={{
+          title: 'Turno agendado',
           headerStyle: estilos.encabezadoNavegacion,
           headerTintColor: estilosGlobales.colorLetraEncabezado
         }}
