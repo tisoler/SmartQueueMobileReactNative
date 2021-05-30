@@ -37,3 +37,15 @@ export const mensajes = {
   sinConexion: 'Parece que su dispositivo no tiene conexión a internet.',
   sinServicio: 'Disculpe, el servicio no está habilitado. Intente luego.'
 };
+
+export const tipoTurno = {
+  fila: 1,
+  agendado: 2,
+};
+
+export const pantalla = {
+  centroAtencionFila: 0,
+  centroAtencionTurno: 1,
+  tipoTurno: 2,
+  calendarioTurno: 3,
+};

@@ -6,19 +6,20 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, TransitionSpecs } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import Login from '../entidades/usuario/login';
-import CentroAtencion from '../entidades/centroAtencion/centroAtencion';
+import CentroContenedor from '../entidades/centroAtencion/centroContenedor';
 import Turno from '../entidades/turno/turno';
+import TurnoAgendado from '../entidades/turnoAgendado/turnoAgendado';
 import Registro from '../entidades/usuario/registro';
 import Lobby from '../entidades/usuario/lobby';
-import TipoTurno from '../entidades/centroAtencion/tipoTurno';
-import Calendario from '../entidades/turnoAgendado/calendario';
 import EvaluacionTurno from '../entidades/turno/evaluacionTurno';
 import MenuLateral from './menuLateral';
 import { ContextoEstilosGlobales } from '../lib/contextoEstilosGlobales';
 import { ContextoEstados } from '../lib/contextoEstados';
 import { recuperarDatosLocalmente, recuperarTokenFB, procesarMensajeError } from '../lib/ayudante';
 import PantallaCargando from './pantallaCargando';
-import { BotonMenuHamburguesa, BotonRefrescarTurnos, BotonBusqueda } from './botonesNavegador';
+import {
+  BotonMenuHamburguesa, BotonRefrescarTurno, BotonBusqueda, BotonRefrescarTurnoAgendado
+} from './botonesNavegador';
 import { ContextoDialogoEmergente } from '../lib/contextoDialogoEmergente';
 
 const Stack = createStackNavigator();
@@ -121,27 +122,9 @@ const NavegadorFijoAutenticado = ({ navigation, route }) => {
       />
       <Stack.Screen
         name="CentroAtencion"
-        component={CentroAtencion}
+        component={CentroContenedor}
         options={{
           title: 'Centro de atención',
-          headerStyle: estilos.encabezadoNavegacion,
-          headerTintColor: estilosGlobales.colorLetraEncabezado
-        }}
-      />
-      <Stack.Screen
-        name="TipoTurno"
-        component={TipoTurno}
-        options={{
-          title: 'Tipo de turno',
-          headerStyle: estilos.encabezadoNavegacion,
-          headerTintColor: estilosGlobales.colorLetraEncabezado
-        }}
-      />
-      <Stack.Screen
-        name="Calendario"
-        component={Calendario}
-        options={{
-          title: 'Turno agendado',
           headerStyle: estilos.encabezadoNavegacion,
           headerTintColor: estilosGlobales.colorLetraEncabezado
         }}
@@ -157,7 +140,21 @@ const NavegadorFijoAutenticado = ({ navigation, route }) => {
             open: TransitionSpecs.TransitionIOSSpec,
             close: TransitionSpecs.TransitionIOSSpec,
           },
-          headerRight: () => <BotonRefrescarTurnos navigation={navigation} />
+          headerRight: () => <BotonRefrescarTurno navigation={navigation} />
+        }}
+      />
+      <Stack.Screen
+        name="TurnoAgendado"
+        component={TurnoAgendado}
+        options={{
+          title: 'Turno agendado',
+          headerStyle: estilos.encabezadoNavegacion,
+          headerTintColor: estilosGlobales.colorLetraEncabezado,
+          transitionSpec: {
+            open: TransitionSpecs.TransitionIOSSpec,
+            close: TransitionSpecs.TransitionIOSSpec,
+          },
+          headerRight: () => <BotonRefrescarTurnoAgendado navigation={navigation} />
         }}
       />
     </Stack.Navigator>
@@ -227,7 +224,7 @@ export default () => {
   }
 
   if (estadoTurnosParaEvaluar?.length > 0 || estadoIrEvaluacion) {
-    return NavegadorEvaluacion(estilosGlobales);
+    // return NavegadorEvaluacion(estilosGlobales);
   }
   if ((estadoLogin?.email && estadoLogin?.token)) {
     return NavegadorAutenticado(estilosGlobales, estadoTurnoActual, estadoDialogoEmergente);

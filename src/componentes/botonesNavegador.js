@@ -7,6 +7,7 @@ import { ContextoEstados } from '../lib/contextoEstados';
 import IconosGenerales from '../lib/iconos';
 import { NombresIconosGenerales } from '../lib/constantes';
 import recuperarTicket from '../entidades/turno/llamadasServicioComunes';
+import recuperarTurno from '../entidades/turnoAgendado/llamadasServicioComunes';
 
 const estilos = StyleSheet.create({
   contenedorBotonIzquierda: {
@@ -60,7 +61,7 @@ export const BotonMenuHamburguesa = (props: Object) => {
   );
 };
 
-export const BotonRefrescarTurnos = (props: Object) => {
+export const BotonRefrescarTurno = (props: Object) => {
   const { navigation } = props;
   const {
     estadoLogin,
@@ -88,6 +89,55 @@ export const BotonRefrescarTurnos = (props: Object) => {
         estadoTemaUsuario,
         fijarTurnoActualEnEstado,
         fijarTurnosEnEstado,
+        fijarUsuarioLogueadoEnEstado,
+        navigation
+      );
+      cambiarConsultando(false);
+    } else {
+      Alert.alert('Debe esperar 30 segundos entre consultas.');
+    }
+  };
+  return (
+    <View style={estilos.contenedorBotonDerecha}>
+      { !consultando ? (
+        <TouchableOpacity style={estilos.botonEnHeader} onPress={refrescarTurnos}>
+          {IconosGenerales[NombresIconosGenerales.refrescar]}
+        </TouchableOpacity>
+      ) : (
+        <ActivityIndicator size="small" color="#FFF" />
+      )}
+    </View>
+  );
+};
+
+export const BotonRefrescarTurnoAgendado = (props: Object) => {
+  const { navigation } = props;
+  const {
+    estadoLogin,
+    estadoFbToken,
+    estadoTurnoActual,
+    estadoTemaUsuario,
+    fijarTurnoActualEnEstado,
+    fijarTurnosAgendadosEnEstado,
+    fijarUsuarioLogueadoEnEstado
+  } = useContext(ContextoEstados);
+  const { turno } = estadoTurnoActual;
+  const [consultando, cambiarConsultando] = useState(false);
+  const [haConsultado, cambiarHaConsultado] = useState(false);
+  const refrescarTurnos = async () => {
+    if (turno && !haConsultado) {
+      cambiarHaConsultado(true);
+      setTimeout(() => {
+        cambiarHaConsultado(false);
+      }, 30000);
+      cambiarConsultando(true);
+      await recuperarTurno(
+        estadoLogin,
+        estadoFbToken,
+        estadoTurnoActual,
+        estadoTemaUsuario,
+        fijarTurnoActualEnEstado,
+        fijarTurnosAgendadosEnEstado,
         fijarUsuarioLogueadoEnEstado,
         navigation
       );

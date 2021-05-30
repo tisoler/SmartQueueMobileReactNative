@@ -9,7 +9,6 @@ import {
   Animated,
   Easing,
   Platform,
-  Alert
 } from 'react-native';
 import { IconosCentros } from '../../lib/constantes';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
@@ -31,8 +30,6 @@ const Teja = (props: Props) => {
   const maxOpacity = 0.2;
   const [scaleValue] = useState(new Animated.Value(0.01));
   const [opacityValue] = useState(new Animated.Value(maxOpacity));
-  const height = estilosGlobales.tamañoLogoCentroTejaChica;
-  const width = estilosGlobales.tamañoLogoCentroTejaChica;
 
   const onPressed = () => {
     Animated.timing(scaleValue, {
@@ -53,14 +50,14 @@ const Teja = (props: Props) => {
     <Animated.View
       style={{
         position: 'absolute',
-        top: 0,
-        left: 0,
+        top: -2,
+        left: -2,
         width: 90,
         height: 90,
         borderRadius: 90,
         transform: [{ scale: scaleValue }],
         opacity: opacityValue,
-        backgroundColor: '#ffffff',
+        backgroundColor: estilosGlobales.colorFondoLogoLogin,
         zIndex: 1
       }}
     />
@@ -80,7 +77,8 @@ const Teja = (props: Props) => {
     teja: {
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: '#54B6E4',
+      borderColor: '#54B6E4',
+      borderWidth: 2,
       borderRadius: 90,
       width: 90,
       height: 90,

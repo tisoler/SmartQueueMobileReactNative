@@ -28,7 +28,8 @@ const temaOscuro = {
   tituloSeccionClaro: {
     fontSize: pantallaChica ? 16.5 : 18.5,
     color: '#ffffff',
-    lineHeight: 50
+    lineHeight: 50,
+    textAlign: 'center',
   },
   textoAviso: {
     fontSize: pantallaChica ? 15 : 17,

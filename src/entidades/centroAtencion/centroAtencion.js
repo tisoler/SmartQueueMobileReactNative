@@ -3,21 +3,27 @@
 import * as React from 'react';
 import { useContext, useState } from 'react';
 import {
-  View, StyleSheet, Text, Image, ActivityIndicator, Alert, ScrollView
+  View, StyleSheet, Text, ActivityIndicator, Alert
 } from 'react-native';
 import withErrorBoundary from '../../hoc/withErrorBoundary';
 import withDialogoEmergente from '../../hoc/withDialogoEmergente';
 import { ContextoEstados } from '../../lib/contextoEstados';
-import { IconosCentros } from '../../lib/constantes';
 import { estimarDemora, generarTicket } from '../../lib/servicios';
 import BotonPopup from '../../componentes/comunes/botonPopup';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 import { procesarMensajeError, esTokenValido } from '../../lib/ayudante';
+import { tipoTurno as tipoTurnoEnum } from '../../lib/constantes';
 
-const CentrosAtencion = ({ route, navigation }) => {
+const CentrosAtencion = (props) => {
+  const {
+    centro,
+    tipoTurno,
+    navigation,
+    elegirTipoTurno,
+    elegirFechaTurno,
+  } = props;
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
-  const { centro } = route?.params;
   const [turnoPedido, setTurnoPedido] = useState(false);
   const [cargando, setCargando] = useState(false);
   const [categoriaSeleccionada, setCategoria] = useState({});
@@ -35,20 +41,10 @@ const CentrosAtencion = ({ route, navigation }) => {
   const estilos = StyleSheet.create({
     contenedor: {
       flex: 1,
+      width: '100%',
       backgroundColor: estilosGlobales.colorFondoContenedorDatos,
       flexDirection: 'column',
       alignItems: 'center'
-    },
-    subContenedor: {
-      backgroundColor: estilosGlobales.colorFondoGlobal,
-      flexDirection: 'column',
-      alignItems: 'center',
-      width: '100%',
-      borderBottomLeftRadius: 30,
-      borderBottomRightRadius: 30,
-    },
-    explicacion: {
-      paddingBottom: 25,
     },
     contenedorConfirmacion: {
       width: '90%',
@@ -68,10 +64,10 @@ const CentrosAtencion = ({ route, navigation }) => {
       fontWeight: 'bold',
       color: '#ffffff',
       backgroundColor: '#8B6CC6',
-      borderRadius: 40,
+      borderRadius: 15,
       height: 45,
       lineHeight: 45,
-      width: 105,
+      width: 205,
       marginTop: 10,
       marginBottom: 10,
     },
@@ -88,7 +84,7 @@ const CentrosAtencion = ({ route, navigation }) => {
     }
   });
 
-  const pedirTurno = (categoria) => {
+  const pedirTurnoFila = (categoria) => {
     setTurnoPedido(true);
     setCargando(true);
     estimarDemora(estadoLogin.token, categoria.id, centro.id)
@@ -138,10 +134,15 @@ const CentrosAtencion = ({ route, navigation }) => {
   };
 
   const obtenerBotonesCategorias = () => (
-    centro.Categories.map((categ, idx) => (
+    [...centro.Categories.map((categ, idx) => (
       <BotonRedondeado
         key={categ.id}
-        manejadorClick={() => pedirTurno(categ)}
+        manejadorClick={
+          () => (tipoTurno === tipoTurnoEnum.fila
+            ? pedirTurnoFila(categ)
+            : elegirFechaTurno(categ)
+          )
+        }
         estilo={{ marginTop: 22 }}
         colorFondo={idx % 2 === 0
           ? estilosGlobales.colorFondoBotonPrincipal
@@ -153,7 +154,20 @@ const CentrosAtencion = ({ route, navigation }) => {
       >
         { categ.description }
       </BotonRedondeado>
-    ))
+    )),
+      <BotonRedondeado
+        key="cancelar"
+        manejadorClick={() => elegirTipoTurno()}
+        estilo={{ marginTop: 22 }}
+        colorBorde={estilosGlobales.colorEfectoClickBotonSecundario}
+        colorFondo="#ffffff"
+        colorEfecto={estilosGlobales.colorEfectoClickBotonSecundario}
+        colorTexto={estilosGlobales.colorFondoBotonPrincipal}
+        flechaAlPrincipio
+      >
+        Cancelar
+      </BotonRedondeado>
+    ]
   );
 
   const turnosAnteriores = demora?.tickets != null ? demora?.tickets : -1;
@@ -214,25 +228,9 @@ const CentrosAtencion = ({ route, navigation }) => {
   };
 
   return (
-    <ScrollView
-      contentContainerStyle={{ flexGrow: 1 }}
-      showsVerticalScrollIndicator={false}
-    >
-      <View style={estilos.contenedor}>
-        <View style={estilos.subContenedor}>
-          <Image style={estilosGlobales.imagenLogoCentro} source={IconosCentros[centro.app_icon]} />
-          <Text style={{ ...estilosGlobales.subtituloGrande, ...{ paddingBottom: 25 } }}>
-            {centro?.name}
-          </Text>
-          {!turnoPedido && (
-            <Text style={[estilosGlobales.textoAviso, estilos.explicacion]}>
-              Seleccione una categoría por favor.
-            </Text>
-          )}
-        </View>
-        { obtenerRender() }
-      </View>
-    </ScrollView>
+    <View style={estilos.contenedor}>
+      {obtenerRender()}
+    </View>
   );
 };
 

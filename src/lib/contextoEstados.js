@@ -33,6 +33,7 @@ export const ProveedorContextoEstados = (props: Props) => {
   const [estadoLogin, asignarEstadoLogin] = useState(estadoInicialLogin);
   const [estadoCentros, asignarEstadoCentros] = useState();
   const [estadoTurnosActivos, asignarEstadoTurnosActivos] = useState();
+  const [estadoTurnosAgendadosActivos, asignarEstadoTurnosAgendadosActivos] = useState();
   const [estadoTurnoActual, asignarEstadoTurnoActual] = useState();
   const [
     estadoTurnosParaEvaluar,
@@ -50,6 +51,18 @@ export const ProveedorContextoEstados = (props: Props) => {
   const fijarTurnosEnEstado = (turnosUsuario: Array<Object>) => {
     fijarTurnosAccion(
       asignarEstadoTurnosActivos,
+      asignarEstadoTurnosParaEvaluar,
+      turnosUsuario
+    );
+  };
+  const agregarTurnoAgendadoActivoEnEstado = (turnoActivo: Object) => {
+    agregarTurnoActivoAccion(
+      estadoTurnosAgendadosActivos, asignarEstadoTurnosAgendadosActivos, turnoActivo
+    );
+  };
+  const fijarTurnosAgendadosEnEstado = (turnosUsuario: Array<Object>) => {
+    fijarTurnosAccion(
+      asignarEstadoTurnosAgendadosActivos,
       asignarEstadoTurnosParaEvaluar,
       turnosUsuario
     );
@@ -75,6 +88,14 @@ export const ProveedorContextoEstados = (props: Props) => {
   };
   const confirmarAsistenciaTurnoEnEstado = (turno: Object) => {
     confirmarAsistenciaTurnoAccion(estadoTurnosActivos, asignarEstadoTurnosActivos, turno);
+  };
+  const removerTurnoAgendadoEnEstado = (turno: Object) => {
+    removerTurnoAccion(estadoTurnosAgendadosActivos, asignarEstadoTurnosAgendadosActivos, turno);
+  };
+  const confirmarAsistenciaTurnoAgendadoEnEstado = (turno: Object) => {
+    confirmarAsistenciaTurnoAccion(
+      estadoTurnosAgendadosActivos, asignarEstadoTurnosAgendadosActivos, turno
+    );
   };
   const evaluarTurnoEnEstado = (turno: Object) => {
     evaluarTurnoAccion(estadoTurnosParaEvaluar, asignarEstadoTurnosParaEvaluar, turno);
@@ -103,16 +124,21 @@ export const ProveedorContextoEstados = (props: Props) => {
       estadoLogin,
       estadoCentros,
       estadoTurnosActivos,
+      estadoTurnosAgendadosActivos,
       estadoTurnosParaEvaluar,
       estadoTemaUsuario,
       estadoTurnoActual,
       estadoFbToken,
       estadoIrEvaluacion,
       agregarTurnoActivoEnEstado,
+      agregarTurnoAgendadoActivoEnEstado,
       fijarTurnosEnEstado,
+      fijarTurnosAgendadosEnEstado,
       fijarUsuarioLogueadoEnEstado,
       removerTurnoEnEstado,
       confirmarAsistenciaTurnoEnEstado,
+      removerTurnoAgendadoEnEstado,
+      confirmarAsistenciaTurnoAgendadoEnEstado,
       evaluarTurnoEnEstado,
       fijarCentrosEnEstado,
       filtrarCentrosEnEstado,

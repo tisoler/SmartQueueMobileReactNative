@@ -8,27 +8,27 @@ import withErrorBoundary from '../../hoc/withErrorBoundary';
 import withDialogoEmergente from '../../hoc/withDialogoEmergente';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import { ContextoEstados } from '../../lib/contextoEstados';
-import { cancelarTicket, confirmarAsistenciaTicket } from '../../lib/servicios';
+import { cancelarTurno, confirmarAsistenciaTurno } from '../../lib/servicios';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 import { procesarMensajeError, esTokenValido } from '../../lib/ayudante';
-import recuperarTicket from './llamadasServicioComunes';
+import recuperarTurno from './llamadasServicioComunes';
 import Teja from '../../componentes/comunes/teja';
 import Turnos from '../../componentes/comunes/svg/turnos';
 import Gente from '../../componentes/comunes/svg/gente';
 import Reloj from '../../componentes/comunes/svg/reloj';
 
-const Turno = ({ navigation }) => {
+const TurnoAgendado = ({ navigation }) => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
   const {
     estadoLogin,
     estadoTurnoActual,
     estadoFbToken,
     estadoTemaUsuario,
-    removerTurnoEnEstado,
-    confirmarAsistenciaTurnoEnEstado,
+    removerTurnoAgendadoEnEstado,
+    confirmarAsistenciaTurnoAgendadoEnEstado,
     fijarTurnoActualEnEstado,
     fijarUsuarioLogueadoEnEstado,
-    fijarTurnosEnEstado
+    fijarTurnosAgendadosEnEstado,
   } = useContext(ContextoEstados);
   const { turno, demora: demoraActual } = estadoTurnoActual;
   const [confirmandoTurno, cambiarConfirmandoTurno] = useState(false);
@@ -52,6 +52,7 @@ const Turno = ({ navigation }) => {
     subContenedor: {
       flexDirection: 'column',
       alignItems: 'center',
+      justifyContent: 'center',
       width: '85%',
       backgroundColor: '#ffffff',
       borderTopLeftRadius: 10,
@@ -82,6 +83,9 @@ const Turno = ({ navigation }) => {
       marginTop: 3,
       marginLeft: 5,
       width: '95%',
+      lineHeight: 25,
+      paddingLeft: 10,
+      paddingRight: 10,
     },
     contenedorTurno: {
       backgroundColor: estilosGlobales.colorFondoGlobal,
@@ -113,25 +117,25 @@ const Turno = ({ navigation }) => {
   });
 
   useEffect(() => {
-    const consultarTicket = async () => {
-      await recuperarTicket(
+    const consultarTurno = async () => {
+      await recuperarTurno(
         estadoLogin,
         estadoFbToken,
         estadoTurnoActual,
         estadoTemaUsuario,
         fijarTurnoActualEnEstado,
-        fijarTurnosEnEstado,
+        fijarTurnosAgendadosEnEstado,
         fijarUsuarioLogueadoEnEstado,
         navigation
       );
       cambiarCargando(false);
     };
 
-    consultarTicket();
+    consultarTurno();
 
     // Configura un intervalo de consulta para refrescar la demora cada 1 minuto.
     const idIntervalo = setInterval(() => {
-      consultarTicket();
+      consultarTurno();
     }, 60000);
     // Cuando el usuario abandona la pantalla limpia el intervalo.
     return () => {
@@ -142,13 +146,13 @@ const Turno = ({ navigation }) => {
     // code vendrá undefined primero)
   }, [turno?.code]);
 
-  const cancelarTurno = () => {
+  const cancelarTurnoAgendado = () => {
     cambiarCargando(true);
-    cancelarTicket(estadoLogin.token, turno.Center.id)
+    cancelarTurno(estadoLogin.token, turno.Center.id)
       .then(res => res.json())
       .then(respuesta => {
         if (respuesta.success) {
-          removerTurnoEnEstado(turno);
+          removerTurnoAgendadoEnEstado(turno);
           navigation.navigate('Lobby');
         } else {
           Alert.alert('Error al cancelar el turno.');
@@ -169,11 +173,11 @@ const Turno = ({ navigation }) => {
 
   const confirmarPresencia = () => {
     cambiarConfirmandoTurno(true);
-    confirmarAsistenciaTicket(estadoLogin.token, turno.Center.id)
+    confirmarAsistenciaTurno(estadoLogin.token, turno.Center.id)
       .then(res => res.json())
       .then(respuesta => {
         if (respuesta.success) {
-          confirmarAsistenciaTurnoEnEstado(turno);
+          confirmarAsistenciaTurnoAgendadoEnEstado(turno);
           // Cambia status en el turno localmente.
           turno.status = 'ready';
         } else {
@@ -206,7 +210,7 @@ const Turno = ({ navigation }) => {
       </BotonRedondeado>
       { !confirmandoTurno && (
         <BotonRedondeado
-          manejadorClick={() => cancelarTurno()}
+          manejadorClick={() => cancelarTurnoAgendado()}
           estilo={{ marginTop: 22 }}
           width="100%"
           colorBorde={estilosGlobales.colorEfectoClickBotonSecundario}
@@ -230,21 +234,6 @@ const Turno = ({ navigation }) => {
     </View>
   );
 
-  const turnosAnteriores = demoraActual?.tickets != null ? demoraActual?.tickets : -1;
-  // eslint-disable-next-line no-nested-ternary
-  const mensajeTurnosAnteriores = turnosAnteriores === 1
-    ? 'Hay 1 turno antes del suyo.'
-    : turnosAnteriores > 1
-      ? `Hay ${turnosAnteriores} turnos antes del suyo.`
-      : 'No hay ningún turno antes del suyo.';
-  const personasEnElLugar = demoraActual?.tickets_ready || -1;
-  // eslint-disable-next-line no-nested-ternary
-  const mensajePersonasEnLugar = personasEnElLugar === 1
-    ? '1 persona con turno ya está en el lugar.'
-    : personasEnElLugar > 1
-      ? `${personasEnElLugar} personas con turno ya están en el lugar.`
-      : 'Ninguna persona con turno está aún en el lugar.';
-
   const TicketTurno = () => (
     <View style={estilos.contenedorTurno}>
       <Teja
@@ -256,19 +245,21 @@ const Turno = ({ navigation }) => {
         <View style={estilos.contenedorHijos}>
           <Text style={estilos.centro}>{turno.Center.name}</Text>
           <Text style={estilos.categoria}>{turno.Category.name}</Text>
-          <Text style={estilos.categoria}>{turno?.code}</Text>
         </View>
       </Teja>
     </View>
   );
 
-  if (cargando || !turno?.code) {
+  if (cargando || !turno?.turno_date) {
     return (
       <View style={estilos.contenedor}>
         <ActivityIndicator size="large" color="#FFF" />
       </View>
     );
   }
+
+  const fechaTurnoArreglo = turno.turno_date.split('-');
+  const fechaConFormato = `${fechaTurnoArreglo[2]}/${fechaTurnoArreglo[1]}/${fechaTurnoArreglo[0]}`;
 
   return (
     <View style={estilos.contenedor}>
@@ -283,14 +274,9 @@ const Turno = ({ navigation }) => {
           }}
           >
             <Turnos width={20} height={20} color={estilosGlobales.colorTextoGeneral} />
-            <Text style={estilos.textoTurno}>{mensajeTurnosAnteriores}</Text>
-          </View>
-          <View style={{
-            display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center',
-          }}
-          >
-            <Gente width={20} height={20} color={estilosGlobales.colorTextoGeneral} />
-            <Text style={estilos.textoTurno}>{mensajePersonasEnLugar}</Text>
+            <Text style={estilos.textoTurno}>
+              {`Su turno es el ${fechaConFormato} a las ${turno.turno_time}.`}
+            </Text>
           </View>
           <View style={{
             display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center',
@@ -298,7 +284,7 @@ const Turno = ({ navigation }) => {
           >
             <Reloj width={20} height={20} color={estilosGlobales.colorTextoGeneral} />
             <Text style={[estilos.textoTurno, estilos.margenUltimoTexto]}>
-              {`La demora estimada es de ${demoraActual?.hours > 0 ? `${demoraActual?.hours} hs.` : ''} ${demoraActual?.minutes ? parseInt(demoraActual.minutes, 10) : '?'} minutos.`}
+              Recuerde estar en el lugar al menos 15 minutos antes del horario.
             </Text>
           </View>
         </View>
@@ -313,4 +299,4 @@ const Turno = ({ navigation }) => {
   );
 };
 
-export default withErrorBoundary('Error en turno.', withDialogoEmergente(Turno));
+export default withErrorBoundary('Error en turno.', withDialogoEmergente(TurnoAgendado));

@@ -1,9 +1,9 @@
 // @flow
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import {
   View, StyleSheet, Alert, ActivityIndicator, Text, ScrollView
 } from 'react-native';
-import { obtenerTicketsParaUsuario, obtenerCentrosAtencion } from '../../lib/servicios';
+import { obtenerTurnosTicketsParaUsuario, obtenerCentrosAtencion } from '../../lib/servicios';
 import { ContextoEstados } from '../../lib/contextoEstados';
 import withErrorBoundary from '../../hoc/withErrorBoundary';
 import withDialogoEmergente from '../../hoc/withDialogoEmergente';
@@ -16,6 +16,12 @@ import {
   esTokenValido,
   crearClienteFirebase
 } from '../../lib/ayudante';
+import BotonRipple from '../../componentes/comunes/botonRipple';
+
+const TipoTurno = {
+  turnoFila: 1,
+  turnoAgendado: 2,
+};
 
 const Lobby = ({ navigation }) => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
@@ -23,9 +29,11 @@ const Lobby = ({ navigation }) => {
     estadoLogin,
     estadoCentros,
     estadoTurnosActivos,
+    estadoTurnosAgendadosActivos,
     estadoFbToken,
     estadoTemaUsuario,
     fijarTurnosEnEstado,
+    fijarTurnosAgendadosEnEstado,
     fijarCentrosEnEstado,
     cambiarTokenFirebaseEnEstado,
     fijarUsuarioLogueadoEnEstado,
@@ -33,6 +41,8 @@ const Lobby = ({ navigation }) => {
     asignarEstadoIrEvaluacion
   } = useContext(ContextoEstados);
   const { abrirDialogoEmergente } = useContext(ContextoDialogoEmergente);
+  const [cargando, fijarCargando] = useState(true);
+  const [mostrarTurnosFilas, cambiarMostrarTurnosFilas] = useState(true);
 
   const estilos = StyleSheet.create({
     contenedor: {
@@ -40,7 +50,12 @@ const Lobby = ({ navigation }) => {
       backgroundColor: estilosGlobales.colorFondoGlobal,
       flexDirection: 'column',
       alignItems: 'center',
-      justifyContent: 'center'
+      justifyContent: 'flex-start',
+    },
+    contenedorCarga: {
+      flex: 1,
+      backgroundColor: estilosGlobales.colorFondoGlobal,
+      justifyContent: 'center',
     },
     encabezado: {
       height: 23,
@@ -75,7 +90,7 @@ const Lobby = ({ navigation }) => {
       alignItems: 'center',
       backgroundColor: estilosGlobales.colorFondoGlobal,
       width: '100%',
-      flex: 3,
+      flex: 1.5,
       paddingTop: 40,
     },
     centro: {
@@ -107,15 +122,13 @@ const Lobby = ({ navigation }) => {
       flexDirection: 'column',
     },
     subContenedorTitulo: {
+      flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
       position: 'absolute',
       top: 225,
-      width: '90%',
-      backgroundColor: '#8B6CC6',
-      height: 45,
-      borderRadius: 10,
-      zIndex: 1
+      width: '100%',
+      zIndex: 1,
     },
   });
 
@@ -132,11 +145,34 @@ const Lobby = ({ navigation }) => {
     );
     // --- Fin Firebase ----
 
-    const consultarTicketsDeUsuario = () => obtenerTicketsParaUsuario(estadoLogin.token)
+    const consultarCentros = () => {
+      if (estadoCentros == null || estadoCentros.centros.length === 0) {
+        obtenerCentrosAtencion(estadoLogin.token)
+          .then(res => res.json())
+          .then(respuesta => {
+            fijarCentrosEnEstado(respuesta.response);
+          })
+          .catch((error) => {
+            if (esTokenValido(
+              error?.message,
+              fijarUsuarioLogueadoEnEstado,
+              estadoLogin.email,
+              estadoFbToken,
+              estadoTemaUsuario
+            )) {
+              Alert.alert(procesarMensajeError(error.message, 'Error durante la carga de centros.'));
+            }
+          });
+      }
+    };
+
+    const consultarTurnosTicketsDeUsuario = () => obtenerTurnosTicketsParaUsuario(estadoLogin.token)
       .then(res => res.json())
       .then(respuesta => {
         if (respuesta.success) {
-          fijarTurnosEnEstado(respuesta.response);
+          fijarTurnosEnEstado(respuesta.response?.tickets);
+          fijarTurnosAgendadosEnEstado(respuesta.response?.turns);
+          fijarCargando(false);
         } else {
           Alert.alert('Error al cargar sus turnos.');
         }
@@ -153,30 +189,12 @@ const Lobby = ({ navigation }) => {
         }
       });
 
-    consultarTicketsDeUsuario();
-
-    if (estadoCentros == null || estadoCentros.centros.length === 0) {
-      obtenerCentrosAtencion(estadoLogin.token)
-        .then(res => res.json())
-        .then(respuesta => {
-          fijarCentrosEnEstado(respuesta.response);
-        })
-        .catch((error) => {
-          if (esTokenValido(
-            error?.message,
-            fijarUsuarioLogueadoEnEstado,
-            estadoLogin.email,
-            estadoFbToken,
-            estadoTemaUsuario
-          )) {
-            Alert.alert(procesarMensajeError(error.message, 'Error durante la carga de centros.'));
-          }
-        });
-    }
+    consultarCentros();
+    consultarTurnosTicketsDeUsuario();
 
     // Configura un intervalo de consulta para refrescar los turnos cada 1 minuto.
     const idIntervalo = setInterval(() => {
-      consultarTicketsDeUsuario();
+      consultarTurnosTicketsDeUsuario();
     }, 60000);
     // Cuando el usuario abandona la pantalla limpia el intervalo.
     return () => {
@@ -184,41 +202,14 @@ const Lobby = ({ navigation }) => {
     };
   }, []);
 
-  const seleccionarTurnoActivo = (turno) => {
+  const seleccionarTurnoActivo = (turno, tipoTurno) => {
     fijarTurnoActualEnEstado(turno, null);
-    navigation.navigate('Turno');
+    navigation.navigate(tipoTurno === TipoTurno.turnoFila ? 'Turno' : 'TurnoAgendado');
   };
 
-  const obtenerTurnoParaCentro = (idCentro) => estadoTurnosActivos
-    .find(turno => turno.Center.id === idCentro);
-
-  const seleccionarCentro = (centro) => {
-    const turnoExistente = obtenerTurnoParaCentro(centro.id);
-    // const turnoAgendadoExistente = obtenerTurnoAgendadoParaCentro(centro.id);
-    const turnoAgendadoExistente = null;
-    // if centro.service_type: 0 = fila, 1 = agendado, 2 = ambos
-    const tipoServicio = 2;
-    switch (tipoServicio) {
-      case 0:
-        if (turnoExistente) {
-          fijarTurnoActualEnEstado(turnoExistente, null);
-          navigation.navigate('Turno');
-        } else {
-          navigation.navigate('CentroAtencion', { centro });
-        }
-        break;
-      case 1:
-        navigation.navigate('CentroAtencion', { centro });
-        break;
-      default:
-        navigation.navigate('TipoTurno', { centro, turnoExistente, turnoAgendadoExistente });
-        break;
-    }
-  };
-
-  if (!estadoTurnosActivos || !estadoCentros) {
+  if (cargando) {
     return (
-      <View style={estilos.contenedor}>
+      <View style={estilos.contenedorCarga}>
         <ActivityIndicator size="large" color="#FFF" />
       </View>
     );
@@ -231,7 +222,7 @@ const Lobby = ({ navigation }) => {
           <TejaChica
             key={centro.id}
             appIcon={centro.app_icon}
-            manejadorClick={() => seleccionarCentro(centro)}
+            manejadorClick={() => navigation.navigate('CentroAtencion', { centro })}
           >
             <Text multiline editable={false} style={estilos.texto}>{centro.name}</Text>
           </TejaChica>
@@ -240,26 +231,109 @@ const Lobby = ({ navigation }) => {
     </View>
   );
 
-  const TurnosPedidos = () => (
-    <View style={estilos.contenedorTurnos}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        { estadoTurnosActivos.map(turno => (
-          <Teja
-            key={turno.id}
-            appIcon={turno.Center.app_icon}
-            manejadorClick={() => seleccionarTurnoActivo(turno)}
-          >
-            <View style={estilos.contenedorHijos}>
-              <Text style={estilos.centro}>{turno.Center.name}</Text>
-              <Text style={estilos.categoria}>{turno.Category.name}</Text>
-              <Text style={turno.status === 'waiting' ? estilos.espera : estilos.enLugar}>
-                {turno.status === 'waiting' ? 'Esperando' : 'En el lugar'}
-              </Text>
-            </View>
-          </Teja>
-        ))}
-      </ScrollView>
+  const TabsDeTurnos = () => (
+    <View style={estilos.subContenedorTitulo}>
+      <BotonRipple
+        height={55}
+        width="47%"
+        colorFondo={`${mostrarTurnosFilas ? '#8B6CC6' : '#F1F1F1'}`}
+        colorBorde={`${mostrarTurnosFilas ? '#8B6CC6' : '#F1F1F1'}`}
+        elevacion={5}
+        manejadorClick={() => cambiarMostrarTurnosFilas(true)}
+        borderRadius={0}
+        borderTopLeftRadius={10}
+        borderBottomLeftRadius={10}
+      >
+        <Text
+          style={{
+            ...estilosGlobales.tituloSeccionClaro,
+            color: mostrarTurnosFilas ? '#ffffff' : '#8B6CC6',
+          }}
+        >
+          Turnos para filas
+        </Text>
+      </BotonRipple>
+      <BotonRipple
+        height={55}
+        width="47%"
+        colorFondo={`${!mostrarTurnosFilas ? '#8B6CC6' : '#F1F1F1'}`}
+        colorBorde={`${!mostrarTurnosFilas ? '#8B6CC6' : '#F1F1F1'}`}
+        elevacion={5}
+        manejadorClick={() => cambiarMostrarTurnosFilas(false)}
+        borderRadius={0}
+        borderTopRightRadius={10}
+        borderBottomRightRadius={10}
+      >
+        <Text
+          style={{
+            ...estilosGlobales.tituloSeccionClaro,
+            color: !mostrarTurnosFilas ? '#ffffff' : '#8B6CC6',
+          }}
+        >
+          Turnos agendados
+        </Text>
+      </BotonRipple>
     </View>
+  );
+
+  const TurnosFilaPedidos = () => (
+    estadoTurnosActivos?.length > 0
+      ? (
+        <View style={estilos.contenedorTurnos}>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            { estadoTurnosActivos?.map(turno => (
+              <Teja
+                key={turno.id}
+                appIcon={turno.Center.app_icon}
+                manejadorClick={() => seleccionarTurnoActivo(turno, TipoTurno.turnoFila)}
+              >
+                <View style={estilos.contenedorHijos}>
+                  <Text style={estilos.centro}>{turno.Center.name}</Text>
+                  <Text style={estilos.categoria}>{turno.Category.name}</Text>
+                  <Text style={turno.status === 'waiting' ? estilos.espera : estilos.enLugar}>
+                    {turno.status === 'waiting' ? 'Esperando' : 'En el lugar'}
+                  </Text>
+                </View>
+              </Teja>
+            ))}
+          </ScrollView>
+        </View>
+      )
+      : (
+        <View style={estilos.contenedorTurnos}>
+          <Text style={{ color: '#ffffff', fontSize: 18, marginTop: 20 }}>No hay turnos para filas.</Text>
+        </View>
+      )
+  );
+
+  const TurnosAgendadosPedidos = () => (
+    estadoTurnosAgendadosActivos?.length > 0
+      ? (
+        <View style={estilos.contenedorTurnos}>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            { estadoTurnosAgendadosActivos?.map(turno => (
+              <Teja
+                key={turno.id}
+                appIcon={turno.Center.app_icon}
+                manejadorClick={() => seleccionarTurnoActivo(turno, TipoTurno.turnoAgendado)}
+              >
+                <View style={estilos.contenedorHijos}>
+                  <Text style={estilos.centro}>{turno.Center.name}</Text>
+                  <Text style={estilos.categoria}>{turno.Category.name}</Text>
+                  <Text style={estilos.categoria}>
+                    {`Fecha: ${turno.turno_date} - Horario: ${turno.turno_time}`}
+                  </Text>
+                </View>
+              </Teja>
+            ))}
+          </ScrollView>
+        </View>
+      )
+      : (
+        <View style={estilos.contenedorTurnos}>
+          <Text style={{ color: '#ffffff', fontSize: 18, marginTop: 20 }}>No hay turnos agendados.</Text>
+        </View>
+      )
   );
 
   return (
@@ -269,12 +343,11 @@ const Lobby = ({ navigation }) => {
         <Text style={estilosGlobales.tituloSeccion}>Sacar turno para:</Text>
       </View>
       <ListadoCentros />
-      <View style={estilos.subContenedorTitulo} elevation={5}>
-        <Text style={estilosGlobales.tituloSeccionClaro}>
-          { estadoTurnosActivos.length > 0 ? 'Turnos pedidos:' : 'Usted no tiene turnos pedidos' }
-        </Text>
-      </View>
-      { estadoTurnosActivos.length > 0 && <TurnosPedidos />}
+
+      <TabsDeTurnos />
+      { mostrarTurnosFilas
+        ? <TurnosFilaPedidos />
+        : <TurnosAgendadosPedidos />}
     </View>
   );
 };

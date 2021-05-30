@@ -12,13 +12,18 @@ type Props = {
   colorFondo?: string,
   colorBorde?: string,
   borderRadius?: number,
+  borderTopLeftRadius?: number,
+  borderTopRightRadius?: number,
+  borderBottomLeftRadius?: number,
+  borderBottomRightRadius?: number,
   manejadorClick?: Function,
   colorEfecto?: string,
   estilo?: Object,
   children: React.Element<any> | React.Element<any>[],
   maxOpacity?: number,
   amplitudEfecto?: number,
-  deshabilitado?: boolean
+  deshabilitado?: boolean,
+  elevacion?: number,
 };
 
 const BotonRipple = (props: Props) => {
@@ -29,13 +34,18 @@ const BotonRipple = (props: Props) => {
     colorFondo = estilosGlobales.colorFondoBotonPrincipal,
     colorBorde = estilosGlobales.colorBordeBotonPrincipal,
     borderRadius = 10,
+    borderTopLeftRadius,
+    borderTopRightRadius,
+    borderBottomLeftRadius,
+    borderBottomRightRadius,
     manejadorClick = () => {},
     colorEfecto = estilosGlobales.colorEfectoClickBotonPrincipal,
     estilo = {},
     children,
     maxOpacity = 0.2,
     amplitudEfecto = 1,
-    deshabilitado = false
+    deshabilitado = false,
+    elevacion = 0,
   } = props;
 
   const [scaleValue] = useState(new Animated.Value(0.01));
@@ -56,8 +66,8 @@ const BotonRipple = (props: Props) => {
         scaleValue.setValue(0.01);
         opacityValue.setValue(maxOpacity);
         setPresiono(false);
-      }, 150);
-      setTimeout(() => manejadorClick(), 350);
+      }, 10);
+      setTimeout(() => manejadorClick(), 50);
     });
   };
 
@@ -70,6 +80,10 @@ const BotonRipple = (props: Props) => {
         width: '100%',
         height: heightContainer - 3,
         borderRadius,
+        borderTopLeftRadius,
+        borderTopRightRadius,
+        borderBottomLeftRadius,
+        borderBottomRightRadius,
         transform: [{ scale: scaleValue }],
         opacity: opacityValue,
         backgroundColor: colorEfecto,
@@ -78,13 +92,17 @@ const BotonRipple = (props: Props) => {
     />
   );
 
-  const iconContainer = {
+  const estiloContenedor = {
     width: widthContainer,
     height: heightContainer,
     borderWidth: 1.7,
     borderColor: !presiono ? colorBorde : estilosGlobales.colorFondoGlobal,
     backgroundColor: colorFondo ?? 'none',
-    borderRadius
+    borderRadius,
+    borderTopLeftRadius,
+    borderTopRightRadius,
+    borderBottomLeftRadius,
+    borderBottomRightRadius,
   };
 
   return (
@@ -92,7 +110,7 @@ const BotonRipple = (props: Props) => {
       onPress={onPressed}
       disabled={deshabilitado}
     >
-      <View style={[iconContainer, estilo]}>
+      <View style={[estiloContenedor, estilo]} elevation={elevacion}>
         {renderRippleView()}
         <View>
           {children}
