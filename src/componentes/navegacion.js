@@ -224,7 +224,7 @@ export default () => {
   }
 
   if (estadoTurnosParaEvaluar?.length > 0 || estadoIrEvaluacion) {
-    // return NavegadorEvaluacion(estilosGlobales);
+    return NavegadorEvaluacion(estilosGlobales);
   }
   if ((estadoLogin?.email && estadoLogin?.token)) {
     return NavegadorAutenticado(estilosGlobales, estadoTurnoActual, estadoDialogoEmergente);

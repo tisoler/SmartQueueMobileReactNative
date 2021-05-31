@@ -211,9 +211,11 @@ const CentrosAtencion = (props) => {
     </View>
   );
 
-  // Cuando el usuario confirma el turno (pantalla turno) y vuelve con el "volver" del SO
+  // Cuando el usuario confirma el ticket (pantalla turno) y vuelve con el "volver" del SO
   // no tiene que cargar esta pantalla, debe ir a la lobby.
-  if (estadoTurnosActivos.some(t => t.Center.id === centro.id)) {
+  if (tipoTurno === tipoTurnoEnum.fila
+    && estadoTurnosActivos.some(t => t.Center.id === centro.id)
+  ) {
     navigation.navigate('Lobby');
   }
 

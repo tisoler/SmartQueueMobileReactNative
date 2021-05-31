@@ -33,7 +33,7 @@ const Lobby = ({ navigation }) => {
     estadoFbToken,
     estadoTemaUsuario,
     fijarTurnosEnEstado,
-    fijarTurnosAgendadosEnEstado,
+    fijarTodosTurnosEnEstado,
     fijarCentrosEnEstado,
     cambiarTokenFirebaseEnEstado,
     fijarUsuarioLogueadoEnEstado,
@@ -146,7 +146,7 @@ const Lobby = ({ navigation }) => {
     // --- Fin Firebase ----
 
     const consultarCentros = () => {
-      if (estadoCentros == null || estadoCentros.centros.length === 0) {
+      if (estadoCentros == null || estadoCentros.centros?.length === 0) {
         obtenerCentrosAtencion(estadoLogin.token)
           .then(res => res.json())
           .then(respuesta => {
@@ -170,8 +170,7 @@ const Lobby = ({ navigation }) => {
       .then(res => res.json())
       .then(respuesta => {
         if (respuesta.success) {
-          fijarTurnosEnEstado(respuesta.response?.tickets);
-          fijarTurnosAgendadosEnEstado(respuesta.response?.turns);
+          fijarTodosTurnosEnEstado(respuesta.response?.tickets, respuesta.response?.turns);
           fijarCargando(false);
         } else {
           Alert.alert('Error al cargar sus turnos.');
@@ -218,7 +217,7 @@ const Lobby = ({ navigation }) => {
   const ListadoCentros = () => (
     <View style={estilos.contenedorCentros}>
       <ScrollView horizontal showsVerticalScrollIndicator={false}>
-        { estadoCentros.centros.map(centro => (
+        { estadoCentros?.centros?.map(centro => (
           <TejaChica
             key={centro.id}
             appIcon={centro.app_icon}

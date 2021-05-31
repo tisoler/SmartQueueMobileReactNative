@@ -4,6 +4,7 @@ import { createContext, useState } from 'react';
 import {
   agregarTurnoActivoAccion,
   fijarTurnosAccion,
+  fijarTodosTurnosAccion, // Borrar
   fijarUsuarioLogueadoAccion,
   removerTurnoAccion,
   confirmarAsistenciaTurnoAccion,
@@ -67,6 +68,21 @@ export const ProveedorContextoEstados = (props: Props) => {
       turnosUsuario
     );
   };
+
+  // Revisar
+  const fijarTodosTurnosEnEstado = (
+    turnosFilasUsuario: Array<Object>,
+    turnosAgendadosUsuario: Array<Object>
+  ) => {
+    fijarTodosTurnosAccion(
+      asignarEstadoTurnosActivos,
+      asignarEstadoTurnosAgendadosActivos,
+      asignarEstadoTurnosParaEvaluar,
+      turnosFilasUsuario,
+      turnosAgendadosUsuario
+    );
+  };
+
   const fijarUsuarioLogueadoEnEstado = (
     email: string,
     token: string,
@@ -134,6 +150,7 @@ export const ProveedorContextoEstados = (props: Props) => {
       agregarTurnoAgendadoActivoEnEstado,
       fijarTurnosEnEstado,
       fijarTurnosAgendadosEnEstado,
+      fijarTodosTurnosEnEstado,
       fijarUsuarioLogueadoEnEstado,
       removerTurnoEnEstado,
       confirmarAsistenciaTurnoEnEstado,

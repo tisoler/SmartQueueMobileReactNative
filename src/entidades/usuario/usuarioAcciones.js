@@ -22,6 +22,23 @@ export const fijarTurnosAccion = (
   asignarEstadoTurnosParaEvaluar(turnosParaEvaluar);
 };
 
+// REVISAR Y BORRAR
+export const fijarTodosTurnosAccion = (
+  asignarEstadoTurnosActivos: Function,
+  asignarEstadoTurnosAgendadosActivos: Function,
+  asignarEstadoTurnosParaEvaluar: Function,
+  turnosFilaUsuario: Array<Object>,
+  turnosAgendadosUsuario: Array<Object>,
+) => {
+  const turnosFilaActivos = turnosFilaUsuario.filter(t => ['waiting', 'ready'].includes(t.status));
+  const turnosAgendadosActivos = turnosAgendadosUsuario.filter(t => ['waiting', 'ready'].includes(t.status));
+  const turnosFilaParaEvaluar = turnosFilaUsuario.filter(t => t.status === 'finished');
+  const turnosAgendadosParaEvaluar = turnosAgendadosUsuario.filter(t => t.status === 'finished');
+  asignarEstadoTurnosActivos(turnosFilaActivos);
+  asignarEstadoTurnosAgendadosActivos(turnosAgendadosActivos);
+  asignarEstadoTurnosParaEvaluar([...turnosFilaParaEvaluar, ...turnosAgendadosParaEvaluar]);
+};
+
 export const fijarUsuarioLogueadoAccion = (
   email: string,
   token: string,
