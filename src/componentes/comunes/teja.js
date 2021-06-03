@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { useState, useContext } from 'react';
+import { useState, } from 'react';
 import {
   StyleSheet,
   Image,
@@ -11,7 +11,6 @@ import {
   Platform
 } from 'react-native';
 import { IconosCentros } from '../../lib/constantes';
-import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 
 type Props = {
   manejadorClick?: Function,
@@ -29,7 +28,6 @@ const Teja = (props: Props) => {
     height = 80,
     width = 270,
   } = props;
-  const { estilosGlobales } = useContext(ContextoEstilosGlobales);
 
   const maxOpacity = 0.2;
   const [scaleValue] = useState(new Animated.Value(0.01));

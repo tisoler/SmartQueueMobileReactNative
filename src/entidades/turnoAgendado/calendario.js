@@ -20,7 +20,7 @@ LocaleConfig.locales.es = {
 };
 LocaleConfig.defaultLocale = 'es';
 
-function Calendario(props) {
+function Calendario(props: any) {
   const {
     centro, elegirTipoTurno, categoria, navigation,
   } = props;
@@ -149,7 +149,10 @@ function Calendario(props) {
 
           markedDates={{
             ...diasDeshabilitados,
-            [diaSeleccionado]: { selected: true, selectedColor: estilosGlobales.colorFondoLogoLogin },
+            [diaSeleccionado || '']: {
+              selected: true,
+              selectedColor: estilosGlobales.colorFondoLogoLogin
+            },
           }}
 
           style={{

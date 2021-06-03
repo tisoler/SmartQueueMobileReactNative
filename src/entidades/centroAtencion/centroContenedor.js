@@ -7,7 +7,7 @@ import {
   useEffect,
 } from 'react';
 import {
-  View, StyleSheet, Text, Image, Animated, ScrollView
+  View, StyleSheet, Text, Image, Animated,
 } from 'react-native';
 import { ContextoEstados } from '../../lib/contextoEstados';
 import { IconosCentros, tipoTurno, pantalla } from '../../lib/constantes';

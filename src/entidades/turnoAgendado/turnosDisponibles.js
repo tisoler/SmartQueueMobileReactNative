@@ -12,7 +12,7 @@ import { ContextoEstados } from '../../lib/contextoEstados';
 import { procesarMensajeError, esTokenValido, } from '../../lib/ayudante';
 import BotonRipple from '../../componentes/comunes/botonRipple';
 
-function TurnosDisponibles(props) {
+function TurnosDisponibles(props: any) {
   const {
     centro, categoria, fijarDiaSeleccionado, diaSeleccionado, elegirTipoTurno, navigation,
   } = props;

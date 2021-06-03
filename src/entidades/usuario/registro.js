@@ -1,28 +1,24 @@
 // @flow
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
-  StyleSheet, View, Text, ScrollView, Image, Alert
+  StyleSheet, View, Text, ScrollView, Alert, Keyboard, Animated, Dimensions,
 } from 'react-native';
 import withErrorBoundary from '../../hoc/withErrorBoundary';
 import TextoIngreso from '../../componentes/comunes/textoIngreso';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
-import Etiqueta from '../../componentes/comunes/etiqueta';
-// V2 import Camara from '../../componentes/comunes/camara';
 import { ContextoEstados } from '../../lib/contextoEstados';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 import {
   validarExistenciaEmanil,
   validarExistenciaDNI,
-  // guardarAvatar,
   guardarUsuario,
   login,
 } from '../../lib/servicios';
-import { NombresIconosGenerales } from '../../lib/constantes';
 import { recuperarTokenFB, procesarMensajeError } from '../../lib/ayudante';
+import LogoLogin from '../../componentes/comunes/svg/logoLogin';
 
 const Registro = ({ navigation }) => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
-  const [numeroPantalla, cambioPantalla] = useState(1);
   const [emailUsuario, cambioEmail] = useState('');
   const [contrasenaUsuario, cambioContrasena] = useState('');
   const [nombreUsuario, cambioNombre] = useState('');
@@ -33,238 +29,190 @@ const Registro = ({ navigation }) => {
   const [DNIExistente, setearDNIExistente] = useState(false);
   const [botonCargando, setearBotonCargando] = useState(false);
   const [mostrarValidaciones, cambiarMostrarValidaciones] = useState(false);
-  // V2 const [uriFoto, guardarUriFoto] = useState();
-  const [uriFoto] = useState();
   const [fbtoken, setFbtoken] = useState('');
   const { fijarUsuarioLogueadoEnEstado } = useContext(ContextoEstados);
+  const [tecladoVisible, cambioTecladoVisible] = useState(false);
+  const [anchoContenedorLogo] = useState(new Animated.Value(0));
+  const [medidaLogo] = useState(new Animated.Value(0));
+  const [opacidadLogo] = useState(new Animated.Value(0.01));
+  const topInicial = Math.round(Dimensions.get('window')?.height);
+  const [posicionRegistroCompleto] = useState(new Animated.Value(topInicial));
+  const [opacidadRegistroCompleto] = useState(new Animated.Value(0.01));
+
+  useEffect(() => {
+    Keyboard.addListener('keyboardDidShow', () => cambioTecladoVisible(true));
+    Keyboard.addListener('keyboardDidHide', () => cambioTecladoVisible(false));
+
+    return () => {
+      Keyboard.removeListener('keyboardDidShow');
+      Keyboard.removeListener('keyboardDidHide');
+    };
+  }, []);
 
   const estilos = StyleSheet.create({
     contenedorGlobal: {
       flex: 1,
       flexDirection: 'column',
-      backgroundColor: estilosGlobales.colorFondoGlobal
+      backgroundColor: '#E7E9EE',
+    },
+    contenedorRegistroCompleto: {
+      height: '100%',
+      width: '100%',
+      position: 'absolute',
+      flexDirection: 'column',
+      backgroundColor: '#8B6CC6',
+    },
+    contenedorLogo: {
+      backgroundColor: estilosGlobales.colorFondoGlobal,
+      flexDirection: 'column',
+      alignItems: 'center',
+      width: '100%',
+      display: !tecladoVisible ? 'flex' : 'none',
+    },
+    fondoLogo: {
+      position: 'absolute',
+      top: !tecladoVisible ? 10 : -140,
+      backgroundColor: estilosGlobales.colorFondoLogoLogin,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 100,
+      zIndex: 2,
+    },
+    mensajeError: {
+      color: '#696868',
     },
     contenedorCampos: {
-      flexGrow: 2,
+      flexGrow: 3,
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center'
     },
-    encabezadoDatosUsuario: {
-      width: '100%',
-      alignItems: 'center',
-      backgroundColor: estilosGlobales.colorFondoEncabezadoTitulos
-    },
     subContenedorCampos: {
       flexGrow: 5,
       alignItems: 'center',
-      justifyContent: 'center',
-      width: '100%',
-      backgroundColor: estilosGlobales.colorFondoContenedorDatos
-    },
-    subContenedorMensajeFoto: {
-      flexGrow: 1.2,
-      alignItems: 'center',
-      justifyContent: 'flex-end',
-      paddingBottom: 20,
-      backgroundColor: estilosGlobales.colorFondoContenedorDatos
+      justifyContent: 'space-between',
+      width: '70%',
+      marginTop: 20,
+      marginBottom: 20,
     },
     subContenedorBotones: {
-      flexGrow: 1,
+      flexGrow: 0.5,
       alignItems: 'center',
       justifyContent: 'flex-start',
       width: '100%'
     },
-    encabezadoPantallaConfirmar: {
-      flexDirection: 'row',
-      height: 130,
-      width: '100%',
-      backgroundColor: estilosGlobales.colorFondoEncabezadoTitulos,
-      alignItems: 'center',
-      paddingLeft: 5
+    subtituloGrande: {
+      color: '#ffffff',
+      fontSize: 20,
+      textAlign: 'center',
+      lineHeight: 25,
     },
-    contenedorDatosConfirmar: {
-      flexGrow: 1,
-      flexDirection: 'column',
-      justifyContent: 'space-between',
-      width: '100%',
-      paddingLeft: 7,
-      paddingTop: 30,
-      paddingBottom: 30,
-      backgroundColor: estilosGlobales.colorFondoContenedorDatos
+    tituloSeccion: {
+      color: '#ffffff',
+      fontSize: 18,
+      textAlign: 'center',
+      lineHeight: 50,
     },
-    contenedorFotografia: {
-      position: 'absolute',
-      width: 130,
-      height: 130,
-      right: 10,
-      paddingTop: 5,
-      paddingBottom: 5
-    },
-    contenedorAvatar: {
-      position: 'absolute',
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: 110,
-      width: 110,
-      borderRadius: 100,
-      backgroundColor: estilosGlobales.colorAvatarLetra,
-      paddingBottom: 4,
-      right: 10
-    },
-    letraAvatar: {
-      fontSize: 50,
-      color: estilosGlobales.colorLetraEncabezado,
-      textAlign: 'center'
-    }
   });
 
-  const textoValidacion = texto => <Text style={estilosGlobales.mensajeError}>{texto}</Text>;
-  const pantallaDatosPrincipales = (
-    <View style={estilos.contenedorCampos}>
-      <View style={estilos.encabezadoDatosUsuario}>
-        <Text style={estilosGlobales.tituloSeccion}>
-          Mis datos:
-        </Text>
-      </View>
-      <View style={estilos.subContenedorCampos}>
-        <TextoIngreso
-          placeholderText="e-mail"
-          value={emailUsuario}
-          icono={NombresIconosGenerales.correo}
-          manejadorCambioTexto={cambioEmail}
-          tipoDeTeclado="email-address"
-          sinPrimeraLetraMayuscula
-        />
-        {!emailUsuario?.trim() && mostrarValidaciones && textoValidacion('Dato requerido.')}
-        {emailExistente && mostrarValidaciones && textoValidacion('El email ingresado ya está registrado.')}
-        <TextoIngreso
-          placeholderText="Contraseña"
-          value={contrasenaUsuario}
-          icono={NombresIconosGenerales.contrasena}
-          manejadorCambioTexto={cambioContrasena}
-          puedeEsconderTexto
-          largoMaximo={16}
-        />
-        {!contrasenaUsuario?.trim() && mostrarValidaciones && textoValidacion('Dato requerido.')}
-        {contrasenaUsuario?.trim().length < 8 && textoValidacion('Debe tener 8 caracteres al menos.')}
-        {contrasenaUsuario?.includes(' ') && mostrarValidaciones && textoValidacion('No puede tener espacios en blanco.')}
-        <TextoIngreso
-          placeholderText="Nombre"
-          value={nombreUsuario}
-          icono={NombresIconosGenerales.usuario}
-          manejadorCambioTexto={cambioNombre}
-        />
-        {!nombreUsuario?.trim() && mostrarValidaciones && textoValidacion('Dato requerido.')}
-        <TextoIngreso
-          placeholderText="Apellido"
-          value={apellidoUsuario}
-          icono={NombresIconosGenerales.usuario}
-          manejadorCambioTexto={cambioApellido}
-        />
-        {!apellidoUsuario?.trim() && mostrarValidaciones && textoValidacion('Dato requerido.')}
-        <TextoIngreso
-          placeholderText="DNI"
-          value={dniUsuario}
-          icono={NombresIconosGenerales.dni}
-          manejadorCambioTexto={cambioDNI}
-          largoMaximo={8}
-          tipoDeTeclado="numeric"
-        />
-        {!dniUsuario?.trim() && mostrarValidaciones && textoValidacion('Dato requerido.')}
-        {DNIExistente && mostrarValidaciones && textoValidacion('El DNI ingresado ya está registrado.')}
-      </View>
-    </View>
-  );
-
-  /* Recuperar para V2
-  const pantallaSolicitarFotografia = (
-    <View style={estilos.subContenedorMensajeFoto}>
-      <Text style={estilosGlobales.textoAviso}>
-        Es necesario que se tome una foto a fin de ser reconocida/o al momento de ser atendida/o.
-      </Text>
-    </View>
-  );
-
-  const aceptarFoto = () => {
-    cambioPantalla(numeroPantalla + 1);
+  const animacionIngresoEncabezado = () => {
+    Animated.timing(anchoContenedorLogo, {
+      toValue: 90,
+      duration: 700,
+      useNativeDriver: false,
+    }).start();
   };
 
-  const pantallaCamara = (
-    <Camara
-      guardarUriFoto={guardarUriFoto}
-      uriFoto={uriFoto}
-      aceptarFoto={aceptarFoto}
-    />
-  );
-  Fin recuperar para V2 */
-
-  const iniciales = (`${nombreUsuario?.charAt(0) || '?'}${apellidoUsuario?.charAt(0) || '?'}`).toUpperCase();
-  const pantallaConfirmarDatos = (
-    <View style={estilos.contenedorCampos}>
-      <View style={estilos.encabezadoPantallaConfirmar}>
-        <View style={{ width: '60%' }}>
-          <Etiqueta multilinea value={`${nombreUsuario} ${apellidoUsuario}`} icono={NombresIconosGenerales.usuario} />
-        </View>
-        {uriFoto ? (
-          <View style={estilos.contenedorFotografia}>
-            <Image
-              source={{ uri: uriFoto, isStatic: true }}
-              style={{ width: '100%', height: '100%', borderRadius: 100 }}
-            />
-          </View>
-        ) : (
-          <View style={estilos.contenedorAvatar}>
-            <Text style={estilos.letraAvatar}>{iniciales}</Text>
-          </View>
-        )}
-      </View>
-      <View style={estilos.contenedorDatosConfirmar}>
-        <Etiqueta value={dniUsuario} icono={NombresIconosGenerales.dni} />
-        <Etiqueta value={emailUsuario} icono={NombresIconosGenerales.correo} />
-        <Etiqueta
-          value={contrasenaUsuario}
-          icono={NombresIconosGenerales.contrasena}
-          puedeEsconderTexto
-        />
-      </View>
-    </View>
-  );
-
-  const pantallaRegistroCompletado = (
-    <View style={estilos.contenedorCampos}>
-      <Text style={estilosGlobales.subtituloGrande}>Registro completado.</Text>
-      <Text style={estilosGlobales.tituloSeccion}>Ya puede comenzar a pedir turnos...</Text>
-    </View>
-  );
-
-  const pantallas = {
-    /* eslint-disable no-useless-computed-key */
-    [1]: pantallaDatosPrincipales,
-    [2]: pantallaConfirmarDatos,
-    [3]: pantallaRegistroCompletado
-    /* Recuperar para V2
-    [1]: pantallaDatosPrincipales,
-    [2]: pantallaSolicitarFotografia,
-    [3]: pantallaCamara,
-    [4]: pantallaConfirmarDatos,
-    [5]: pantallaRegistroCompletado
-    Fin recuperar para V2 */
-    /* eslint-enable no-useless-computed-key */
+  const animacionIngresoLogo = () => {
+    Animated.timing(medidaLogo, {
+      toValue: 100,
+      duration: 400,
+      useNativeDriver: false,
+    }).start();
   };
 
-  const textoBotonSiguientePorPantalla = {
-    /* eslint-disable no-useless-computed-key */
-    [1]: 'SIGUIENTE',
-    [2]: 'CONFIRMAR DATOS',
-    [3]: 'COMENZAR'
-    // Recuperar para V2
-    // [1]: 'SIGUIENTE',
-    // [2]: 'TOMAR FOTO',
-    // [4]: 'CONFIRMAR DATOS',
-    // [5]: 'COMENZAR'
-    // Fin recuperar para V2
-    /* eslint-enable no-useless-computed-key */
+  const animacionOpacidadLogo = () => {
+    Animated.timing(opacidadLogo, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const animacionPosicionRegistroCompleto = () => {
+    Animated.timing(posicionRegistroCompleto, {
+      toValue: 0,
+      duration: 1000,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const animacionOpacidadRegistroCompleto = () => {
+    Animated.timing(opacidadRegistroCompleto, {
+      toValue: 1,
+      duration: 700,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      animacionIngresoEncabezado();
+      setTimeout(() => {
+        animacionIngresoLogo();
+        setTimeout(() => {
+          animacionOpacidadLogo();
+        }, 200);
+      }, 400);
+    }, 400);
+  }, []);
+
+  const loguearUsuario = async () => {
+    try {
+      const firebaseToken = await recuperarTokenFB();
+      setFbtoken(firebaseToken);
+      const payload = { email: emailUsuario, password: contrasenaUsuario, fbtoken: firebaseToken };
+      const res = await login(payload);
+      const respuesta = await res.json();
+      return respuesta;
+    } catch (error) {
+      Alert.alert(procesarMensajeError(error.message, 'Error durante el login.'));
+    }
+    return { success: false };
+  };
+
+  const enviarUsuario: Function = async (idFoto = '') => {
+    try {
+      const usuario = {
+        dni: dniUsuario,
+        name: nombreUsuario,
+        surname: apellidoUsuario,
+        email: emailUsuario,
+        password: contrasenaUsuario,
+        image: idFoto
+      };
+
+      const res = await guardarUsuario(usuario);
+      const respuesta = await res.json();
+      return respuesta;
+    } catch (error) {
+      Alert.alert(procesarMensajeError(error.message, 'Error mientras se creaba su usuario.'));
+    }
+    return { success: false };
+  };
+
+  const guardar = async () => {
+    const respuesta = await enviarUsuario();
+    if (respuesta.success) {
+      const respuestaLogin = await loguearUsuario();
+      if (respuestaLogin.success) {
+        // Almacena temporalmente el token para notificar al usuario
+        // y permitir que acepte comenzar a operar la app.
+        cambioToken(respuestaLogin.token);
+      } else {
+        navigation.navigate('Login');
+      }
+    }
   };
 
   const validarDatosRegistro = async () => {
@@ -304,185 +252,123 @@ const Registro = ({ navigation }) => {
     return esValido;
   };
 
-  const loguearUsuario = async () => {
-    try {
-      const firebaseToken = await recuperarTokenFB();
-      setFbtoken(firebaseToken);
-      const payload = { email: emailUsuario, password: contrasenaUsuario, fbtoken: firebaseToken };
-      const res = await login(payload);
-      const respuesta = await res.json();
-      return respuesta;
-    } catch (error) {
-      Alert.alert(procesarMensajeError(error.message, 'Error durante el login.'));
-    }
-    return { success: false };
-  };
-
-  const enviarUsuario: Function = async (idFoto = '') => {
-    try {
-      const usuario = {
-        dni: dniUsuario,
-        name: nombreUsuario,
-        surname: apellidoUsuario,
-        email: emailUsuario,
-        password: contrasenaUsuario,
-        image: idFoto
-      };
-
-      const res = await guardarUsuario(usuario);
-      const respuesta = await res.json();
-      return respuesta;
-    } catch (error) {
-      Alert.alert(procesarMensajeError(error.message, 'Error mientras se creaba su usuario.'));
-    }
-    return { success: false };
-  };
-
-  /*
-  const enviarAvatar: Function = async () => {
-    const foto = new FormData();
-    foto.append('file', { uri: uriFoto, name: 'avatar.jpg', type: 'image/jpg' });
-
-    const res = await guardarAvatar({ avatar: foto });
-    const respuesta = await res.json();
-    return respuesta;
-  };
-  */
-
-  const guardar = async () => {
-    /*
-    let respuesta = enviarAvatar();
-    if (respuesta.success) {
-      respuesta = enviarUsuario(respuesta.id);
-      if (respuesta.success) {
-        loguearUsuario();
-      }
-    }
-    */
-    const respuesta = await enviarUsuario();
-    if (respuesta.success) {
-      const respuestaLogin = await loguearUsuario();
-      if (respuestaLogin.success) {
-        // Almacena temporalmente el token para notificar al usuario
-        // y permitir que acepte comenzar a operar la app.
-        cambioToken(respuestaLogin.token);
-        // V2 - cambioPantalla(5);
-        cambioPantalla(3);
-        // Fin V2
-      } else {
-        navigation.navigate('Login');
-      }
-    }
-    setearBotonCargando(false);
-  };
-
-  const accionesBotonPrincipalDatosPrincipales = async () => {
+  const registrar = async () => {
     setearBotonCargando(true);
     const sonDatosValidos = await validarDatosRegistro();
     if (sonDatosValidos) {
-      cambioPantalla(numeroPantalla + 1);
       cambiarMostrarValidaciones(false);
+      await guardar();
+      animacionPosicionRegistroCompleto();
+      setearBotonCargando(false);
+      setTimeout(() => {
+        animacionOpacidadRegistroCompleto();
+      }, 1000);
     }
     setearBotonCargando(false);
   };
 
-  const accionesBotonPrincipalPorPantalla = {
-    // Recuperar para V2
-    /* eslint-disable no-useless-computed-key */
-    /* [1]: accionesBotonPrincipalDatosPrincipales,
-    [2]: () => cambioPantalla(numeroPantalla + 1),
-    [4]: () => {
-      setearBotonCargando(true);
-      guardar();
-    }, */
-    // Almacena credenciales, esto cambia el navegador (Autenticado) y pasa a la Lobby.
-    // [5]: () => fijarUsuarioLogueadoEnEstado(emailUsuario, tokenUsuario,
-    // contrasenaUsuario, fbtoken)
-    /* eslint-enable no-useless-computed-key */
-    // Fin recuperar para V2
-
-    /* eslint-disable no-useless-computed-key */
-    [1]: accionesBotonPrincipalDatosPrincipales,
-    [2]: () => {
-      setearBotonCargando(true);
-      guardar();
-    },
-    // Almacena credenciales, esto cambia el navegador (Autenticado) y pasa a la Lobby.
-    [3]: () => fijarUsuarioLogueadoEnEstado(emailUsuario, tokenUsuario, fbtoken)
-    /* eslint-enable no-useless-computed-key */
-  };
-
-  const Botonera = () => (
-    /* Recuperar para V2
-    <View style={estilos.subContenedorBotones}>
-      { [1, 2, 4, 5].includes(numeroPantalla) // ---> Botón para avanzar en el proceso
-        && (
-        <BotonRedondeado
-          manejadorClick={accionesBotonPrincipalPorPantalla[numeroPantalla]}
-          cargando={botonCargando}
-          estilo={{ marginTop: 20 }}
-        >
-          {textoBotonSiguientePorPantalla[numeroPantalla]}
-        </BotonRedondeado>
-        )}
-
-      { [2, 4].includes(numeroPantalla) // ---> Botón para modificar datos
-        && (
+  const textoValidacion = texto => <Text style={estilos.mensajeError}>{texto}</Text>;
+  const PantallaDatosPrincipales = (
+    <View style={{ flex: 1 }}>
+      <View style={estilos.contenedorCampos}>
+        <View style={estilos.subContenedorCampos}>
+          <TextoIngreso
+            placeholderText="Email"
+            value={emailUsuario}
+            manejadorCambioTexto={cambioEmail}
+            tipoDeTeclado="email-address"
+            sinPrimeraLetraMayuscula
+          />
+          {!emailUsuario?.trim() && mostrarValidaciones && textoValidacion('Dato requerido.')}
+          {emailExistente && mostrarValidaciones && textoValidacion('Email ya registrado.')}
+          <TextoIngreso
+            placeholderText="Contraseña"
+            value={contrasenaUsuario}
+            manejadorCambioTexto={cambioContrasena}
+            puedeEsconderTexto
+            largoMaximo={16}
+          />
+          {!contrasenaUsuario?.trim() && mostrarValidaciones && textoValidacion('Dato requerido.')}
+          {contrasenaUsuario?.trim().length < 8 && mostrarValidaciones && textoValidacion('Debe tener 8 caracteres al menos.')}
+          {contrasenaUsuario?.includes(' ') && mostrarValidaciones && textoValidacion('No puede tener espacios.')}
+          <TextoIngreso
+            placeholderText="Nombre"
+            value={nombreUsuario}
+            manejadorCambioTexto={cambioNombre}
+          />
+          {!nombreUsuario?.trim() && mostrarValidaciones && textoValidacion('Dato requerido.')}
+          <TextoIngreso
+            placeholderText="Apellido"
+            value={apellidoUsuario}
+            manejadorCambioTexto={cambioApellido}
+          />
+          {!apellidoUsuario?.trim() && mostrarValidaciones && textoValidacion('Dato requerido.')}
+          <TextoIngreso
+            placeholderText="DNI"
+            value={dniUsuario}
+            manejadorCambioTexto={cambioDNI}
+            largoMaximo={8}
+            tipoDeTeclado="numeric"
+          />
+          {!dniUsuario?.trim() && mostrarValidaciones && textoValidacion('Dato requerido.')}
+          {DNIExistente && mostrarValidaciones && textoValidacion('El DNI ingresado ya está registrado.')}
+        </View>
+      </View>
+      {!tecladoVisible && (
+        <View style={estilos.subContenedorBotones}>
           <BotonRedondeado
-            manejadorClick={() => cambioPantalla(1)}
-            colorBorde={estilosGlobales.colorBordeBotonSecundario}
-            colorFondo={estilosGlobales.colorFondoBotonSecundario}
-            colorEfecto={estilosGlobales.colorEfectoClickBotonSecundario}
+            manejadorClick={registrar}
+            cargando={botonCargando}
             estilo={{ marginTop: 20 }}
           >
-            MODIFICAR MIS DATOS
+            Registrarme
           </BotonRedondeado>
-        )}
-    Fin recuperar para V2 */
-
-    <View style={estilos.subContenedorBotones}>
-      { [1, 2, 3].includes(numeroPantalla) // ---> Botón para avanzar en el proceso
-      && (
-      <BotonRedondeado
-        manejadorClick={accionesBotonPrincipalPorPantalla[numeroPantalla]}
-        cargando={botonCargando}
-        estilo={{ marginTop: 20 }}
-      >
-        {textoBotonSiguientePorPantalla[numeroPantalla]}
-      </BotonRedondeado>
+        </View>
       )}
-
-      { [2].includes(numeroPantalla) // ---> Botón para modificar datos
-        && (
-          <BotonRedondeado
-            manejadorClick={() => cambioPantalla(1)}
-            colorBorde={estilosGlobales.colorBordeBotonSecundario}
-            colorFondo={estilosGlobales.colorFondoBotonSecundario}
-            colorEfecto={estilosGlobales.colorEfectoClickBotonSecundario}
-            estilo={{ marginTop: 20 }}
-          >
-            MODIFICAR MIS DATOS
-          </BotonRedondeado>
-        )}
     </View>
   );
 
+  const PantallaRegistroCompletado = (
+    <Animated.View style={{ ...estilos.contenedorRegistroCompleto, top: posicionRegistroCompleto }}>
+      <Animated.View style={{ ...estilos.contenedorCampos, opacity: opacidadRegistroCompleto }}>
+        <Text style={estilos.subtituloGrande}>¡Ha completado el registro!</Text>
+        <Text style={estilos.tituloSeccion}>Ya puede comenzar a pedir turnos...</Text>
+      </Animated.View>
+      <Animated.View style={{ ...estilos.subContenedorBotones, opacity: opacidadRegistroCompleto }}>
+        <BotonRedondeado
+          // Almacena credenciales, esto cambia el navegador (Autenticado) y pasa a la Lobby.
+          manejadorClick={() => fijarUsuarioLogueadoEnEstado(emailUsuario, tokenUsuario, fbtoken)}
+          cargando={botonCargando}
+          estilo={{ marginTop: 20 }}
+        >
+          Comenzar
+        </BotonRedondeado>
+      </Animated.View>
+    </Animated.View>
+  );
+
   return (
-    <ScrollView
-      style={estilos.contenedorGlobal}
-      contentContainerStyle={{ flexGrow: 1 }}
-      showsVerticalScrollIndicator={false}
-    >
-      { pantallas[numeroPantalla] }
-      <Botonera />
-    </ScrollView>
-    /* V2 - <ScrollView style={estilos.contenedorGlobal} contentContainerStyle={{ flexGrow: 1 }}>
-      { pantallas[numeroPantalla] }
-      { numeroPantalla !== 3
-        && (
-          <Botonera />
-        )}
-    </ScrollView> */
+    <View style={{ flex: 1 }}>
+      <ScrollView
+        style={estilos.contenedorGlobal}
+        contentContainerStyle={{ flexGrow: 1 }}
+        showsVerticalScrollIndicator={false}
+      >
+        <Animated.View style={{ ...estilos.contenedorLogo, height: anchoContenedorLogo }}>
+          <Animated.View
+            style={{ ...estilos.fondoLogo, ...{ width: medidaLogo, height: medidaLogo } }}
+            elevation={5}
+          >
+            <Animated.View style={{ opacity: opacidadLogo }}>
+              <LogoLogin width={100} height={100} />
+            </Animated.View>
+          </Animated.View>
+        </Animated.View>
+        { PantallaDatosPrincipales }
+      </ScrollView>
+      { /* Solo visible luego de presionar Registrarme, la visibilidad se maneja con el efecto. */ }
+      { PantallaRegistroCompletado }
+    </View>
   );
 };
 

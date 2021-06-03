@@ -2,7 +2,7 @@
 // @flow
 import React, { useEffect, useState, useContext } from 'react';
 import {
-  View, StyleSheet, Text, ActivityIndicator, Alert
+  View, StyleSheet, Text, ActivityIndicator, Alert, Animated, Dimensions,
 } from 'react-native';
 import withErrorBoundary from '../../hoc/withErrorBoundary';
 import withDialogoEmergente from '../../hoc/withDialogoEmergente';
@@ -33,6 +33,10 @@ const Turno = ({ navigation }) => {
   const { turno, demora: demoraActual } = estadoTurnoActual;
   const [confirmandoTurno, cambiarConfirmandoTurno] = useState(false);
   const [cargando, cambiarCargando] = useState(true);
+  const [opacidadBienvenida] = useState(new Animated.Value(0.01));
+  const topInicial = Math.round(Dimensions.get('window')?.height);
+  const [posicionPantallaCancelar] = useState(new Animated.Value(topInicial));
+  const [opacidadPantallaCancelar] = useState(new Animated.Value(0.01));
 
   let colorFondo = estilosGlobales.colorBarraNavegacion;
   if (demoraActual?.tickets <= 10 && demoraActual?.tickets_ready <= 3) {
@@ -110,7 +114,54 @@ const Turno = ({ navigation }) => {
       fontSize: 17,
       textAlign: 'center',
     },
+    pantallaTurnoCancelado: {
+      height: '100%',
+      width: '100%',
+      position: 'absolute',
+      flexDirection: 'column',
+      backgroundColor: '#8B6CC6',
+    },
+    contenedorCampos: {
+      flexGrow: 3,
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
+    subtituloGrande: {
+      color: '#ffffff',
+      fontSize: 22,
+      textAlign: 'center',
+      lineHeight: 25,
+    },
   });
+
+  const animacionOpacidadBienvenida = () => {
+    Animated.timing(opacidadBienvenida, {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const animacionPosicionPantallaCancelar = () => {
+    Animated.timing(posicionPantallaCancelar, {
+      toValue: 0,
+      duration: 1000,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const animacionOpacidadPantallaCancelar = () => {
+    Animated.timing(opacidadPantallaCancelar, {
+      toValue: 1,
+      duration: 700,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  useEffect(() => {
+    if (turno) animacionOpacidadBienvenida();
+  }, [turno]);
 
   useEffect(() => {
     const consultarTicket = async () => {
@@ -143,13 +194,19 @@ const Turno = ({ navigation }) => {
   }, [turno?.code]);
 
   const cancelarTurno = () => {
-    cambiarCargando(true);
+    // cambiarCargando(true);
     cancelarTicket(estadoLogin.token, turno.Center.id)
       .then(res => res.json())
       .then(respuesta => {
         if (respuesta.success) {
-          removerTurnoEnEstado(turno);
-          navigation.navigate('Lobby');
+          animacionPosicionPantallaCancelar();
+          setTimeout(() => {
+            animacionOpacidadPantallaCancelar();
+            setTimeout(() => {
+              removerTurnoEnEstado(turno);
+              navigation.navigate('Lobby');
+            }, 1000);
+          }, 1000);
         } else {
           Alert.alert('Error al cancelar el turno.');
         }
@@ -194,7 +251,7 @@ const Turno = ({ navigation }) => {
       .finally(() => cambiarConfirmandoTurno(false));
   };
 
-  const obtenerAccionesTurno = () => (
+  const AccionesTurno = (
     <View style={estilos.subContenedor}>
       <BotonRedondeado
         manejadorClick={() => confirmarPresencia()}
@@ -206,7 +263,7 @@ const Turno = ({ navigation }) => {
       </BotonRedondeado>
       { !confirmandoTurno && (
         <BotonRedondeado
-          manejadorClick={() => cancelarTurno()}
+          manejadorClick={cancelarTurno}
           estilo={{ marginTop: 22 }}
           width="100%"
           colorBorde={estilosGlobales.colorEfectoClickBotonSecundario}
@@ -220,14 +277,21 @@ const Turno = ({ navigation }) => {
     </View>
   );
 
-  const SaludoBienvenida = () => (
-    <View style={estilos.subContenedorSaludo} elevation={5}>
+  const SaludoBienvenida = (
+    <Animated.View
+      style={{
+        ...estilos.subContenedorSaludo,
+        opacity: opacidadBienvenida,
+        display: turno?.status !== 'ready' ? 'none' : 'flex'
+      }}
+      elevation={5}
+    >
       <Text style={estilosGlobales.tituloGrande}>Bienvenida/o.</Text>
       <Text style={estilosGlobales.subtituloGrande}>
         Ya hemos recibido la notificación de su llegada.
         Su turno aparecerá en pantalla y será atendido/a.
       </Text>
-    </View>
+    </Animated.View>
   );
 
   const turnosAnteriores = demoraActual?.tickets != null ? demoraActual?.tickets : -1;
@@ -262,6 +326,16 @@ const Turno = ({ navigation }) => {
     </View>
   );
 
+  const PantallaCancelarTurno = (
+    <Animated.View style={{ ...estilos.pantallaTurnoCancelado, top: posicionPantallaCancelar }}>
+      <Animated.View style={{ ...estilos.contenedorCampos, opacity: opacidadPantallaCancelar }}>
+        <Text style={estilos.subtituloGrande}>
+          Su turno ha sido cancelado.
+        </Text>
+      </Animated.View>
+    </Animated.View>
+  );
+
   if (cargando || !turno?.code) {
     return (
       <View style={estilos.contenedor}>
@@ -271,44 +345,44 @@ const Turno = ({ navigation }) => {
   }
 
   return (
-    <View style={estilos.contenedor}>
-      <TicketTurno />
-      <View style={{
-        display: 'flex', flexDirection: 'row', marginTop: 20, height: 150,
-      }}
-      >
-        <View style={estilos.subContenedor} elevation={5}>
-          <View style={{
-            display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center',
-          }}
-          >
-            <Turnos width={20} height={20} color={estilosGlobales.colorTextoGeneral} />
-            <Text style={estilos.textoTurno}>{mensajeTurnosAnteriores}</Text>
+    <View style={{ flex: 1 }}>
+      <View style={estilos.contenedor}>
+        <TicketTurno />
+        <View style={{
+          display: 'flex', flexDirection: 'row', marginTop: 20, height: 150,
+        }}
+        >
+          <View style={estilos.subContenedor} elevation={5}>
+            <View style={{
+              display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center',
+            }}
+            >
+              <Turnos width={20} height={20} color={estilosGlobales.colorTextoGeneral} />
+              <Text style={estilos.textoTurno}>{mensajeTurnosAnteriores}</Text>
+            </View>
+            <View style={{
+              display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center',
+            }}
+            >
+              <Gente width={20} height={20} color={estilosGlobales.colorTextoGeneral} />
+              <Text style={estilos.textoTurno}>{mensajePersonasEnLugar}</Text>
+            </View>
+            <View style={{
+              display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center',
+            }}
+            >
+              <Reloj width={20} height={20} color={estilosGlobales.colorTextoGeneral} />
+              <Text style={[estilos.textoTurno, estilos.margenUltimoTexto]}>
+                {`La demora estimada es de ${demoraActual?.hours > 0 ? `${demoraActual?.hours} hs.` : ''} ${demoraActual?.minutes ? parseInt(demoraActual.minutes, 10) : '?'} minutos.`}
+              </Text>
+            </View>
           </View>
-          <View style={{
-            display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center',
-          }}
-          >
-            <Gente width={20} height={20} color={estilosGlobales.colorTextoGeneral} />
-            <Text style={estilos.textoTurno}>{mensajePersonasEnLugar}</Text>
-          </View>
-          <View style={{
-            display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center',
-          }}
-          >
-            <Reloj width={20} height={20} color={estilosGlobales.colorTextoGeneral} />
-            <Text style={[estilos.textoTurno, estilos.margenUltimoTexto]}>
-              {`La demora estimada es de ${demoraActual?.hours > 0 ? `${demoraActual?.hours} hs.` : ''} ${demoraActual?.minutes ? parseInt(demoraActual.minutes, 10) : '?'} minutos.`}
-            </Text>
-          </View>
+          <View style={estilos.subContenedorColor} elevation={5} />
         </View>
-        <View style={estilos.subContenedorColor} elevation={5} />
+        { SaludoBienvenida }
+        { turno?.status !== 'ready' && AccionesTurno }
       </View>
-      { turno?.status === 'ready' ? (
-        <SaludoBienvenida />
-      ) : (
-        obtenerAccionesTurno()
-      )}
+      { PantallaCancelarTurno }
     </View>
   );
 };

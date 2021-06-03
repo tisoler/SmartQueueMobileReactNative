@@ -139,7 +139,7 @@ const Login = ({ navigation }) => {
         <View style={estilos.encabezado} />
         <View style={estilos.subContenedor}>
           <TextoIngreso
-            placeholderText="e-mail"
+            placeholderText="Email"
             manejadorCambioTexto={cambioEmail}
             value={emailUsuario}
             soloLectura={cargando}
@@ -148,7 +148,7 @@ const Login = ({ navigation }) => {
             sinPrimeraLetraMayuscula
           />
           <TextoIngreso
-            placeholderText="contraseña"
+            placeholderText="Contraseña"
             manejadorCambioTexto={cambioContrasena}
             value={contrasenaUsuario}
             soloLectura={cargando}

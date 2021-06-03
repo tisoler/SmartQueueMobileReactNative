@@ -19,7 +19,7 @@ export default () => {
   return (
     <View style={estilos.contenedor}>
       <Text style={estilosGlobales.subtituloGrande}>Hola</Text>
-      <Text style={estilosGlobales.tituloSeccion}>Estoy recuperando tus datos...</Text>
+      <Text style={estilosGlobales.tituloSeccionClaro}>Estoy recuperando tus datos...</Text>
     </View>
   );
 };

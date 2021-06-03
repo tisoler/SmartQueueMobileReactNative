@@ -19,7 +19,7 @@ export default () => {
       left: 0,
       right: 0,
       height: Dimensions.get('window').height + useHeaderHeight(),
-      backgroundColor: 'rgba(0,0,0,0.6)',
+      backgroundColor: 'rgba(0,0,0,0.7)',
       alignItems: 'center',
       justifyContent: 'center',
     },
@@ -63,7 +63,7 @@ export default () => {
         <View style={estilos.dialogo}>
           <View style={estilos.contenedorMensaje}>
             <View style={estilos.contenedorTitulo}>
-              <Text style={estilosGlobales.tituloSeccion}>
+              <Text style={estilosGlobales.tituloSeccionClaro}>
                 {estadoDialogoEmergente.titulo || 'Notificación de turno'}
               </Text>
             </View>
@@ -86,7 +86,7 @@ export default () => {
               height={80}
               width="50%"
               manejadorClick={estadoDialogoEmergente.botones[1].onPress}
-              colorFondo={estilosGlobales.colorFondoBotonSecundario}
+              colorFondo="#8B6CC6"
             >
               { estadoDialogoEmergente.botones[1].texto }
             </BotonPopup>

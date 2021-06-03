@@ -2,7 +2,7 @@
 // @flow
 import React, { useEffect, useState, useContext } from 'react';
 import {
-  View, StyleSheet, Text, ActivityIndicator, Alert
+  View, StyleSheet, Text, ActivityIndicator, Alert, Animated, Dimensions,
 } from 'react-native';
 import withErrorBoundary from '../../hoc/withErrorBoundary';
 import withDialogoEmergente from '../../hoc/withDialogoEmergente';
@@ -14,7 +14,6 @@ import { procesarMensajeError, esTokenValido } from '../../lib/ayudante';
 import recuperarTurno from './llamadasServicioComunes';
 import Teja from '../../componentes/comunes/teja';
 import Turnos from '../../componentes/comunes/svg/turnos';
-import Gente from '../../componentes/comunes/svg/gente';
 import Reloj from '../../componentes/comunes/svg/reloj';
 
 const TurnoAgendado = ({ navigation }) => {
@@ -33,6 +32,10 @@ const TurnoAgendado = ({ navigation }) => {
   const { turno, demora: demoraActual } = estadoTurnoActual;
   const [confirmandoTurno, cambiarConfirmandoTurno] = useState(false);
   const [cargando, cambiarCargando] = useState(true);
+  const [opacidadBienvenida] = useState(new Animated.Value(0.01));
+  const topInicial = Math.round(Dimensions.get('window')?.height);
+  const [posicionPantallaCancelar] = useState(new Animated.Value(topInicial));
+  const [opacidadPantallaCancelar] = useState(new Animated.Value(0.01));
 
   let colorFondo = estilosGlobales.colorBarraNavegacion;
   if (demoraActual?.tickets <= 10 && demoraActual?.tickets_ready <= 3) {
@@ -114,7 +117,54 @@ const TurnoAgendado = ({ navigation }) => {
       fontSize: 17,
       textAlign: 'center',
     },
+    pantallaTurnoCancelado: {
+      height: '100%',
+      width: '100%',
+      position: 'absolute',
+      flexDirection: 'column',
+      backgroundColor: '#8B6CC6',
+    },
+    contenedorCampos: {
+      flexGrow: 3,
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
+    subtituloGrande: {
+      color: '#ffffff',
+      fontSize: 22,
+      textAlign: 'center',
+      lineHeight: 25,
+    },
   });
+
+  const animacionOpacidadBienvenida = () => {
+    Animated.timing(opacidadBienvenida, {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const animacionPosicionPantallaCancelar = () => {
+    Animated.timing(posicionPantallaCancelar, {
+      toValue: 0,
+      duration: 1000,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const animacionOpacidadPantallaCancelar = () => {
+    Animated.timing(opacidadPantallaCancelar, {
+      toValue: 1,
+      duration: 700,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  useEffect(() => {
+    if (turno) animacionOpacidadBienvenida();
+  }, [turno]);
 
   useEffect(() => {
     const consultarTurno = async () => {
@@ -147,13 +197,19 @@ const TurnoAgendado = ({ navigation }) => {
   }, [turno?.code]);
 
   const cancelarTurnoAgendado = () => {
-    cambiarCargando(true);
+    // cambiarCargando(true);
     cancelarTurno(estadoLogin.token, turno.Center.id)
       .then(res => res.json())
       .then(respuesta => {
         if (respuesta.success) {
-          removerTurnoAgendadoEnEstado(turno);
-          navigation.navigate('Lobby');
+          animacionPosicionPantallaCancelar();
+          setTimeout(() => {
+            animacionOpacidadPantallaCancelar();
+            setTimeout(() => {
+              removerTurnoAgendadoEnEstado(turno);
+              navigation.navigate('Lobby');
+            }, 1000);
+          }, 1000);
         } else {
           Alert.alert('Error al cancelar el turno.');
         }
@@ -198,7 +254,7 @@ const TurnoAgendado = ({ navigation }) => {
       .finally(() => cambiarConfirmandoTurno(false));
   };
 
-  const obtenerAccionesTurno = () => (
+  const AccionesTurno = (
     <View style={estilos.subContenedor}>
       <BotonRedondeado
         manejadorClick={() => confirmarPresencia()}
@@ -224,14 +280,21 @@ const TurnoAgendado = ({ navigation }) => {
     </View>
   );
 
-  const SaludoBienvenida = () => (
-    <View style={estilos.subContenedorSaludo} elevation={5}>
+  const SaludoBienvenida = (
+    <Animated.View
+      style={{
+        ...estilos.subContenedorSaludo,
+        opacity: opacidadBienvenida,
+        display: turno?.status !== 'ready' ? 'none' : 'flex'
+      }}
+      elevation={5}
+    >
       <Text style={estilosGlobales.tituloGrande}>Bienvenida/o.</Text>
       <Text style={estilosGlobales.subtituloGrande}>
         Ya hemos recibido la notificación de su llegada.
         Su turno aparecerá en pantalla y será atendido/a.
       </Text>
-    </View>
+    </Animated.View>
   );
 
   const TicketTurno = () => (
@@ -250,6 +313,16 @@ const TurnoAgendado = ({ navigation }) => {
     </View>
   );
 
+  const PantallaCancelarTurno = (
+    <Animated.View style={{ ...estilos.pantallaTurnoCancelado, top: posicionPantallaCancelar }}>
+      <Animated.View style={{ ...estilos.contenedorCampos, opacity: opacidadPantallaCancelar }}>
+        <Text style={estilos.subtituloGrande}>
+          Su turno ha sido cancelado.
+        </Text>
+      </Animated.View>
+    </Animated.View>
+  );
+
   if (cargando || !turno?.turno_date) {
     return (
       <View style={estilos.contenedor}>
@@ -262,39 +335,39 @@ const TurnoAgendado = ({ navigation }) => {
   const fechaConFormato = `${fechaTurnoArreglo[2]}/${fechaTurnoArreglo[1]}/${fechaTurnoArreglo[0]}`;
 
   return (
-    <View style={estilos.contenedor}>
-      <TicketTurno />
-      <View style={{
-        display: 'flex', flexDirection: 'row', marginTop: 20, height: 150,
-      }}
-      >
-        <View style={estilos.subContenedor} elevation={5}>
-          <View style={{
-            display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center',
-          }}
-          >
-            <Turnos width={20} height={20} color={estilosGlobales.colorTextoGeneral} />
-            <Text style={estilos.textoTurno}>
-              {`Su turno es el ${fechaConFormato} a las ${turno.turno_time}.`}
-            </Text>
+    <View style={{ flex: 1 }}>
+      <View style={estilos.contenedor}>
+        <TicketTurno />
+        <View style={{
+          display: 'flex', flexDirection: 'row', marginTop: 20, height: 150,
+        }}
+        >
+          <View style={estilos.subContenedor} elevation={5}>
+            <View style={{
+              display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center',
+            }}
+            >
+              <Turnos width={20} height={20} color={estilosGlobales.colorTextoGeneral} />
+              <Text style={estilos.textoTurno}>
+                {`Su turno es el ${fechaConFormato} a las ${turno.turno_time}.`}
+              </Text>
+            </View>
+            <View style={{
+              display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center',
+            }}
+            >
+              <Reloj width={20} height={20} color={estilosGlobales.colorTextoGeneral} />
+              <Text style={[estilos.textoTurno, estilos.margenUltimoTexto]}>
+                Recuerde estar en el lugar al menos 15 minutos antes del horario.
+              </Text>
+            </View>
           </View>
-          <View style={{
-            display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center',
-          }}
-          >
-            <Reloj width={20} height={20} color={estilosGlobales.colorTextoGeneral} />
-            <Text style={[estilos.textoTurno, estilos.margenUltimoTexto]}>
-              Recuerde estar en el lugar al menos 15 minutos antes del horario.
-            </Text>
-          </View>
+          <View style={estilos.subContenedorColor} elevation={5} />
         </View>
-        <View style={estilos.subContenedorColor} elevation={5} />
+        { SaludoBienvenida }
+        { turno?.status !== 'ready' && AccionesTurno }
       </View>
-      { turno?.status === 'ready' ? (
-        <SaludoBienvenida />
-      ) : (
-        obtenerAccionesTurno()
-      )}
+      { PantallaCancelarTurno }
     </View>
   );
 };

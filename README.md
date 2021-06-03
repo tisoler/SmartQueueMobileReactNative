@@ -18,5 +18,9 @@ yarn test
 
 Para crear el bundle
 ./gradlew bundleRelease
+
+Nota:   - modificar versionCode y versionName en /SmartQueue/SmartQueueMobileReactNative/android/app/build.gradle
+        - modificar version en package.json
+
 Para crear el apk
 ./gradlew assembleRelease

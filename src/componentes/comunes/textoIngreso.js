@@ -42,7 +42,6 @@ export default (props: Props) => {
     contenedor: {
       flexDirection: 'row',
       width: '90%',
-      marginBottom: 15,
       height: 50,
       alignItems: 'center',
     },
@@ -93,7 +92,7 @@ export default (props: Props) => {
           editable={!soloLectura}
           secureTextEntry={esconderTexto}
           onTouchStart={manejadorClick}
-          placeholderTextColor="#B5B7B7"
+          placeholderTextColor="#999999"
           keyboardType={tipoDeTeclado}
           maxLength={largoMaximo}
           autoCapitalize={!sinPrimeraLetraMayuscula && !puedeEsconderTexto ? 'words' : 'none'}

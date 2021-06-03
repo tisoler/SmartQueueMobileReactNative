@@ -108,7 +108,7 @@ const notificarAvanceTurno = (
 ) => {
   if (payload?.data?.center_id) {
     abrirDialogoEmergente(
-      payload.notification?.title || 'Avence de turno',
+      payload.notification?.title || 'Avance de turno',
       payload.notification?.body ? `${payload.notification?.body} ¿Desea ir al turno?` : `Su turno ${payload.data.code || ''} ha avanzado. ¿Desea ver el turno?`,
       'Sí',
       'Más tarde'
