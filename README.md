@@ -24,3 +24,4 @@ Nota:   - modificar versionCode y versionName en /SmartQueue/SmartQueueMobileRea
 
 Para crear el apk
 ./gradlew assembleRelease
+Prueba
