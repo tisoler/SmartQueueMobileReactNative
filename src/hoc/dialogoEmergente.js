@@ -50,7 +50,9 @@ export default () => {
       flex: 1,
       alignItems: 'center',
       justifyContent: 'center',
-      width: '100%'
+      width: '100%',
+      paddingLeft: 10,
+      paddingRight: 10,
     },
     botonera: {
       flexDirection: 'row'

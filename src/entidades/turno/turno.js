@@ -8,7 +8,7 @@ import withErrorBoundary from '../../hoc/withErrorBoundary';
 import withDialogoEmergente from '../../hoc/withDialogoEmergente';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import { ContextoEstados } from '../../lib/contextoEstados';
-import { cancelarTicket, confirmarAsistenciaTicket } from '../../lib/servicios';
+import { cancelarTicket, confirmarAsistenciaTicket, obtenerTicketsParaUsuario } from '../../lib/servicios';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 import { procesarMensajeError, esTokenValido } from '../../lib/ayudante';
 import recuperarTicket from './llamadasServicioComunes';
@@ -25,7 +25,6 @@ const Turno = ({ navigation }) => {
     estadoFbToken,
     estadoTemaUsuario,
     removerTurnoEnEstado,
-    confirmarAsistenciaTurnoEnEstado,
     fijarTurnoActualEnEstado,
     fijarUsuarioLogueadoEnEstado,
     fijarTurnosEnEstado
@@ -159,6 +158,14 @@ const Turno = ({ navigation }) => {
     }).start();
   };
 
+  const refrescarTurnosFila = async () => {
+    const res = await obtenerTicketsParaUsuario(estadoLogin.token);
+    const respuesta = await res.json();
+    if (respuesta.success) {
+      fijarTurnosEnEstado(respuesta.response);
+    }
+  };
+
   useEffect(() => {
     if (turno) animacionOpacidadBienvenida();
   }, [turno]);
@@ -179,6 +186,8 @@ const Turno = ({ navigation }) => {
     };
 
     consultarTicket();
+    // Cuando se toma un turno necesitamos refrescar la lista
+    refrescarTurnosFila();
 
     // Configura un intervalo de consulta para refrescar la demora cada 1 minuto.
     const idIntervalo = setInterval(() => {
@@ -230,9 +239,10 @@ const Turno = ({ navigation }) => {
       .then(res => res.json())
       .then(respuesta => {
         if (respuesta.success) {
-          confirmarAsistenciaTurnoEnEstado(turno);
           // Cambia status en el turno localmente.
           turno.status = 'ready';
+          // Refrescar turnos de fila
+          refrescarTurnosFila();
         } else {
           Alert.alert('Error al confirmar el turno.');
         }
@@ -254,7 +264,7 @@ const Turno = ({ navigation }) => {
   const AccionesTurno = (
     <View style={estilos.subContenedor}>
       <BotonRedondeado
-        manejadorClick={() => confirmarPresencia()}
+        manejadorClick={confirmarPresencia}
         cargando={confirmandoTurno}
         estilo={{ marginTop: 20 }}
         width="100%"

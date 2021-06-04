@@ -1,6 +1,6 @@
 // @flow
 import React, { useContext, useEffect, useState } from 'react';
-import { StyleSheet, Alert } from 'react-native';
+import { StyleSheet, Alert, } from 'react-native';
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, TransitionSpecs } from '@react-navigation/stack';
@@ -88,17 +88,17 @@ const NavegadorFijoNoAutenticado = (estilosGlobales: Object) => {
 };
 
 const NavegadorFijoAutenticado = ({ navigation, route }) => {
-  const { estilosGlobales, estadoTurnoActual } = route.params;
+  const { estilosGlobales } = route.params;
   const [buscarCentro, cambiarBuscarCentro] = useState(false);
   const estilos = StyleSheet.create({
     encabezadoNavegacion: {
-      backgroundColor: estilosGlobales.colorBarraNavegacion
+      backgroundColor: estilosGlobales.colorBarraNavegacion,
     }
   });
 
   return (
     <Stack.Navigator
-      initialRouteName={estadoTurnoActual?.irHaciaTurno ? 'Turnos' : 'Lobby'}
+      initialRouteName="Lobby"
     >
       <Stack.Screen
         name="Lobby"
@@ -163,23 +163,24 @@ const NavegadorFijoAutenticado = ({ navigation, route }) => {
 
 const Drawer = createDrawerNavigator();
 
-const NavegadorAutenticado = (
-  estilosGlobales: Object,
-  estadoTurnoActual: Object,
-  estadoDialogoEmergente: Object
-) => (
-  <NavigationContainer>
-    <Drawer.Navigator
-      // Deshabilitado cuando hay diálogo emergente.
-      edgeWidth={!estadoDialogoEmergente ? 30 : 0}
-      minSwipeDistance={10}
-      drawerContent={(props) => <MenuLateral navigation={props.navigation} />}
-      drawerType="front"
-    >
-      <Drawer.Screen name="NavegadorFijo" component={NavegadorFijoAutenticado} initialParams={{ estilosGlobales, estadoTurnoActual }} />
-    </Drawer.Navigator>
-  </NavigationContainer>
-);
+const NavegadorAutenticado = (estilosGlobales: Object, estadoDialogoEmergente: Object) => {
+  const showDrawer = false;
+
+  return (
+    <NavigationContainer>
+      <Drawer.Navigator
+        // Deshabilitado cuando hay diálogo emergente.
+        edgeWidth={!estadoDialogoEmergente ? 30 : 0}
+        minSwipeDistance={10}
+        drawerContent={(props) => <MenuLateral navigation={props.navigation} />}
+        drawerType="front"
+        drawerStyle={{ width: !showDrawer ? null : '100%' }}
+      >
+        <Drawer.Screen name="NavegadorFijo" component={NavegadorFijoAutenticado} initialParams={{ estilosGlobales }} />
+      </Drawer.Navigator>
+    </NavigationContainer>
+  );
+};
 
 const recuperarCredencialesAlmacenadas = async (fijarUsuarioLogueadoEnEstado: Function) => {
   try {
@@ -201,9 +202,8 @@ const recuperarCredencialesAlmacenadas = async (fijarUsuarioLogueadoEnEstado: Fu
 export default () => {
   const {
     estadoLogin,
-    estadoTurnosParaEvaluar,
     estadoIrEvaluacion,
-    estadoTurnoActual,
+    estadoTurnosParaEvaluar,
     fijarUsuarioLogueadoEnEstado
   } = useContext(ContextoEstados);
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
@@ -227,7 +227,7 @@ export default () => {
     return NavegadorEvaluacion(estilosGlobales);
   }
   if ((estadoLogin?.email && estadoLogin?.token)) {
-    return NavegadorAutenticado(estilosGlobales, estadoTurnoActual, estadoDialogoEmergente);
+    return NavegadorAutenticado(estilosGlobales, estadoDialogoEmergente);
   }
   return NavegadorFijoNoAutenticado(estilosGlobales);
 };

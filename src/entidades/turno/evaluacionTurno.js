@@ -15,11 +15,14 @@ const EvaluacionTurno = () => {
   const {
     estadoLogin,
     estadoTurnosParaEvaluar,
+    estadoIrEvaluacion,
     evaluarTurnoEnEstado,
     asignarEstadoIrEvaluacion
   } = useContext(ContextoEstados);
   const turnosParaEvaluar = estadoTurnosParaEvaluar;
-  const turnoEvaluado = turnosParaEvaluar[0];
+  const turnoEvaluado = turnosParaEvaluar && turnosParaEvaluar.length > 0
+    ? turnosParaEvaluar[0]
+    : null;
   const [cantidadEstrellas, setCantidadEstrellas] = useState(0);
   const [altoContenedorEstrellas] = useState(new Animated.Value(0));
 
@@ -98,6 +101,14 @@ const EvaluacionTurno = () => {
     }
   });
 
+  if (!turnoEvaluado) {
+    return (
+      <View style={estilos.contenedor}>
+        <ActivityIndicator size="large" color="#FFF" />
+      </View>
+    );
+  }
+
   const evaluar = (cantEstrellas) => {
     if (cantidadEstrellas === 0) {
       setCantidadEstrellas(cantEstrellas);
@@ -108,25 +119,17 @@ const EvaluacionTurno = () => {
             setTimeout(() => {
               if (turnosParaEvaluar.length > 1) {
                 setCantidadEstrellas(0);
+              } else if (estadoIrEvaluacion) {
+                // Cuando llama desde notificación usa este state
+                // Una vez que se evalúan los turnos lo pasa a false
+                asignarEstadoIrEvaluacion(false);
               }
               evaluarTurnoEnEstado(turnoEvaluado);
-            }, 2000);
+            }, 1500);
           }
         });
     }
   };
-
-  if (!turnoEvaluado) {
-    return (
-      <View style={estilos.contenedor}>
-        <ActivityIndicator size="large" color="#FFF" />
-      </View>
-    );
-  }
-
-  // Cuando llama desde notificación usa este state
-  // Una vez que se carga el estado de turnos para evaluar lo pasa a false
-  asignarEstadoIrEvaluacion(false);
 
   const TicketTurno = () => (
     <View style={estilos.contenedorTurno}>

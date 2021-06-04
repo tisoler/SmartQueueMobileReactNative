@@ -8,7 +8,7 @@ import withErrorBoundary from '../../hoc/withErrorBoundary';
 import withDialogoEmergente from '../../hoc/withDialogoEmergente';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import { ContextoEstados } from '../../lib/contextoEstados';
-import { cancelarTurno, confirmarAsistenciaTurno } from '../../lib/servicios';
+import { cancelarTurno, confirmarAsistenciaTurno, obtenerTurnosParaUsuario } from '../../lib/servicios';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
 import { procesarMensajeError, esTokenValido } from '../../lib/ayudante';
 import recuperarTurno from './llamadasServicioComunes';
@@ -24,7 +24,6 @@ const TurnoAgendado = ({ navigation }) => {
     estadoFbToken,
     estadoTemaUsuario,
     removerTurnoAgendadoEnEstado,
-    confirmarAsistenciaTurnoAgendadoEnEstado,
     fijarTurnoActualEnEstado,
     fijarUsuarioLogueadoEnEstado,
     fijarTurnosAgendadosEnEstado,
@@ -166,6 +165,14 @@ const TurnoAgendado = ({ navigation }) => {
     if (turno) animacionOpacidadBienvenida();
   }, [turno]);
 
+  const refrescarTurnosAgendados = async () => {
+    const res = await obtenerTurnosParaUsuario(estadoLogin.token);
+    const respuesta = await res.json();
+    if (respuesta.success) {
+      fijarTurnosAgendadosEnEstado(respuesta.response);
+    }
+  };
+
   useEffect(() => {
     const consultarTurno = async () => {
       await recuperarTurno(
@@ -182,6 +189,8 @@ const TurnoAgendado = ({ navigation }) => {
     };
 
     consultarTurno();
+    // Cuando se toma un turno necesitamos refrescar la lista
+    refrescarTurnosAgendados();
 
     // Configura un intervalo de consulta para refrescar la demora cada 1 minuto.
     const idIntervalo = setInterval(() => {
@@ -233,7 +242,6 @@ const TurnoAgendado = ({ navigation }) => {
       .then(res => res.json())
       .then(respuesta => {
         if (respuesta.success) {
-          confirmarAsistenciaTurnoAgendadoEnEstado(turno);
           // Cambia status en el turno localmente.
           turno.status = 'ready';
         } else {
@@ -257,7 +265,7 @@ const TurnoAgendado = ({ navigation }) => {
   const AccionesTurno = (
     <View style={estilos.subContenedor}>
       <BotonRedondeado
-        manejadorClick={() => confirmarPresencia()}
+        manejadorClick={confirmarPresencia}
         cargando={confirmandoTurno}
         estilo={{ marginTop: 20 }}
         width="100%"
@@ -266,7 +274,7 @@ const TurnoAgendado = ({ navigation }) => {
       </BotonRedondeado>
       { !confirmandoTurno && (
         <BotonRedondeado
-          manejadorClick={() => cancelarTurnoAgendado()}
+          manejadorClick={cancelarTurnoAgendado}
           estilo={{ marginTop: 22 }}
           width="100%"
           colorBorde={estilosGlobales.colorEfectoClickBotonSecundario}

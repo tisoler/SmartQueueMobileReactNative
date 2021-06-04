@@ -2,15 +2,6 @@
 import jwt from 'jwt-decode';
 import { guardarDatosLocalmente } from '../../lib/ayudante';
 
-export const agregarTurnoActivoAccion = (
-  estadoTurnosActivos: Object,
-  asignarEstadoTurnosActivos: Function,
-  turnoActivo: Object
-) => {
-  const turnosActivos = [...estadoTurnosActivos, turnoActivo];
-  asignarEstadoTurnosActivos(turnosActivos);
-};
-
 export const fijarTurnosAccion = (
   asignarEstadoTurnosActivos: Function,
   asignarEstadoTurnosParaEvaluar: Function,
@@ -19,7 +10,9 @@ export const fijarTurnosAccion = (
   const turnosActivos = turnosUsuario.filter(t => ['waiting', 'ready'].includes(t.status));
   const turnosParaEvaluar = turnosUsuario.filter(t => t.status === 'finished');
   asignarEstadoTurnosActivos(turnosActivos);
-  asignarEstadoTurnosParaEvaluar(turnosParaEvaluar);
+  if (turnosParaEvaluar?.length > 0) {
+    asignarEstadoTurnosParaEvaluar(turnosParaEvaluar);
+  }
 };
 
 // REVISAR Y BORRAR
@@ -34,9 +27,10 @@ export const fijarTodosTurnosAccion = (
   const turnosAgendadosActivos = turnosAgendadosUsuario.filter(t => ['waiting', 'ready'].includes(t.status));
   const turnosFilaParaEvaluar = turnosFilaUsuario.filter(t => t.status === 'finished');
   const turnosAgendadosParaEvaluar = turnosAgendadosUsuario.filter(t => t.status === 'finished');
+  const turnosParaEvaluar = [...turnosFilaParaEvaluar, ...turnosAgendadosParaEvaluar];
   asignarEstadoTurnosActivos(turnosFilaActivos);
   asignarEstadoTurnosAgendadosActivos(turnosAgendadosActivos);
-  asignarEstadoTurnosParaEvaluar([...turnosFilaParaEvaluar, ...turnosAgendadosParaEvaluar]);
+  if (turnosParaEvaluar?.length > 0) asignarEstadoTurnosParaEvaluar(turnosParaEvaluar);
 };
 
 export const fijarUsuarioLogueadoAccion = (
@@ -79,17 +73,6 @@ export const removerTurnoAccion = (
   turno: Object
 ) => {
   const turnosActivos = estadoTurnosActivos.filter(t => t.id !== turno.id);
-  asignarEstadoTurnosActivos(turnosActivos);
-};
-
-export const confirmarAsistenciaTurnoAccion = (
-  estadoTurnosActivos: Object,
-  asignarEstadoTurnosActivos: Function,
-  turno: Object
-) => {
-  const turnosActivos = [...estadoTurnosActivos];
-  const indice = turnosActivos.findIndex(t => t.id === turno.id);
-  turnosActivos[indice].status = 'ready';
   asignarEstadoTurnosActivos(turnosActivos);
 };
 

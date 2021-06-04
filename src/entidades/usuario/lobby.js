@@ -64,7 +64,7 @@ const Lobby = ({ navigation }) => {
     },
     texto: {
       color: estilosGlobales.colorTextoGeneral,
-      fontSize: 13.5,
+      fontSize: 14,
       textAlign: 'center',
       width: estilosGlobales.tamañoLogoCentroTeja + 40,
     },
@@ -95,10 +95,11 @@ const Lobby = ({ navigation }) => {
     },
     centro: {
       color: estilosGlobales.colorTextoGeneral,
-      fontSize: 16,
+      fontSize: 15,
       textAlign: 'center',
       paddingLeft: 4,
       paddingRight: 4,
+      fontWeight: 'bold',
     },
     categoria: {
       color: estilosGlobales.colorTextoGeneral,
@@ -287,11 +288,15 @@ const Lobby = ({ navigation }) => {
                 manejadorClick={() => seleccionarTurnoActivo(turno, TipoTurno.turnoFila)}
               >
                 <View style={estilos.contenedorHijos}>
-                  <Text style={estilos.centro}>{turno.Center.name}</Text>
-                  <Text style={estilos.categoria}>{turno.Category.name}</Text>
-                  <Text style={turno.status === 'waiting' ? estilos.espera : estilos.enLugar}>
-                    {turno.status === 'waiting' ? 'Esperando' : 'En el lugar'}
-                  </Text>
+                  <View style={{ flex: 0.7, justifyContent: 'center' }}>
+                    <Text style={estilos.centro}>{turno.Center.name}</Text>
+                    <Text style={estilos.categoria}>{turno.Category.name}</Text>
+                  </View>
+                  <View style={{ flex: 0.3, justifyContent: 'flex-end' }}>
+                    <Text style={turno.status === 'waiting' ? estilos.espera : estilos.enLugar}>
+                      {turno.status === 'waiting' ? 'Esperando' : 'En el lugar'}
+                    </Text>
+                  </View>
                 </View>
               </Teja>
             ))}
@@ -310,21 +315,25 @@ const Lobby = ({ navigation }) => {
       ? (
         <View style={estilos.contenedorTurnos}>
           <ScrollView showsVerticalScrollIndicator={false}>
-            { estadoTurnosAgendadosActivos?.map(turno => (
-              <Teja
-                key={turno.id}
-                appIcon={turno.Center.app_icon}
-                manejadorClick={() => seleccionarTurnoActivo(turno, TipoTurno.turnoAgendado)}
-              >
-                <View style={estilos.contenedorHijos}>
-                  <Text style={estilos.centro}>{turno.Center.name}</Text>
-                  <Text style={estilos.categoria}>{turno.Category.name}</Text>
-                  <Text style={estilos.categoria}>
-                    {`Fecha: ${turno.turno_date} - Horario: ${turno.turno_time}`}
-                  </Text>
-                </View>
-              </Teja>
-            ))}
+            { estadoTurnosAgendadosActivos?.map(turno => {
+              const fechaTurnoArreglo = turno.turno_date.split('-');
+              const fechaConFormato = `${fechaTurnoArreglo[2]}/${fechaTurnoArreglo[1]}/${fechaTurnoArreglo[0]}`;
+              return (
+                <Teja
+                  key={turno.id}
+                  appIcon={turno.Center.app_icon}
+                  manejadorClick={() => seleccionarTurnoActivo(turno, TipoTurno.turnoAgendado)}
+                >
+                  <View style={estilos.contenedorHijos}>
+                    <Text style={estilos.centro}>{turno.Center.name}</Text>
+                    <Text style={estilos.categoria}>{turno.Category.name}</Text>
+                    <Text style={estilos.categoria}>
+                      {`Fecha: ${fechaConFormato} Horario: ${turno.turno_time}`}
+                    </Text>
+                  </View>
+                </Teja>
+              );
+            })}
           </ScrollView>
         </View>
       )

@@ -22,6 +22,8 @@ const CentrosAtencion = (props) => {
     navigation,
     elegirTipoTurno,
     elegirFechaTurno,
+    // eslint-disable-next-line no-unused-vars
+    fijarSubtitulo = (texto: string) => {},
   } = props;
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
   const [turnoPedido, setTurnoPedido] = useState(false);
@@ -30,10 +32,8 @@ const CentrosAtencion = (props) => {
   const [demora, setDemora] = useState({});
   const {
     estadoLogin,
-    estadoTurnosActivos,
     estadoFbToken,
     estadoTemaUsuario,
-    agregarTurnoActivoEnEstado,
     fijarUsuarioLogueadoEnEstado,
     fijarTurnoActualEnEstado
   } = useContext(ContextoEstados);
@@ -113,8 +113,14 @@ const CentrosAtencion = (props) => {
       .then(res => res.json())
       .then(respuesta => {
         if (respuesta?.success) {
-          agregarTurnoActivoEnEstado(respuesta?.response?.ticket);
+          // Pone el nuevo turno en estado
           fijarTurnoActualEnEstado(respuesta?.response?.ticket, demora);
+          // Limpia la pila del navegador para volver desde Turno a la Lobby
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Lobby' }],
+          });
+          // Se dirige a Turno
           navigation.navigate('Turno');
         } else {
           Alert.alert('Error en la solicitud de turno.');
@@ -211,21 +217,18 @@ const CentrosAtencion = (props) => {
     </View>
   );
 
-  // Cuando el usuario confirma el ticket (pantalla turno) y vuelve con el "volver" del SO
-  // no tiene que cargar esta pantalla, debe ir a la lobby.
-  if (tipoTurno === tipoTurnoEnum.fila
-    && estadoTurnosActivos.some(t => t.Center.id === centro.id)
-  ) {
-    navigation.navigate('Lobby');
-  }
-
   const obtenerRender = () => {
     if (!turnoPedido) {
       return obtenerBotonesCategorias();
     }
     if (cargando) {
-      return <ActivityIndicator size="large" color="#fff" />;
+      return (
+        <View style={{ flex: 1, justifyContent: 'center', }}>
+          <ActivityIndicator size="large" color={estilosGlobales.colorFondoGlobal} />
+        </View>
+      );
     }
+    fijarSubtitulo('Confirmación');
     return obtenerPopupConfirmacion();
   };
 

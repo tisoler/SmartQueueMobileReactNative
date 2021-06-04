@@ -20,9 +20,7 @@ function TurnosDisponibles(props: any) {
     estadoLogin,
     estadoFbToken,
     estadoTemaUsuario,
-    estadoTurnosAgendadosActivos,
     fijarUsuarioLogueadoEnEstado,
-    agregarTurnoAgendadoActivoEnEstado,
     fijarTurnoActualEnEstado,
   } = useContext(ContextoEstados);
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
@@ -143,8 +141,14 @@ function TurnosDisponibles(props: any) {
         .then(res => res.json())
         .then(respuesta => {
           if (respuesta.success) {
-            agregarTurnoAgendadoActivoEnEstado(respuesta?.response);
+            // Pone el nuevo turno en estado
             fijarTurnoActualEnEstado(respuesta?.response, 0);
+            // Limpia la pila del navegador para volver desde Turno a la Lobby
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Lobby' }],
+            });
+            // Se dirige a Turno
             navigation.navigate('TurnoAgendado');
           } else {
             fijarCargando(false);
@@ -170,10 +174,6 @@ function TurnosDisponibles(props: any) {
 
   const fechaElegidaArreglo = diaSeleccionado.split('-');
   const fechaConFormato = `${fechaElegidaArreglo[2]}/${fechaElegidaArreglo[1]}/${fechaElegidaArreglo[0]}`;
-
-  // Cuando el usuario confirma el turno (pantalla turnoAgendado) y vuelve con el "volver" del SO
-  // no tiene que cargar esta pantalla, debe ir a la lobby.
-  if (estadoTurnosAgendadosActivos.some(t => t.Center.id === centro.id)) navigation.navigate('Lobby');
 
   if (cargando) {
     return (

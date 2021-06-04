@@ -58,6 +58,12 @@ const Login = ({ navigation }) => {
       borderTopRightRadius: 5,
       zIndex: 1,
     },
+    camposLoguin: {
+      width: '95%',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      height: 125,
+    },
     botonera: {
       flexGrow: 1.5,
       backgroundColor: '#E7E9EE',
@@ -138,23 +144,25 @@ const Login = ({ navigation }) => {
         </View>
         <View style={estilos.encabezado} />
         <View style={estilos.subContenedor}>
-          <TextoIngreso
-            placeholderText="Email"
-            manejadorCambioTexto={cambioEmail}
-            value={emailUsuario}
-            soloLectura={cargando}
-            manejadorClick={() => cambioLogin(false)}
-            tipoDeTeclado="email-address"
-            sinPrimeraLetraMayuscula
-          />
-          <TextoIngreso
-            placeholderText="Contraseña"
-            manejadorCambioTexto={cambioContrasena}
-            value={contrasenaUsuario}
-            soloLectura={cargando}
-            puedeEsconderTexto
-            manejadorClick={() => cambioLogin(false)}
-          />
+          <View style={estilos.camposLoguin}>
+            <TextoIngreso
+              placeholderText="Email"
+              manejadorCambioTexto={cambioEmail}
+              value={emailUsuario}
+              soloLectura={cargando}
+              manejadorClick={() => cambioLogin(false)}
+              tipoDeTeclado="email-address"
+              sinPrimeraLetraMayuscula
+            />
+            <TextoIngreso
+              placeholderText="Contraseña"
+              manejadorCambioTexto={cambioContrasena}
+              value={contrasenaUsuario}
+              soloLectura={cargando}
+              puedeEsconderTexto
+              manejadorClick={() => cambioLogin(false)}
+            />
+          </View>
           {loginIncorrecto
             && <Text style={estilosGlobales.mensajeError}>Usuario o contraseña incorrectos.</Text>}
         </View>

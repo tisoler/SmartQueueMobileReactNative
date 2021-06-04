@@ -25,7 +25,7 @@ const Teja = (props: Props) => {
     manejadorClick = () => {},
     appIcon,
     children,
-    height = 80,
+    height = 100,
     width = 270,
   } = props;
 

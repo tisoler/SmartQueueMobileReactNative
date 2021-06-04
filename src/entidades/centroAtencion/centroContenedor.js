@@ -140,7 +140,7 @@ const CentroContenedor = ({ navigation, route }: Props) => {
 
   useEffect(() => {
     function fijarPantallaInicial() {
-    // centro.service: 0 = fila, 1 = agendado, 2 = ambos
+    // centro.service: 0 = fila, 1 = agendado, 2 = ambos // HACER
       const tipoServicio = 2;
       switch (tipoServicio) {
         case 0:
@@ -167,6 +167,7 @@ const CentroContenedor = ({ navigation, route }: Props) => {
             navigation={navigation}
             elegirTipoTurno={elegirTipoTurno}
             elegirFechaTurno={elegirFechaTurno}
+            fijarSubtitulo={fijarSubtitulo}
           />
         );
       case pantalla.centroAtencionTurno:

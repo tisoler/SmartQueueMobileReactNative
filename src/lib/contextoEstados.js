@@ -2,12 +2,10 @@
 import * as React from 'react';
 import { createContext, useState } from 'react';
 import {
-  agregarTurnoActivoAccion,
   fijarTurnosAccion,
   fijarTodosTurnosAccion, // Borrar
   fijarUsuarioLogueadoAccion,
   removerTurnoAccion,
-  confirmarAsistenciaTurnoAccion,
   evaluarTurnoAccion,
   cambiarTemaUsuarioAccion,
   cambiarTokenFirebaseAccion
@@ -46,19 +44,11 @@ export const ProveedorContextoEstados = (props: Props) => {
 
   // Interface contexto - acciones
   // Información usuario logueado
-  const agregarTurnoActivoEnEstado = (turnoActivo: Object) => {
-    agregarTurnoActivoAccion(estadoTurnosActivos, asignarEstadoTurnosActivos, turnoActivo);
-  };
   const fijarTurnosEnEstado = (turnosUsuario: Array<Object>) => {
     fijarTurnosAccion(
       asignarEstadoTurnosActivos,
       asignarEstadoTurnosParaEvaluar,
       turnosUsuario
-    );
-  };
-  const agregarTurnoAgendadoActivoEnEstado = (turnoActivo: Object) => {
-    agregarTurnoActivoAccion(
-      estadoTurnosAgendadosActivos, asignarEstadoTurnosAgendadosActivos, turnoActivo
     );
   };
   const fijarTurnosAgendadosEnEstado = (turnosUsuario: Array<Object>) => {
@@ -102,16 +92,8 @@ export const ProveedorContextoEstados = (props: Props) => {
   const removerTurnoEnEstado = (turno: Object) => {
     removerTurnoAccion(estadoTurnosActivos, asignarEstadoTurnosActivos, turno);
   };
-  const confirmarAsistenciaTurnoEnEstado = (turno: Object) => {
-    confirmarAsistenciaTurnoAccion(estadoTurnosActivos, asignarEstadoTurnosActivos, turno);
-  };
   const removerTurnoAgendadoEnEstado = (turno: Object) => {
     removerTurnoAccion(estadoTurnosAgendadosActivos, asignarEstadoTurnosAgendadosActivos, turno);
-  };
-  const confirmarAsistenciaTurnoAgendadoEnEstado = (turno: Object) => {
-    confirmarAsistenciaTurnoAccion(
-      estadoTurnosAgendadosActivos, asignarEstadoTurnosAgendadosActivos, turno
-    );
   };
   const evaluarTurnoEnEstado = (turno: Object) => {
     evaluarTurnoAccion(estadoTurnosParaEvaluar, asignarEstadoTurnosParaEvaluar, turno);
@@ -130,8 +112,8 @@ export const ProveedorContextoEstados = (props: Props) => {
     filtrarCentrosAccion(estadoCentros, asignarEstadoCentros, textoBusqueda);
   };
   // Turno
-  const fijarTurnoActualEnEstado = (turno: Object, demora: Object, irHaciaTurno = false) => {
-    fijarTurnoActualAccion(asignarEstadoTurnoActual, turno, demora, irHaciaTurno);
+  const fijarTurnoActualEnEstado = (turno: Object, demora: Object) => {
+    fijarTurnoActualAccion(asignarEstadoTurnoActual, turno, demora);
   };
   // Fin interface contexto - acciones
 
@@ -146,16 +128,12 @@ export const ProveedorContextoEstados = (props: Props) => {
       estadoTurnoActual,
       estadoFbToken,
       estadoIrEvaluacion,
-      agregarTurnoActivoEnEstado,
-      agregarTurnoAgendadoActivoEnEstado,
       fijarTurnosEnEstado,
       fijarTurnosAgendadosEnEstado,
       fijarTodosTurnosEnEstado,
       fijarUsuarioLogueadoEnEstado,
       removerTurnoEnEstado,
-      confirmarAsistenciaTurnoEnEstado,
       removerTurnoAgendadoEnEstado,
-      confirmarAsistenciaTurnoAgendadoEnEstado,
       evaluarTurnoEnEstado,
       fijarCentrosEnEstado,
       filtrarCentrosEnEstado,

@@ -4,7 +4,8 @@ import {
   View,
   Text,
   TouchableOpacity,
-  StyleSheet
+  StyleSheet,
+  Dimensions,
 } from 'react-native';
 import { ContextoEstados } from '../lib/contextoEstados';
 import { ContextoEstilosGlobales } from '../lib/contextoEstilosGlobales';
@@ -26,6 +27,7 @@ const MenuLateral = (props: Object) => {
   const estilos = StyleSheet.create({
     contenedorGlobal: {
       flex: 1,
+      width: Math.round(Dimensions.get('window')?.width || 300) * 0.85,
       flexDirection: 'column',
       backgroundColor: estilosGlobales.colorBarraNavegacion
     },
