@@ -50,6 +50,9 @@ const espaniol = {
   lobbyHora: 'Horario',
   lobbyNoHayTurnosFila: 'No hay turnos para filas',
   lobbyNoHayTurnosAgendados: 'No hay turnos agendados',
+  // Tipo turnos
+  tipoTurnoTurnosFila: 'Fila virtual',
+  tipoTurnoTurnosAgendados: 'Turno agendado',
   // Centro
   centroSeleccionarCategoria: 'Seleccione una categoría por favor',
   centroSeleccionarTipoTurno: '¿Qué tipo de turno desea solicitar?',
@@ -160,6 +163,9 @@ const english = {
   lobbyHora: 'Hour',
   lobbyNoHayTurnosFila: 'There are no tickets',
   lobbyNoHayTurnosAgendados: 'There are no appointments',
+  // Tipo turnos
+  tipoTurnoTurnosFila: 'Virtual line',
+  tipoTurnoTurnosAgendados: 'Appointment',
   // Centro
   centroSeleccionarCategoria: 'Please select a category',
   centroSeleccionarTipoTurno: 'Please choose your ticket type',

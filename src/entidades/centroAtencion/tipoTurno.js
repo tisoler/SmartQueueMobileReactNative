@@ -1,15 +1,18 @@
 // @flow
 import * as React from 'react';
+import { useContext } from 'react';
 import { View, StyleSheet } from 'react-native';
 import withErrorBoundary from '../../hoc/withErrorBoundary';
 import withDialogoEmergente from '../../hoc/withDialogoEmergente';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
+import { ContextoIdiomas } from '../../lib/contextoIdioma';
 
 const TipoTurno = (props) => {
   const {
     pedirTurnoFila,
     pedirTurnoAgendado,
   } = props;
+  const { textosGlobales } = useContext(ContextoIdiomas);
 
   const estilos = StyleSheet.create({
     contenedor: {
@@ -27,7 +30,7 @@ const TipoTurno = (props) => {
         manejadorClick={() => pedirTurnoFila()}
         flechaAlFinal
       >
-        Fila virtual
+        {textosGlobales.tipoTurnoTurnosFila}
       </BotonRedondeado>
       <BotonRedondeado
         manejadorClick={() => pedirTurnoAgendado()}
@@ -36,7 +39,7 @@ const TipoTurno = (props) => {
         estilo={{ marginTop: 22 }}
         flechaAlFinal
       >
-        Turno agendado
+        {textosGlobales.tipoTurnoTurnosAgendados}
       </BotonRedondeado>
     </View>
   );
