@@ -68,6 +68,7 @@ export const BotonRefrescarTurno = (props: Object) => {
     estadoFbToken,
     estadoTurnoActual,
     estadoTemaUsuario,
+    estadoIdiomaUsuario,
     fijarTurnoActualEnEstado,
     fijarTurnosEnEstado,
     fijarUsuarioLogueadoEnEstado
@@ -87,6 +88,7 @@ export const BotonRefrescarTurno = (props: Object) => {
         estadoFbToken,
         estadoTurnoActual,
         estadoTemaUsuario,
+        estadoIdiomaUsuario,
         fijarTurnoActualEnEstado,
         fijarTurnosEnEstado,
         fijarUsuarioLogueadoEnEstado,
@@ -117,6 +119,7 @@ export const BotonRefrescarTurnoAgendado = (props: Object) => {
     estadoFbToken,
     estadoTurnoActual,
     estadoTemaUsuario,
+    estadoIdiomaUsuario,
     fijarTurnoActualEnEstado,
     fijarTurnosAgendadosEnEstado,
     fijarUsuarioLogueadoEnEstado
@@ -136,6 +139,7 @@ export const BotonRefrescarTurnoAgendado = (props: Object) => {
         estadoFbToken,
         estadoTurnoActual,
         estadoTemaUsuario,
+        estadoIdiomaUsuario,
         fijarTurnoActualEnEstado,
         fijarTurnosAgendadosEnEstado,
         fijarUsuarioLogueadoEnEstado,

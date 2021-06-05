@@ -8,6 +8,7 @@ import {
   removerTurnoAccion,
   evaluarTurnoAccion,
   cambiarTemaUsuarioAccion,
+  cambiarIdiomaUsuarioAccion,
   cambiarTokenFirebaseAccion
 } from '../entidades/usuario/usuarioAcciones';
 import { fijarCentrosAccion, filtrarCentrosAccion } from '../entidades/centroAtencion/centroAtencionAcciones';
@@ -26,6 +27,7 @@ const estadoInicialLogin = {
   iniciales: ''
 };
 const temaUsuarioInicial = 'temaOscuro';
+const idiomaUsuarioInicial = 'english';
 
 export const ProveedorContextoEstados = (props: Props) => {
   const { children } = props;
@@ -39,6 +41,7 @@ export const ProveedorContextoEstados = (props: Props) => {
     asignarEstadoTurnosParaEvaluar
   ] = useState();
   const [estadoTemaUsuario, asignarEstadoTemaUsuario] = useState(temaUsuarioInicial);
+  const [estadoIdiomaUsuario, asignarEstadoIdiomaUsuario] = useState(idiomaUsuarioInicial);
   const [estadoFbToken, asignarEstadoFbToken] = useState();
   const [estadoIrEvaluacion, asignarEstadoIrEvaluacion] = useState();
 
@@ -77,16 +80,19 @@ export const ProveedorContextoEstados = (props: Props) => {
     email: string,
     token: string,
     fbtoken: string,
-    temaUsuario = 'temaOscuro'
+    temaUsuario? = 'temaOscuro',
+    idiomaUsuario? = 'english',
   ) => {
     fijarUsuarioLogueadoAccion(
       email,
       token,
       fbtoken,
       temaUsuario,
+      idiomaUsuario,
       asignarEstadoLogin,
       asignarEstadoTemaUsuario,
-      asignarEstadoFbToken
+      asignarEstadoIdiomaUsuario,
+      asignarEstadoFbToken,
     );
   };
   const removerTurnoEnEstado = (turno: Object) => {
@@ -100,6 +106,9 @@ export const ProveedorContextoEstados = (props: Props) => {
   };
   const cambiarTemaUsuarioEnEstado = () => {
     cambiarTemaUsuarioAccion(estadoTemaUsuario, asignarEstadoTemaUsuario);
+  };
+  const cambiarIdiomaUsuarioEnEstado = () => {
+    cambiarIdiomaUsuarioAccion(estadoIdiomaUsuario, asignarEstadoIdiomaUsuario);
   };
   const cambiarTokenFirebaseEnEstado = (tokenFb: string) => {
     cambiarTokenFirebaseAccion(asignarEstadoFbToken, tokenFb);
@@ -125,6 +134,7 @@ export const ProveedorContextoEstados = (props: Props) => {
       estadoTurnosAgendadosActivos,
       estadoTurnosParaEvaluar,
       estadoTemaUsuario,
+      estadoIdiomaUsuario,
       estadoTurnoActual,
       estadoFbToken,
       estadoIrEvaluacion,
@@ -138,8 +148,11 @@ export const ProveedorContextoEstados = (props: Props) => {
       fijarCentrosEnEstado,
       filtrarCentrosEnEstado,
       cambiarTemaUsuarioEnEstado,
+      cambiarIdiomaUsuarioEnEstado,
       fijarTurnoActualEnEstado,
       cambiarTokenFirebaseEnEstado,
+      // Solamente expuesto para cuando hay idioma en almacenamiento local pero no email
+      asignarEstadoIdiomaUsuario,
       // Es el único que no está en acciones, envía el setState directamente
       asignarEstadoIrEvaluacion
     }}

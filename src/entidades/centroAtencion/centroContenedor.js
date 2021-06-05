@@ -12,6 +12,7 @@ import {
 import { ContextoEstados } from '../../lib/contextoEstados';
 import { IconosCentros, tipoTurno, pantalla } from '../../lib/constantes';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
+import { ContextoIdiomas } from '../../lib/contextoIdioma';
 import CentroAtencion from './centroAtencion';
 import TipoTurno from './tipoTurno';
 import Calendario from '../turnoAgendado/calendario';
@@ -23,6 +24,7 @@ type Props = {
 
 const CentroContenedor = ({ navigation, route }: Props) => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
+  const { textosGlobales } = useContext(ContextoIdiomas);
   const {
     estadoTurnosActivos, estadoTurnosAgendadosActivos, fijarTurnoActualEnEstado,
   } = useContext(ContextoEstados);
@@ -112,7 +114,7 @@ const CentroContenedor = ({ navigation, route }: Props) => {
       fijarTurnoActualEnEstado(turnoExistente, null);
       navigation.navigate('Turno');
     } else {
-      fijarSubtitulo('Seleccione una categoría por favor.');
+      fijarSubtitulo(textosGlobales.centroSeleccionarCategoria);
       fijarPantallaActual(pantalla.centroAtencionFila);
     }
   }
@@ -122,18 +124,18 @@ const CentroContenedor = ({ navigation, route }: Props) => {
       fijarTurnoActualEnEstado(turnoAgendadoExistente, null);
       navigation.navigate('TurnoAgendado');
     } else {
-      fijarSubtitulo('Seleccione una categoría por favor.');
+      fijarSubtitulo(textosGlobales.centroSeleccionarCategoria);
       fijarPantallaActual(pantalla.centroAtencionTurno);
     }
   }
 
   function elegirTipoTurno() {
-    fijarSubtitulo('¿Qué tipo de turno desea solicitar?');
+    fijarSubtitulo(textosGlobales.centroSeleccionarTipoTurno);
     fijarPantallaActual(pantalla.tipoTurno);
   }
 
   function elegirFechaTurno(categoria) {
-    fijarSubtitulo('Seleccione fecha y horario del turno');
+    fijarSubtitulo(textosGlobales.centroSeleccionarFechaHora);
     fijarCategoriaSeleccionada(categoria);
     fijarPantallaActual(pantalla.calendarioTurno);
   }

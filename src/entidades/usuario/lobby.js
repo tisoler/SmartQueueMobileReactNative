@@ -10,6 +10,7 @@ import withDialogoEmergente from '../../hoc/withDialogoEmergente';
 import Teja from '../../componentes/comunes/teja';
 import TejaChica from '../../componentes/comunes/tejaChica';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
+import { ContextoIdiomas } from '../../lib/contextoIdioma';
 import { ContextoDialogoEmergente } from '../../lib/contextoDialogoEmergente';
 import {
   procesarMensajeError,
@@ -25,6 +26,7 @@ const TipoTurno = {
 
 const Lobby = ({ navigation }) => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
+  const { textosGlobales } = useContext(ContextoIdiomas);
   const {
     estadoLogin,
     estadoCentros,
@@ -32,6 +34,7 @@ const Lobby = ({ navigation }) => {
     estadoTurnosAgendadosActivos,
     estadoFbToken,
     estadoTemaUsuario,
+    estadoIdiomaUsuario,
     fijarTurnosEnEstado,
     fijarTodosTurnosEnEstado,
     fijarCentrosEnEstado,
@@ -142,7 +145,8 @@ const Lobby = ({ navigation }) => {
       fijarTurnoActualEnEstado,
       fijarTurnosEnEstado,
       asignarEstadoIrEvaluacion,
-      abrirDialogoEmergente
+      abrirDialogoEmergente,
+      textosGlobales,
     );
     // --- Fin Firebase ----
 
@@ -159,7 +163,8 @@ const Lobby = ({ navigation }) => {
               fijarUsuarioLogueadoEnEstado,
               estadoLogin.email,
               estadoFbToken,
-              estadoTemaUsuario
+              estadoTemaUsuario,
+              estadoIdiomaUsuario,
             )) {
               Alert.alert(procesarMensajeError(error.message, 'Error durante la carga de centros.'));
             }
@@ -183,7 +188,8 @@ const Lobby = ({ navigation }) => {
           fijarUsuarioLogueadoEnEstado,
           estadoLogin.email,
           estadoFbToken,
-          estadoTemaUsuario
+          estadoTemaUsuario,
+          estadoIdiomaUsuario,
         )) {
           Alert.alert(procesarMensajeError(error.message, 'Error durante la carga de turnos activos.'));
         }
@@ -250,7 +256,7 @@ const Lobby = ({ navigation }) => {
             color: mostrarTurnosFilas ? '#ffffff' : '#8B6CC6',
           }}
         >
-          Turnos para filas
+          {textosGlobales.lobbyTurnosFila}
         </Text>
       </BotonRipple>
       <BotonRipple
@@ -270,7 +276,7 @@ const Lobby = ({ navigation }) => {
             color: !mostrarTurnosFilas ? '#ffffff' : '#8B6CC6',
           }}
         >
-          Turnos agendados
+          {textosGlobales.lobbyTurnosAgendados}
         </Text>
       </BotonRipple>
     </View>
@@ -294,7 +300,7 @@ const Lobby = ({ navigation }) => {
                   </View>
                   <View style={{ flex: 0.3, justifyContent: 'flex-end' }}>
                     <Text style={turno.status === 'waiting' ? estilos.espera : estilos.enLugar}>
-                      {turno.status === 'waiting' ? 'Esperando' : 'En el lugar'}
+                      {turno.status === 'waiting' ? textosGlobales.lobbyEsperando : textosGlobales.lobbyEnElLugar}
                     </Text>
                   </View>
                 </View>
@@ -305,7 +311,7 @@ const Lobby = ({ navigation }) => {
       )
       : (
         <View style={estilos.contenedorTurnos}>
-          <Text style={{ color: '#ffffff', fontSize: 18, marginTop: 20 }}>No hay turnos para filas.</Text>
+          <Text style={{ color: '#ffffff', fontSize: 18, marginTop: 20 }}>{textosGlobales.lobbyNoHayTurnosFila}</Text>
         </View>
       )
   );
@@ -328,7 +334,10 @@ const Lobby = ({ navigation }) => {
                     <Text style={estilos.centro}>{turno.Center.name}</Text>
                     <Text style={estilos.categoria}>{turno.Category.name}</Text>
                     <Text style={estilos.categoria}>
-                      {`Fecha: ${fechaConFormato} Horario: ${turno.turno_time}`}
+                      {`${textosGlobales.lobbyFecha}: ${fechaConFormato}`}
+                    </Text>
+                    <Text style={estilos.categoria}>
+                      {`${textosGlobales.lobbyHora}: ${turno.turno_time}`}
                     </Text>
                   </View>
                 </Teja>
@@ -339,7 +348,7 @@ const Lobby = ({ navigation }) => {
       )
       : (
         <View style={estilos.contenedorTurnos}>
-          <Text style={{ color: '#ffffff', fontSize: 18, marginTop: 20 }}>No hay turnos agendados.</Text>
+          <Text style={{ color: '#ffffff', fontSize: 18, marginTop: 20 }}>{textosGlobales.lobbyNoHayTurnosAgendados}</Text>
         </View>
       )
   );
@@ -348,7 +357,7 @@ const Lobby = ({ navigation }) => {
     <View style={estilos.contenedor}>
       <View style={estilos.encabezado} />
       <View style={estilos.contenedorTituloCentros} elevation={5}>
-        <Text style={estilosGlobales.tituloSeccion}>Sacar turno para:</Text>
+        <Text style={estilosGlobales.tituloSeccion}>{textosGlobales.lobbyMensajeSacarTurno}</Text>
       </View>
       <ListadoCentros />
 

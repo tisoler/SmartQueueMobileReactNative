@@ -41,10 +41,11 @@ export const esTokenValido = (
   fijarUsuarioLogueadoEnEstado: Function,
   email: string,
   fbtoken: string,
-  estadoTemaUsuario: string
+  estadoTemaUsuario: string,
+  estadoIdiomaUsuario: string,
 ) => {
   if (mensaje.trim().toLowerCase().includes('unexpected token')) {
-    fijarUsuarioLogueadoEnEstado(email, '', fbtoken, estadoTemaUsuario);
+    fijarUsuarioLogueadoEnEstado(email, '', fbtoken, estadoTemaUsuario, estadoIdiomaUsuario);
     return false;
   }
   return true;
@@ -104,14 +105,15 @@ const notificarAvanceTurno = (
   payload: Object,
   navigation: Object,
   fijarTurnoActualEnEstado: Function,
-  abrirDialogoEmergente: Function
+  abrirDialogoEmergente: Function,
+  textosGlobales: Object,
 ) => {
   if (payload?.data?.center_id) {
     abrirDialogoEmergente(
       payload.notification?.title || 'Avance de turno',
       payload.notification?.body ? `${payload.notification?.body} ¿Desea ir al turno?` : `Su turno ${payload.data.code || ''} ha avanzado. ¿Desea ver el turno?`,
-      'Sí',
-      'Más tarde'
+      textosGlobales.dialogoEmergenteSi,
+      textosGlobales.dialogoEmergenteMasTarde
     )
       .then(respuesta => {
         if (respuesta) {
@@ -145,13 +147,14 @@ const notificarEvaluarTurno = (
   estadoLogin: Object,
   fijarTurnosEnEstado: Function,
   asignarEstadoIrEvaluacion: Function,
-  abrirDialogoEmergente: Function
+  abrirDialogoEmergente: Function,
+  textosGlobales: Object,
 ) => {
   abrirDialogoEmergente(
       payload.notification?.title || `Evaluación de atención de ${payload?.data?.center}`,
       payload.notification?.body ? `${payload.notification?.body} ¿Desea evaluarlo ahora?` : 'Tiene un turno para evaluar. ¿Desea evaluarlo ahora?',
-      'Sí',
-      'Más tarde'
+      textosGlobales.dialogoEmergenteSi,
+      textosGlobales.dialogoEmergenteMasTarde
   )
     .then(async respuesta => {
       if (respuesta) {
@@ -171,7 +174,8 @@ export const crearClienteFirebase = async (
   fijarTurnoActualEnEstado: Function,
   fijarTurnosEnEstado: Function,
   asignarEstadoIrEvaluacion: Function,
-  abrirDialogoEmergente: Function
+  abrirDialogoEmergente: Function,
+  textosGlobales: Object,
 ) => {
   // Listener para cuando el token de Firebase se ha refrescado
   messaging().onTokenRefresh(async () => {
@@ -191,7 +195,8 @@ export const crearClienteFirebase = async (
             payload,
             navigation,
             fijarTurnoActualEnEstado,
-            abrirDialogoEmergente
+            abrirDialogoEmergente,
+            textosGlobales,
           );
           break;
         case '2': // Evaluacion
@@ -200,7 +205,8 @@ export const crearClienteFirebase = async (
             estadoLogin,
             fijarTurnosEnEstado,
             asignarEstadoIrEvaluacion,
-            abrirDialogoEmergente
+            abrirDialogoEmergente,
+            textosGlobales,
           );
           break;
         default:

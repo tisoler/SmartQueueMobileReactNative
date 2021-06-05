@@ -38,9 +38,11 @@ export const fijarUsuarioLogueadoAccion = (
   token: string,
   tokenFb: string,
   temaUsuario: string,
+  idiomaUsuario: string,
   asignarEstadoLogin: Function,
   asignarEstadoTemaUsuario: Function,
-  asignarEstadoFbToken: Function
+  asignarEstadoIdiomaUsuario: Function,
+  asignarEstadoFbToken: Function,
 ) => {
   let inicialNombre = '';
   let inicialApellido = '';
@@ -64,6 +66,7 @@ export const fijarUsuarioLogueadoAccion = (
     iniciales: (`${inicialNombre}${inicialApellido}`).toUpperCase()
   });
   asignarEstadoTemaUsuario(temaUsuario);
+  asignarEstadoIdiomaUsuario(idiomaUsuario);
   asignarEstadoFbToken(tokenFb);
 };
 
@@ -92,6 +95,15 @@ export const cambiarTemaUsuarioAccion = (
   const temaUsuario = estadoTemaUsuario === 'temaOscuro' ? 'temaClaro' : 'temaOscuro';
   guardarDatosLocalmente('@temaUsuario', temaUsuario);
   asignarEstadoTemaUsuario(temaUsuario);
+};
+
+export const cambiarIdiomaUsuarioAccion = (
+  estadoIdiomaUsuario: Object,
+  asignarEstadoIdiomaUsuario: Function
+) => {
+  const idiomaUsuario = estadoIdiomaUsuario === 'espaniol' ? 'english' : 'espaniol';
+  guardarDatosLocalmente('@idiomaUsuario', idiomaUsuario);
+  asignarEstadoIdiomaUsuario(idiomaUsuario);
 };
 
 export const cambiarTokenFirebaseAccion = (asignarEstadoFbToken: Function, tokenFb: string) => {

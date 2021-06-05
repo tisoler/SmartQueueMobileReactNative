@@ -4,6 +4,7 @@ import messaging from '@react-native-firebase/messaging';
 import Navegador from './src/componentes/navegacion';
 import { ProveedorContextoEstados } from './src/lib/contextoEstados';
 import { ProveedorContextoEstilosGlobales } from './src/lib/contextoEstilosGlobales';
+import { ProveedorContextoIdiomas } from './src/lib/contextoIdioma';
 import { ProveedorContextoDialogoEmergente } from './src/lib/contextoDialogoEmergente';
 import { guardarDatosLocalmente, recuperarDatosLocalmente } from './src/lib/ayudante';
 
@@ -40,9 +41,11 @@ messaging().setBackgroundMessageHandler(async payload => {
 export default () => (
   <ProveedorContextoEstados>
     <ProveedorContextoEstilosGlobales>
-      <ProveedorContextoDialogoEmergente>
-        <Navegador />
-      </ProveedorContextoDialogoEmergente>
+      <ProveedorContextoIdiomas>
+        <ProveedorContextoDialogoEmergente>
+          <Navegador />
+        </ProveedorContextoDialogoEmergente>
+      </ProveedorContextoIdiomas>
     </ProveedorContextoEstilosGlobales>
   </ProveedorContextoEstados>
 );

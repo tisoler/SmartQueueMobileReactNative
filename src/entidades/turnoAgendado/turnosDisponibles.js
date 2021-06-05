@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
+import { ContextoIdiomas } from '../../lib/contextoIdioma';
 import { obtenerTurnosDisponibles, generarTurno } from '../../lib/servicios';
 import { ContextoEstados } from '../../lib/contextoEstados';
 import { procesarMensajeError, esTokenValido, } from '../../lib/ayudante';
@@ -20,10 +21,12 @@ function TurnosDisponibles(props: any) {
     estadoLogin,
     estadoFbToken,
     estadoTemaUsuario,
+    estadoIdiomaUsuario,
     fijarUsuarioLogueadoEnEstado,
     fijarTurnoActualEnEstado,
   } = useContext(ContextoEstados);
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
+  const { textosGlobales } = useContext(ContextoIdiomas);
   const [cargando, fijarCargando] = useState(true);
   const [horarioSeleccionado, fijarHorarioSeleccionado] = useState('');
   const turnos = useRef();
@@ -116,7 +119,8 @@ function TurnosDisponibles(props: any) {
               fijarUsuarioLogueadoEnEstado,
               estadoLogin.email,
               estadoFbToken,
-              estadoTemaUsuario
+              estadoTemaUsuario,
+              estadoIdiomaUsuario,
           )) {
             fijarCargando(false);
             Alert.alert(procesarMensajeError(error.message, 'Error durante la carga de días disponibles.'));
@@ -161,7 +165,8 @@ function TurnosDisponibles(props: any) {
               fijarUsuarioLogueadoEnEstado,
               estadoLogin.email,
               estadoFbToken,
-              estadoTemaUsuario
+              estadoTemaUsuario,
+              estadoIdiomaUsuario,
           )) {
             fijarCargando(false);
             Alert.alert(procesarMensajeError(error.message, 'Error durante la generación del turno.'));
@@ -187,7 +192,7 @@ function TurnosDisponibles(props: any) {
     <View style={estilos.contenedorTurnos}>
       <View style={estilos.contenedorFechaElegida}>
         <View style={{ flexDirection: 'column', width: '35%', }}>
-          <Text style={estilos.fechaElegida}>Fecha elegida</Text>
+          <Text style={estilos.fechaElegida}>{textosGlobales.turnosDisponiblesFechaElegida}</Text>
           <Text style={estilos.fechaElegida}>{fechaConFormato}</Text>
         </View>
         <View style={{ width: '65%', }}>
@@ -202,13 +207,13 @@ function TurnosDisponibles(props: any) {
             colorTexto={estilosGlobales.colorFondoBotonPrincipal}
             flechaAlPrincipio
           >
-            Cambiar fecha
+            {textosGlobales.turnosDisponiblesCambiarFecha}
           </BotonRedondeado>
         </View>
       </View>
 
       <Text style={{ marginTop: 10, fontSize: 18, color: estilosGlobales.colorFondoLogoLogin }}>
-        Horarios
+        {textosGlobales.turnosDisponiblesHorarios}
       </Text>
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
@@ -238,12 +243,14 @@ function TurnosDisponibles(props: any) {
   const PopupConfirmacion = () => (
     <View style={estilos.contenedorConfirmacion}>
       <View style={estilos.contenedorMensaje}>
-        <Text style={estilos.titulo}>Confirmar turno</Text>
-        <Text style={estilos.mensaje}>
-          {`Fecha: ${fechaConFormato} - Horario: ${horarioSeleccionado}`}
+        <Text style={estilos.titulo}>
+          {textosGlobales.turnosDisponiblesMensajeTituloConfirmacion}
         </Text>
         <Text style={estilos.mensaje}>
-          ¿Desea tomar el turno?
+          {`${textosGlobales.turnosDisponiblesFecha}: ${fechaConFormato} - ${textosGlobales.turnosDisponiblesHorario}: ${horarioSeleccionado}`}
+        </Text>
+        <Text style={estilos.mensaje}>
+          {textosGlobales.turnosDisponiblesMensajeConfirmacion}
         </Text>
       </View>
       <View style={{ width: '100%', alignItems: 'center' }}>
@@ -251,7 +258,7 @@ function TurnosDisponibles(props: any) {
           manejadorClick={() => confirmarTurno()}
           estilo={{ marginTop: 5 }}
         >
-          Confirmar
+          {textosGlobales.turnosDisponiblesConfirmar}
         </BotonRedondeado>
         <BotonRedondeado
           manejadorClick={() => fijarHorarioSeleccionado('')}
@@ -262,7 +269,7 @@ function TurnosDisponibles(props: any) {
           colorTexto={estilosGlobales.colorFondoBotonPrincipal}
           flechaAlPrincipio
         >
-          Cambiar turno
+          {textosGlobales.turnosDisponiblesCambiarTurno}
         </BotonRedondeado>
         <BotonRedondeado
           manejadorClick={() => fijarDiaSeleccionado()}
@@ -273,7 +280,7 @@ function TurnosDisponibles(props: any) {
           colorTexto={estilosGlobales.colorFondoBotonPrincipal}
           flechaAlPrincipio
         >
-          Cambiar fecha
+          {textosGlobales.turnosDisponiblesCambiarFecha}
         </BotonRedondeado>
         <BotonRedondeado
           manejadorClick={() => elegirTipoTurno()}
@@ -284,7 +291,7 @@ function TurnosDisponibles(props: any) {
           colorTexto={estilosGlobales.colorFondoBotonPrincipal}
           flechaAlPrincipio
         >
-          Cancelar
+          {textosGlobales.turnosDisponiblesCancelar}
         </BotonRedondeado>
       </View>
     </View>

@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { ContextoEstados } from '../lib/contextoEstados';
 import { ContextoEstilosGlobales } from '../lib/contextoEstilosGlobales';
+import { ContextoIdiomas } from '../lib/contextoIdioma';
 import Etiqueta from './comunes/etiqueta';
 import { NombresIconosGenerales } from '../lib/constantes';
 import { version } from '../../package.json';
@@ -18,11 +19,14 @@ const MenuLateral = (props: Object) => {
   const {
     estadoLogin,
     estadoTemaUsuario,
+    estadoIdiomaUsuario,
     estadoFbToken,
     fijarUsuarioLogueadoEnEstado,
-    cambiarTemaUsuarioEnEstado
+    cambiarTemaUsuarioEnEstado,
+    cambiarIdiomaUsuarioEnEstado,
   } = useContext(ContextoEstados);
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
+  const { textosGlobales } = useContext(ContextoIdiomas);
 
   const estilos = StyleSheet.create({
     contenedorGlobal: {
@@ -90,14 +94,28 @@ const MenuLateral = (props: Object) => {
       </View>
       <View style={estilos.contenedorOpciones}>
         <TouchableOpacity style={estilos.opcionMenu} onPress={() => navigation.navigate('Lobby')}>
-          <Etiqueta value="Mis turnos" icono={NombresIconosGenerales.turnos} tamanoLetra={18} />
+          <Etiqueta
+            value={textosGlobales.menuLateralMisTurnos}
+            icono={NombresIconosGenerales.turnos}
+            tamanoLetra={18}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={estilos.opcionMenu}
+          onPress={() => cambiarIdiomaUsuarioEnEstado()}
+        >
+          <Etiqueta
+            value={estadoIdiomaUsuario === 'espaniol' ? 'Change to English' : 'Cambiar a español'}
+            icono={NombresIconosGenerales.idioma}
+            tamanoLetra={18}
+          />
         </TouchableOpacity>
         <TouchableOpacity
           style={estilos.opcionMenu}
           onPress={() => cambiarTemaUsuarioEnEstado()}
         >
           <Etiqueta
-            value={estadoTemaUsuario === 'temaClaro' ? 'Estilo oscuro' : 'Estilo claro'}
+            value={estadoTemaUsuario === 'temaClaro' ? textosGlobales.menuLateralEstiloClaro : textosGlobales.menuLateralEstiloOscuro}
             icono={NombresIconosGenerales.paleta}
             tamanoLetra={18}
           />
@@ -107,12 +125,16 @@ const MenuLateral = (props: Object) => {
             style={estilos.opcionMenu}
             onPress={
               () => {
-                fijarUsuarioLogueadoEnEstado('', '', estadoFbToken, estadoTemaUsuario);
+                fijarUsuarioLogueadoEnEstado('', '', estadoFbToken, estadoTemaUsuario, estadoIdiomaUsuario);
                 navigation.closeDrawer();
               }
             }
           >
-            <Etiqueta value="Cerrar sesión" icono={NombresIconosGenerales.cerrarSesion} tamanoLetra={18} />
+            <Etiqueta
+              value={textosGlobales.menuLateralCerrarSesion}
+              icono={NombresIconosGenerales.cerrarSesion}
+              tamanoLetra={18}
+            />
           </TouchableOpacity>
         </View>
       </View>

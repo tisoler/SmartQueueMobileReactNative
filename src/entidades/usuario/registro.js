@@ -8,6 +8,7 @@ import TextoIngreso from '../../componentes/comunes/textoIngreso';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import { ContextoEstados } from '../../lib/contextoEstados';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
+import { ContextoIdiomas } from '../../lib/contextoIdioma';
 import {
   validarExistenciaEmanil,
   validarExistenciaDNI,
@@ -19,6 +20,7 @@ import LogoLogin from '../../componentes/comunes/svg/logoLogin';
 
 const Registro = ({ navigation }) => {
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
+  const { textosGlobales } = useContext(ContextoIdiomas);
   const [emailUsuario, cambioEmail] = useState('');
   const [contrasenaUsuario, cambioContrasena] = useState('');
   const [nombreUsuario, cambioNombre] = useState('');
@@ -223,7 +225,9 @@ const Registro = ({ navigation }) => {
       || contrasenaUsuario?.trim().length < 8
       || contrasenaUsuario?.includes(' ')
       || !nombreUsuario
+      || nombreUsuario?.trim().length < 3
       || !apellidoUsuario
+      || apellidoUsuario?.trim().length < 3
       || !dniUsuario
     ) {
       return false;
@@ -273,45 +277,57 @@ const Registro = ({ navigation }) => {
       <View style={estilos.contenedorCampos}>
         <View style={estilos.subContenedorCampos}>
           <TextoIngreso
-            placeholderText="Email"
+            placeholderText={textosGlobales.registroEmail}
             value={emailUsuario}
             manejadorCambioTexto={cambioEmail}
             tipoDeTeclado="email-address"
             sinPrimeraLetraMayuscula
           />
-          {!emailUsuario?.trim() && mostrarValidaciones && textoValidacion('Dato requerido.')}
-          {emailExistente && mostrarValidaciones && textoValidacion('Email ya registrado.')}
+          {!emailUsuario?.trim() && mostrarValidaciones
+            && textoValidacion(textosGlobales.registroDatoRequerido)}
+          {emailExistente && mostrarValidaciones
+            && textoValidacion(textosGlobales.registroEmailYaRegistrado)}
           <TextoIngreso
-            placeholderText="Contraseña"
+            placeholderText={textosGlobales.registroContrasenia}
             value={contrasenaUsuario}
             manejadorCambioTexto={cambioContrasena}
             puedeEsconderTexto
             largoMaximo={16}
           />
-          {!contrasenaUsuario?.trim() && mostrarValidaciones && textoValidacion('Dato requerido.')}
-          {contrasenaUsuario?.trim().length < 8 && mostrarValidaciones && textoValidacion('Debe tener 8 caracteres al menos.')}
-          {contrasenaUsuario?.includes(' ') && mostrarValidaciones && textoValidacion('No puede tener espacios.')}
+          {!contrasenaUsuario?.trim() && mostrarValidaciones
+            && textoValidacion(textosGlobales.registroDatoRequerido)}
+          {contrasenaUsuario?.trim().length < 8 && mostrarValidaciones
+            && textoValidacion(textosGlobales.registroMinimoOchoCaracteres)}
+          {contrasenaUsuario?.includes(' ') && mostrarValidaciones && textoValidacion(textosGlobales.registroEmailYaRegistrado)}
           <TextoIngreso
-            placeholderText="Nombre"
+            placeholderText={textosGlobales.registroNombre}
             value={nombreUsuario}
             manejadorCambioTexto={cambioNombre}
           />
-          {!nombreUsuario?.trim() && mostrarValidaciones && textoValidacion('Dato requerido.')}
+          {!nombreUsuario?.trim() && mostrarValidaciones
+            && textoValidacion(textosGlobales.registroDatoRequerido)}
+          {nombreUsuario?.trim().length < 3 && mostrarValidaciones
+            && textoValidacion(textosGlobales.registroMinimoTresCaracteres)}
           <TextoIngreso
-            placeholderText="Apellido"
+            placeholderText={textosGlobales.registroApellido}
             value={apellidoUsuario}
             manejadorCambioTexto={cambioApellido}
           />
-          {!apellidoUsuario?.trim() && mostrarValidaciones && textoValidacion('Dato requerido.')}
+          {!apellidoUsuario?.trim() && mostrarValidaciones
+            && textoValidacion(textosGlobales.registroDatoRequerido)}
+          {apellidoUsuario?.trim().length < 3 && mostrarValidaciones
+            && textoValidacion(textosGlobales.registroMinimoTresCaracteres)}
           <TextoIngreso
-            placeholderText="DNI"
+            placeholderText={textosGlobales.registroDni}
             value={dniUsuario}
             manejadorCambioTexto={cambioDNI}
             largoMaximo={8}
             tipoDeTeclado="numeric"
           />
-          {!dniUsuario?.trim() && mostrarValidaciones && textoValidacion('Dato requerido.')}
-          {DNIExistente && mostrarValidaciones && textoValidacion('El DNI ingresado ya está registrado.')}
+          {!dniUsuario?.trim() && mostrarValidaciones
+            && textoValidacion(textosGlobales.registroDatoRequerido)}
+          {DNIExistente && mostrarValidaciones
+            && textoValidacion(textosGlobales.registroDniYaRegistrado)}
         </View>
       </View>
       {!tecladoVisible && (
@@ -321,7 +337,7 @@ const Registro = ({ navigation }) => {
             cargando={botonCargando}
             estilo={{ marginTop: 20 }}
           >
-            Registrarme
+            {textosGlobales.registroBotonRegistrarse}
           </BotonRedondeado>
         </View>
       )}
@@ -331,8 +347,10 @@ const Registro = ({ navigation }) => {
   const PantallaRegistroCompletado = (
     <Animated.View style={{ ...estilos.contenedorRegistroCompleto, top: posicionRegistroCompleto }}>
       <Animated.View style={{ ...estilos.contenedorCampos, opacity: opacidadRegistroCompleto }}>
-        <Text style={estilos.subtituloGrande}>¡Ha completado el registro!</Text>
-        <Text style={estilos.tituloSeccion}>Ya puede comenzar a pedir turnos...</Text>
+        <Text style={estilos.subtituloGrande}>
+          {textosGlobales.registroMensajeRegistroCompleto}
+        </Text>
+        <Text style={estilos.tituloSeccion}>{textosGlobales.registroMensajeEmpezarUso}</Text>
       </Animated.View>
       <Animated.View style={{ ...estilos.subContenedorBotones, opacity: opacidadRegistroCompleto }}>
         <BotonRedondeado
@@ -341,7 +359,7 @@ const Registro = ({ navigation }) => {
           cargando={botonCargando}
           estilo={{ marginTop: 20 }}
         >
-          Comenzar
+          {textosGlobales.registroBotonComenzar}
         </BotonRedondeado>
       </Animated.View>
     </Animated.View>

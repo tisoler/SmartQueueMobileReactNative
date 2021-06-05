@@ -26,6 +26,7 @@ export const NombresIconosGenerales = {
   cancelar: 'cancelar',
   cruz: 'cruz',
   turnos: 'turnos',
+  idioma: 'idioma',
   paleta: 'paleta',
   refrescar: 'refrescar',
   ojo: 'ojo',

@@ -10,6 +10,7 @@ import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import { ContextoEstados } from '../../lib/contextoEstados';
 import { cancelarTurno, confirmarAsistenciaTurno, obtenerTurnosParaUsuario } from '../../lib/servicios';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
+import { ContextoIdiomas } from '../../lib/contextoIdioma';
 import { procesarMensajeError, esTokenValido } from '../../lib/ayudante';
 import recuperarTurno from './llamadasServicioComunes';
 import Teja from '../../componentes/comunes/teja';
@@ -17,17 +18,19 @@ import Turnos from '../../componentes/comunes/svg/turnos';
 import Reloj from '../../componentes/comunes/svg/reloj';
 
 const TurnoAgendado = ({ navigation }) => {
-  const { estilosGlobales } = useContext(ContextoEstilosGlobales);
   const {
     estadoLogin,
     estadoTurnoActual,
     estadoFbToken,
     estadoTemaUsuario,
+    estadoIdiomaUsuario,
     removerTurnoAgendadoEnEstado,
     fijarTurnoActualEnEstado,
     fijarUsuarioLogueadoEnEstado,
     fijarTurnosAgendadosEnEstado,
   } = useContext(ContextoEstados);
+  const { estilosGlobales } = useContext(ContextoEstilosGlobales);
+  const { textosGlobales } = useContext(ContextoIdiomas);
   const { turno, demora: demoraActual } = estadoTurnoActual;
   const [confirmandoTurno, cambiarConfirmandoTurno] = useState(false);
   const [cargando, cambiarCargando] = useState(true);
@@ -55,6 +58,16 @@ const TurnoAgendado = ({ navigation }) => {
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
+      width: '85%',
+      backgroundColor: '#ffffff',
+      borderTopLeftRadius: 10,
+      borderBottomLeftRadius: 10,
+      padding: 10,
+    },
+    subContenedorInformacion: {
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'space-between',
       width: '85%',
       backgroundColor: '#ffffff',
       borderTopLeftRadius: 10,
@@ -180,6 +193,7 @@ const TurnoAgendado = ({ navigation }) => {
         estadoFbToken,
         estadoTurnoActual,
         estadoTemaUsuario,
+        estadoIdiomaUsuario,
         fijarTurnoActualEnEstado,
         fijarTurnosAgendadosEnEstado,
         fijarUsuarioLogueadoEnEstado,
@@ -229,7 +243,8 @@ const TurnoAgendado = ({ navigation }) => {
           fijarUsuarioLogueadoEnEstado,
           estadoLogin.email,
           estadoFbToken,
-          estadoTemaUsuario
+          estadoTemaUsuario,
+          estadoIdiomaUsuario,
         )) {
           Alert.alert(procesarMensajeError(error.message, 'Error al cancelar el turno.'));
         }
@@ -254,7 +269,8 @@ const TurnoAgendado = ({ navigation }) => {
           fijarUsuarioLogueadoEnEstado,
           estadoLogin.email,
           estadoFbToken,
-          estadoTemaUsuario
+          estadoTemaUsuario,
+          estadoIdiomaUsuario,
         )) {
           Alert.alert(procesarMensajeError(error.message, 'Error al confirmar presencia.'));
         }
@@ -270,7 +286,7 @@ const TurnoAgendado = ({ navigation }) => {
         estilo={{ marginTop: 20 }}
         width="100%"
       >
-        Ya estoy en el lugar
+        {textosGlobales.turnoAgendadoYaEstoyAqui}
       </BotonRedondeado>
       { !confirmandoTurno && (
         <BotonRedondeado
@@ -282,7 +298,7 @@ const TurnoAgendado = ({ navigation }) => {
           colorEfecto={estilosGlobales.colorEfectoClickBotonSecundario}
           colorTexto={estilosGlobales.colorFondoBotonPrincipal}
         >
-          Cancelar turno
+          {textosGlobales.turnoAgendadoCancelar}
         </BotonRedondeado>
       )}
     </View>
@@ -297,10 +313,12 @@ const TurnoAgendado = ({ navigation }) => {
       }}
       elevation={5}
     >
-      <Text style={estilosGlobales.tituloGrande}>Bienvenida/o.</Text>
+      <Text style={estilosGlobales.tituloGrande}>{textosGlobales.turnoAgendadoBienvenida}</Text>
       <Text style={estilosGlobales.subtituloGrande}>
-        Ya hemos recibido la notificación de su llegada.
-        Su turno aparecerá en pantalla y será atendido/a.
+        {textosGlobales.turnoAgendadoMensajeArrivo1}
+      </Text>
+      <Text style={estilosGlobales.subtituloGrande}>
+        {textosGlobales.turnoAgendadoMensajeArrivo2}
       </Text>
     </Animated.View>
   );
@@ -325,7 +343,7 @@ const TurnoAgendado = ({ navigation }) => {
     <Animated.View style={{ ...estilos.pantallaTurnoCancelado, top: posicionPantallaCancelar }}>
       <Animated.View style={{ ...estilos.contenedorCampos, opacity: opacidadPantallaCancelar }}>
         <Text style={estilos.subtituloGrande}>
-          Su turno ha sido cancelado.
+          {textosGlobales.turnoAgendadoCancelado}
         </Text>
       </Animated.View>
     </Animated.View>
@@ -350,14 +368,14 @@ const TurnoAgendado = ({ navigation }) => {
           display: 'flex', flexDirection: 'row', marginTop: 20, height: 150,
         }}
         >
-          <View style={estilos.subContenedor} elevation={5}>
+          <View style={estilos.subContenedorInformacion} elevation={5}>
             <View style={{
               display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center',
             }}
             >
               <Turnos width={20} height={20} color={estilosGlobales.colorTextoGeneral} />
               <Text style={estilos.textoTurno}>
-                {`Su turno es el ${fechaConFormato} a las ${turno.turno_time}.`}
+                {`${textosGlobales.turnoSuTurnoEs} ${fechaConFormato} ${textosGlobales.turnoALas} ${turno.turno_time}.`}
               </Text>
             </View>
             <View style={{
@@ -366,7 +384,7 @@ const TurnoAgendado = ({ navigation }) => {
             >
               <Reloj width={20} height={20} color={estilosGlobales.colorTextoGeneral} />
               <Text style={[estilos.textoTurno, estilos.margenUltimoTexto]}>
-                Recuerde estar en el lugar al menos 15 minutos antes del horario.
+                {textosGlobales.turnoRecordatorio}
               </Text>
             </View>
           </View>

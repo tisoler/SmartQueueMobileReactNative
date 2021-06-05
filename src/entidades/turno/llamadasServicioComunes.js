@@ -23,7 +23,8 @@ const recuperarTicket = async (
   estadoLogin: Object,
   estadoFbToken: Object,
   estadoTurnoActual: Object,
-  estadoTemaUsuario: Object,
+  estadoTemaUsuario: string,
+  estadoIdiomaUsuario: string,
   fijarTurnoActualEnEstado: Function,
   fijarTurnosEnEstado: Function,
   fijarUsuarioLogueadoEnEstado: Function,
@@ -58,7 +59,8 @@ const recuperarTicket = async (
       fijarUsuarioLogueadoEnEstado,
       estadoLogin.email,
       estadoFbToken,
-      estadoTemaUsuario
+      estadoTemaUsuario,
+      estadoIdiomaUsuario,
     )) {
       Alert.alert(procesarMensajeError(error.message, 'Error en la consulta de turno.'));
     }

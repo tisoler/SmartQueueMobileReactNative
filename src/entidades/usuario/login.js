@@ -10,12 +10,14 @@ import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import { ContextoEstados } from '../../lib/contextoEstados';
 import { NombresIconosGenerales, mensajes } from '../../lib/constantes';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
+import { ContextoIdiomas } from '../../lib/contextoIdioma';
 import { recuperarTokenFB, recuperarDatosLocalmente, procesarMensajeError } from '../../lib/ayudante';
 import IconosGenerales from '../../lib/iconos';
 
 const Login = ({ navigation }) => {
   const { estadoLogin, fijarUsuarioLogueadoEnEstado } = useContext(ContextoEstados);
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
+  const { textosGlobales } = useContext(ContextoIdiomas);
   const [emailUsuario, cambioEmail] = useState(estadoLogin?.email || '');
   const [contrasenaUsuario, cambioContrasena] = useState('');
   const [cargando, cambioCargando] = useState(false);
@@ -111,13 +113,14 @@ const Login = ({ navigation }) => {
     cambioCargando(true);
     const fbtoken = await recuperarTokenFB();
     const temaUsuario = await recuperarDatosLocalmente('@temaUsuario');
+    const idiomaUsuario = await recuperarDatosLocalmente('@idiomaUsuario');
     const payload = { email: emailUsuario, password: contrasenaUsuario, fbtoken };
     login(payload)
       .then(res => res.json())
       .then(respuesta => {
         cambioCargando(false);
         if (respuesta?.success) {
-          fijarUsuarioLogueadoEnEstado(emailUsuario, respuesta.token, fbtoken, temaUsuario || '');
+          fijarUsuarioLogueadoEnEstado(emailUsuario, respuesta.token, fbtoken, temaUsuario || '', idiomaUsuario || '');
         } else {
           // eslint-disable-next-line no-lonely-if
           if (respuesta?.message?.trim().toLowerCase().includes('connect econnrefused')) {
@@ -146,7 +149,7 @@ const Login = ({ navigation }) => {
         <View style={estilos.subContenedor}>
           <View style={estilos.camposLoguin}>
             <TextoIngreso
-              placeholderText="Email"
+              placeholderText={textosGlobales.loginEmail}
               manejadorCambioTexto={cambioEmail}
               value={emailUsuario}
               soloLectura={cargando}
@@ -155,7 +158,7 @@ const Login = ({ navigation }) => {
               sinPrimeraLetraMayuscula
             />
             <TextoIngreso
-              placeholderText="Contraseña"
+              placeholderText={textosGlobales.loginContrasenia}
               manejadorCambioTexto={cambioContrasena}
               value={contrasenaUsuario}
               soloLectura={cargando}
@@ -176,7 +179,7 @@ const Login = ({ navigation }) => {
               width={tecladoVisible ? '47%' : '100%'}
               height={tecladoVisible ? 45 : 59}
             >
-              Ingresar
+              {textosGlobales.loginBotonIngresar}
             </BotonRedondeado>
             {!cargando
               && (
@@ -190,7 +193,7 @@ const Login = ({ navigation }) => {
                   height={tecladoVisible ? 45 : 59}
                   colorTexto={estilosGlobales.colorFondoBotonPrincipal}
                 >
-                  Registrarse
+                  {textosGlobales.loginBotonRegistrarse}
                 </BotonRedondeado>
               )}
           </View>

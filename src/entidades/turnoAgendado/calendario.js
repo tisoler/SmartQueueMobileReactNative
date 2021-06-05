@@ -6,6 +6,7 @@ import { View, Alert, ActivityIndicator } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
+import { ContextoIdiomas } from '../../lib/contextoIdioma';
 import TurnosDisponibles from './turnosDisponibles';
 import { obtenerDiasDisponibles } from '../../lib/servicios';
 import { ContextoEstados } from '../../lib/contextoEstados';
@@ -18,7 +19,14 @@ LocaleConfig.locales.es = {
   dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'Vier', 'Sab'],
   today: 'Hoy'
 };
-LocaleConfig.defaultLocale = 'es';
+
+LocaleConfig.locales.en = {
+  monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+  monthNamesShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'],
+  dayNames: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+  dayNamesShort: ['Sun', 'Mon', 'Tue', 'Web', 'Thu', 'Fri', 'Sat'],
+  today: 'Today'
+};
 
 function Calendario(props: any) {
   const {
@@ -28,14 +36,18 @@ function Calendario(props: any) {
     estadoLogin,
     estadoFbToken,
     estadoTemaUsuario,
+    estadoIdiomaUsuario,
     fijarUsuarioLogueadoEnEstado,
   } = useContext(ContextoEstados);
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
+  const { textosGlobales } = useContext(ContextoIdiomas);
   const [diaSeleccionado, fijarDiaSeleccionado] = useState();
   const diasDeshabilitados = useRef();
   const fechaDesde = useRef();
   const fechaHasta = useRef();
   const [cargando, fijarCargando] = useState(true);
+
+  LocaleConfig.defaultLocale = textosGlobales.calendarioCultura;
 
   useEffect(() => {
     const fijarDiasDisponibles = (dias) => {
@@ -68,7 +80,8 @@ function Calendario(props: any) {
           fijarUsuarioLogueadoEnEstado,
           estadoLogin.email,
           estadoFbToken,
-          estadoTemaUsuario
+          estadoTemaUsuario,
+          estadoIdiomaUsuario,
         )) {
           fijarCargando(false);
           Alert.alert(procesarMensajeError(error.message, 'Error durante la carga de días disponibles.'));
@@ -211,7 +224,7 @@ function Calendario(props: any) {
             colorTexto={estilosGlobales.colorFondoBotonPrincipal}
             flechaAlPrincipio
           >
-            Cancelar
+            {textosGlobales.calendarioCancelar}
           </BotonRedondeado>
         </View>
       </View>

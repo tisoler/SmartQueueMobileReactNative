@@ -8,10 +8,10 @@ import { ContextoEstados } from '../../lib/contextoEstados';
 import Estrella from '../../componentes/comunes/svg/estrella';
 import { evaluarTurno } from '../../lib/servicios';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
+import { ContextoIdiomas } from '../../lib/contextoIdioma';
 import Teja from '../../componentes/comunes/teja';
 
 const EvaluacionTurno = () => {
-  const { estilosGlobales } = useContext(ContextoEstilosGlobales);
   const {
     estadoLogin,
     estadoTurnosParaEvaluar,
@@ -19,6 +19,8 @@ const EvaluacionTurno = () => {
     evaluarTurnoEnEstado,
     asignarEstadoIrEvaluacion
   } = useContext(ContextoEstados);
+  const { estilosGlobales } = useContext(ContextoEstilosGlobales);
+  const { textosGlobales } = useContext(ContextoIdiomas);
   const turnosParaEvaluar = estadoTurnosParaEvaluar;
   const turnoEvaluado = turnosParaEvaluar && turnosParaEvaluar.length > 0
     ? turnosParaEvaluar[0]
@@ -152,8 +154,8 @@ const EvaluacionTurno = () => {
       <TicketTurno />
       <Text style={[estilos.texto]}>
         { cantidadEstrellas === 0
-          ? 'Por favor evalúe nuestra atención. Nos permite mejorar el servicio.'
-          : 'Muchas gracias, que tenga un buen día.'}
+          ? textosGlobales.evaluacionPedido
+          : textosGlobales.evaluacionSaludo}
       </Text>
       <Animated.View
         style={{ ...estilos.contenedorEstrellas, height: altoContenedorEstrellas }}

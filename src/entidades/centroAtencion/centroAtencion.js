@@ -12,6 +12,7 @@ import { estimarDemora, generarTicket } from '../../lib/servicios';
 import BotonPopup from '../../componentes/comunes/botonPopup';
 import BotonRedondeado from '../../componentes/comunes/botonRedondeado';
 import { ContextoEstilosGlobales } from '../../lib/contextoEstilosGlobales';
+import { ContextoIdiomas } from '../../lib/contextoIdioma';
 import { procesarMensajeError, esTokenValido } from '../../lib/ayudante';
 import { tipoTurno as tipoTurnoEnum } from '../../lib/constantes';
 
@@ -26,6 +27,7 @@ const CentrosAtencion = (props) => {
     fijarSubtitulo = (texto: string) => {},
   } = props;
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
+  const { textosGlobales } = useContext(ContextoIdiomas);
   const [turnoPedido, setTurnoPedido] = useState(false);
   const [cargando, setCargando] = useState(false);
   const [categoriaSeleccionada, setCategoria] = useState({});
@@ -34,6 +36,7 @@ const CentrosAtencion = (props) => {
     estadoLogin,
     estadoFbToken,
     estadoTemaUsuario,
+    estadoIdiomaUsuario,
     fijarUsuarioLogueadoEnEstado,
     fijarTurnoActualEnEstado
   } = useContext(ContextoEstados);
@@ -100,7 +103,8 @@ const CentrosAtencion = (props) => {
           fijarUsuarioLogueadoEnEstado,
           estadoLogin.email,
           estadoFbToken,
-          estadoTemaUsuario
+          estadoTemaUsuario,
+          estadoIdiomaUsuario,
         )) {
           Alert.alert(procesarMensajeError(error.message, 'Error en la solicitud de turno.'));
         }
@@ -132,7 +136,8 @@ const CentrosAtencion = (props) => {
           fijarUsuarioLogueadoEnEstado,
           estadoLogin.email,
           estadoFbToken,
-          estadoTemaUsuario
+          estadoTemaUsuario,
+          estadoIdiomaUsuario,
         )) {
           Alert.alert(procesarMensajeError(error.message, 'Error en la solicitud de turno.'));
         }
@@ -171,7 +176,7 @@ const CentrosAtencion = (props) => {
         colorTexto={estilosGlobales.colorFondoBotonPrincipal}
         flechaAlPrincipio
       >
-        Cancelar
+        {textosGlobales.centroCancelar}
       </BotonRedondeado>
     ]
   );
@@ -179,10 +184,10 @@ const CentrosAtencion = (props) => {
   const turnosAnteriores = demora?.tickets != null ? demora?.tickets : -1;
   // eslint-disable-next-line no-nested-ternary
   const mensajeTurnosAnteriores = turnosAnteriores === 1
-    ? 'Hay 1 turno antes del suyo.'
+    ? textosGlobales.centroUnTurnoAntes
     : turnosAnteriores > 1
-      ? `Hay ${turnosAnteriores} turnos antes del suyo.`
-      : 'No hay ningún turno antes del suyo.';
+      ? `${textosGlobales.centroHay} ${turnosAnteriores} ${textosGlobales.centroTurnosAntes}`
+      : textosGlobales.centroNoHayTurnosAntes;
 
   const obtenerPopupConfirmacion = () => (
     <View style={estilos.contenedorConfirmacion}>
@@ -190,10 +195,10 @@ const CentrosAtencion = (props) => {
         <Text style={estilos.titulo}>{ categoriaSeleccionada.description }</Text>
         <Text style={estilos.mensaje}>{mensajeTurnosAnteriores}</Text>
         <Text style={estilos.mensaje}>
-          {`La demora estimada es de ${demora?.hours > 0 ? `${demora?.hours} hs.` : ''} ${demora?.minutes ? parseInt(demora.minutes, 10) : '?'} minutos.`}
+          {`${textosGlobales.centroDemoraEstimada} ${demora?.hours > 0 ? `${demora?.hours} hs.` : ''} ${demora?.minutes ? parseInt(demora.minutes, 10) : '?'} ${textosGlobales.centroMinutos}.`}
         </Text>
         <Text style={estilos.mensaje}>
-          ¿Desea tomar el turno?
+          {textosGlobales.centroDeseaTomarTurno}
         </Text>
       </View>
       <View style={estilos.contenedorBotonesConfirmacion}>
@@ -211,7 +216,7 @@ const CentrosAtencion = (props) => {
           manejadorClick={() => confirmarTurno()}
           colorFondo={estilosGlobales.colorFondoBotonPrincipal}
         >
-          Sí
+          {textosGlobales.centroSi}
         </BotonPopup>
       </View>
     </View>
@@ -228,7 +233,7 @@ const CentrosAtencion = (props) => {
         </View>
       );
     }
-    fijarSubtitulo('Confirmación');
+    fijarSubtitulo(textosGlobales.centroConfirmacion);
     return obtenerPopupConfirmacion();
   };
 

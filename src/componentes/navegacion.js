@@ -14,6 +14,7 @@ import Lobby from '../entidades/usuario/lobby';
 import EvaluacionTurno from '../entidades/turno/evaluacionTurno';
 import MenuLateral from './menuLateral';
 import { ContextoEstilosGlobales } from '../lib/contextoEstilosGlobales';
+import { ContextoIdiomas } from '../lib/contextoIdioma';
 import { ContextoEstados } from '../lib/contextoEstados';
 import { recuperarDatosLocalmente, recuperarTokenFB, procesarMensajeError } from '../lib/ayudante';
 import PantallaCargando from './pantallaCargando';
@@ -30,6 +31,7 @@ const NavegadorEvaluacion = (estilosGlobales: Object) => {
       backgroundColor: estilosGlobales.colorBarraNavegacion
     }
   });
+  const { textosGlobales } = useContext(ContextoIdiomas);
 
   return (
     <NavigationContainer>
@@ -39,7 +41,7 @@ const NavegadorEvaluacion = (estilosGlobales: Object) => {
           component={EvaluacionTurno}
           options={{
             headerLeft: () => null,
-            title: 'Evaluación',
+            title: textosGlobales.navegadorEvaluacion,
             headerStyle: estilos.encabezadoNavegacion,
             headerTintColor: estilosGlobales.colorLetraEncabezado,
             transitionSpec: {
@@ -59,6 +61,7 @@ const NavegadorFijoNoAutenticado = (estilosGlobales: Object) => {
       backgroundColor: estilosGlobales.colorBarraNavegacion
     }
   });
+  const { textosGlobales } = useContext(ContextoIdiomas);
 
   return (
     <NavigationContainer>
@@ -67,7 +70,7 @@ const NavegadorFijoNoAutenticado = (estilosGlobales: Object) => {
           name="Login"
           component={Login}
           options={{
-            title: 'Queue',
+            title: textosGlobales.navegadorNombreApp,
             headerStyle: estilos.encabezadoNavegacion,
             headerTintColor: estilosGlobales.colorLetraEncabezado
           }}
@@ -77,7 +80,7 @@ const NavegadorFijoNoAutenticado = (estilosGlobales: Object) => {
           name="Registro"
           component={Registro}
           options={{
-            title: 'Queue - Registro',
+            title: textosGlobales.navegadorRegistro,
             headerStyle: estilos.encabezadoNavegacion,
             headerTintColor: estilosGlobales.colorLetraEncabezado
           }}
@@ -95,6 +98,7 @@ const NavegadorFijoAutenticado = ({ navigation, route }) => {
       backgroundColor: estilosGlobales.colorBarraNavegacion,
     }
   });
+  const { textosGlobales } = useContext(ContextoIdiomas);
 
   return (
     <Stack.Navigator
@@ -104,7 +108,7 @@ const NavegadorFijoAutenticado = ({ navigation, route }) => {
         name="Lobby"
         component={Lobby}
         options={{
-          title: 'Queue',
+          title: textosGlobales.navegadorLobby,
           headerStyle: {
             ...estilos.encabezadoNavegacion,
             elevation: 0, // Quitar la sombra de la barra de navegación
@@ -124,7 +128,7 @@ const NavegadorFijoAutenticado = ({ navigation, route }) => {
         name="CentroAtencion"
         component={CentroContenedor}
         options={{
-          title: 'Centro de atención',
+          title: textosGlobales.navegadorCentro,
           headerStyle: estilos.encabezadoNavegacion,
           headerTintColor: estilosGlobales.colorLetraEncabezado
         }}
@@ -133,7 +137,7 @@ const NavegadorFijoAutenticado = ({ navigation, route }) => {
         name="Turno"
         component={Turno}
         options={{
-          title: 'Turno',
+          title: textosGlobales.navegadorTurno,
           headerStyle: estilos.encabezadoNavegacion,
           headerTintColor: estilosGlobales.colorLetraEncabezado,
           transitionSpec: {
@@ -147,7 +151,7 @@ const NavegadorFijoAutenticado = ({ navigation, route }) => {
         name="TurnoAgendado"
         component={TurnoAgendado}
         options={{
-          title: 'Turno agendado',
+          title: textosGlobales.navegadorTurnoAgendado,
           headerStyle: estilos.encabezadoNavegacion,
           headerTintColor: estilosGlobales.colorLetraEncabezado,
           transitionSpec: {
@@ -182,15 +186,21 @@ const NavegadorAutenticado = (estilosGlobales: Object, estadoDialogoEmergente: O
   );
 };
 
-const recuperarCredencialesAlmacenadas = async (fijarUsuarioLogueadoEnEstado: Function) => {
+const recuperarCredencialesAlmacenadas = async (
+  fijarUsuarioLogueadoEnEstado: Function,
+  asignarEstadoIdiomaUsuario: Function,
+) => {
   try {
     const email = await recuperarDatosLocalmente('@email');
     const token = await recuperarDatosLocalmente('@token');
     const temaUsuario = await recuperarDatosLocalmente('@temaUsuario');
+    const idiomaUsuario = await recuperarDatosLocalmente('@idiomaUsuario');
     let fbtoken = '';
     if (email) {
       fbtoken = await recuperarTokenFB();
-      fijarUsuarioLogueadoEnEstado(email, token, fbtoken, temaUsuario);
+      fijarUsuarioLogueadoEnEstado(email, token, fbtoken, temaUsuario, idiomaUsuario);
+    } else if (idiomaUsuario) {
+      asignarEstadoIdiomaUsuario(idiomaUsuario);
     }
     return token || '';
   } catch (error) {
@@ -204,7 +214,8 @@ export default () => {
     estadoLogin,
     estadoIrEvaluacion,
     estadoTurnosParaEvaluar,
-    fijarUsuarioLogueadoEnEstado
+    fijarUsuarioLogueadoEnEstado,
+    asignarEstadoIdiomaUsuario,
   } = useContext(ContextoEstados);
   const { estilosGlobales } = useContext(ContextoEstilosGlobales);
   const { estadoDialogoEmergente } = useContext(ContextoDialogoEmergente);
@@ -213,7 +224,10 @@ export default () => {
   // Recuperar credenciales almacenadas localmente
   useEffect(() => {
     const recuperarCredenciales = async () => {
-      await recuperarCredencialesAlmacenadas(fijarUsuarioLogueadoEnEstado);
+      await recuperarCredencialesAlmacenadas(
+        fijarUsuarioLogueadoEnEstado,
+        asignarEstadoIdiomaUsuario
+      );
       cambiarListo(true);
     };
     recuperarCredenciales();
